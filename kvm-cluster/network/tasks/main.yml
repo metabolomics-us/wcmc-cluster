@@ -1,0 +1,97 @@
+---
+- set_fact:
+               netplan_configuration: 
+                  network:
+                        ethernets:
+                               enp3s0f0: {}
+                               enp3s0f1: {}
+                               enp4s0f0: {}
+                               enp4s0f1: {}
+                               ens2f0:
+                                       dhcp4: true
+                               ens2f1: {}
+
+                        bonds:
+                                bond0:
+                                        parameters:
+                                                mode: 802.3ad
+                                                lacp-rate: fast
+                                                mii-monitor-interval: 50
+                                        interfaces:
+                                                - enp3s0f0
+                                                - enp3s0f1
+                                                - enp4s0f0
+                                                - enp4s0f1 
+                                        mtu: 9000
+                        vlans:
+                               # delegate to the bridges
+                               vlan.30:
+                                        id: 30
+                                        link: bond0
+                                        dhcp4: false
+                                        dhcp6: false
+
+                               # delegate to the bridges
+                               vlan.31:
+                                        id: 31
+                                        link: bond0
+                                        dhcp4: false
+                                        dhcp6: false
+
+
+                               # host only
+                               vlan.110:
+                                       id: 110
+                                       link: ens2f0
+                                       dhcp4: false
+                                       dhcp6: false
+
+
+                               # host only
+                               vlan.111:
+                                       id: 111
+                                       link: ens2f0
+                                       dhcp4: false
+                                       dhcp6: false
+
+
+                        # defines brigdes for KVM based interfaces  
+                        bridges:
+
+                                # production cluster resides in this network
+                                br30:
+                                        interfaces:
+                                                - vlan.30
+                                        dhcp6: false
+                                        dhcp4: true
+                                        dhcp-identifier: mac
+
+                                # test cluster resides in this network
+                                br31:
+                                        interfaces:
+                                                - vlan.31
+                                        dhcp4: true
+                                        dhcp6: false
+                                        dhcp-identifier: mac
+
+                                # dedicated data lan for fast access
+                                # based on NVM storage
+                                br110:
+                                        interfaces:
+                                                - vlan.110
+                                        dhcp6: false
+                                        dhcp4: true
+                                        dhcp-identifier: mac
+
+                                # dedicated data lan for nas shares
+                                # based on a dedicated storage box
+                                br111:
+                                        interfaces:
+                                                - vlan.111
+                                        dhcp4: true
+                                        dhcp6: false
+                                        dhcp-identifier: mac
+ 
+- import_role: 
+        name: mrlesmithjr.netplan
+

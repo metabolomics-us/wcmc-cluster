@@ -1,0 +1,12 @@
+---
+- import_role: 
+        name: "nickjj.docker"
+  tags: ["docker"]
+
+- import_role:
+        name: "atosatto.docker-swarm"
+  vars:
+                skip_engine: True # if true, skip the docker engine installation
+                skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
+                skip_swarm: False  # if true, skip the swarm setup
+                skip_docker_py: True # if true, skip the docker-py

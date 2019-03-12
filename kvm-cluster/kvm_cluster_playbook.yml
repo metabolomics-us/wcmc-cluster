@@ -1,0 +1,18 @@
+---
+  - hosts: node
+    gather_facts: True
+    become_user: root
+    become: true
+    name: "install the KVM cluster"
+
+    tasks:
+            - import_role:
+                    name: network
+            - import_role:
+                    name: default
+            - import_role:
+                    name: kvm
+            - import_role:
+                    name: users
+            - import_role:
+                    name: docker

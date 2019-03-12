@@ -1,0 +1,17 @@
+---
+- import_role:
+        name: ypsman.ipv6_disable
+- name: "remove cloud init crap"
+  apt:
+    name: cloud-init
+    state: absent
+
+- name: "configure a sensible hostname"
+  shell: "hostnamectl set-hostname {{ inventory_hostname }}"
+
+- name: "install default utilities"
+  apt:
+    name: [git,mc,mtr,htop,nmap,sysstat,tmux]
+    update_cache: true
+    state: latest
+

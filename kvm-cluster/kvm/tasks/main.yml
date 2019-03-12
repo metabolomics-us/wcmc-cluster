@@ -1,0 +1,57 @@
+---
+- name: "install qeme and libvrt related stuff"
+  apt:
+                      name: [qemu-kvm, libvirt-clients, libvirt-daemon-system, bridge-utils]
+                      update_cache: true
+                      state: latest
+
+
+- name: "format disk in ext4, if not done so"
+  filesystem:
+          dev: /dev/nvme0n1
+          fstype: ext4
+          force: False
+            
+- name: "setup required directory"
+  mount:
+          path: /mnt/kvm
+          src: /dev/nvme0n1
+          fstype: ext4
+          state: mounted
+
+- include_role:
+        name: openmicroscopy.nfs-mount
+  vars:
+        nfs_share_mounts:
+                - path: /mnt/iso
+                  location: "{{image_server}}:/mnt/images"
+                  opts: "ro"
+
+- name: "check if pool exists"
+  shell: "virsh pool-info --pool storage"
+  register: exist
+  ignore_errors: True
+
+- name: "setup storage pool"
+  shell: "virsh pool-define-as --name storage --type dir --target /mnt/kvm"
+  when: exist is failed
+
+- name: "autostart pool"
+  shell: "virsh pool-autostart storage"
+
+- include_role: 
+        name: stackhpc.libvirt-vm
+  vars:
+            libvirt_vms:
+                    - state: present
+                    - name: 'prod-{{inventory_hostname}}'
+                      memory_mb: 16192  
+                      vcpus: 8
+                      volumes:
+                              - name: 'data-prod-{{inventory_hostname}}'
+                                device: 'disk'
+                                capacity: '600GB'
+                                pool: 'storage'
+                      interfaces:
+                              - network: 'br30'
+
