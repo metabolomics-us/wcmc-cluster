@@ -6,7 +6,7 @@ kvm-node-3	ansible_ssh_host=192.168.5.22
 kvm-node-4	ansible_ssh_host=192.168.5.23
 
 [docker_swarm_manager]
-kvm-node-1	swarm_labels=deploy
+kvm-node-1	swarm_labels='["deploy","elasticdb"]'
 
 [docker_swarm_worker]
 kvm-node-2	swarm_labels='["libvirt"]'
@@ -15,5 +15,5 @@ kvm-node-4	swarm_labels='["libvirt"]'
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
-image_server=192.168.111.247
+image_server=192.168.111.10
 

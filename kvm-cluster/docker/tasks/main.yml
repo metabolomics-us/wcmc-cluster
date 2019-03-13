@@ -10,3 +10,42 @@
                 skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
                 skip_swarm: False  # if true, skip the swarm setup
                 skip_docker_py: True # if true, skip the docker-py
+
+- name: "cloning monitoring stack"
+  when: "'docker_swarm_manager' in group_names"  
+  git:
+        repo: https://github.com/metabolomics-us/swarmprom.git
+        version: master
+        dest: /mnt/git/swarmprom
+        clone: true
+        update: true
+
+- name: "cloning logging stack"
+  when: "'docker_swarm_manager' in group_names"  
+  git:
+        repo: https://github.com/metabolomics-us/docker-elk.git
+        version: master
+        dest: /mnt/git/logging
+        clone: true
+        update: true
+
+
+- name: "install required pip packages"
+  pip:
+          name: [jsondiff,pyyaml]  
+
+
+- name: "deploying monitoring stack"        
+  when: "'docker_swarm_manager' in group_names"
+  docker_stack:
+          state: present
+          name: monitoring
+          compose: /mnt/git/swarmprom/docker-compose.yml
+ 
+- name: "deploying logging stack"        
+  when: "'docker_swarm_manager' in group_names"
+  docker_stack:
+          state: present
+          name: logging
+          compose: /mnt/git/logging/docker-stack.yml
+          
