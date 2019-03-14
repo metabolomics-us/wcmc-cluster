@@ -8,7 +8,10 @@
           ssh_key_bits: 2048
           ssh_key_file: .ssh/id_rsa
           append: true
-          authorized_key:
+
+- name: Add key for user wohlgemuth and host leela
+  authorized_key:
+                  user: wohlgemuth
                   state: present
                   key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCvuRPJtrZM/BdLl9MCBCNUX7BSWx1ECECZ8+Mlq9etg0Z9lVoDN5MmgvCQkXebhb8iSWwvBhp0bLbKeiNQqufnUAd25EFK9eo3xLmOzIqAF5fuWle0hwglrJ/c6UBBnJDSbZlcRwfmEBvf9ky1saUuoxus5XR5OcMXt/2nY8vYcIpxVLITvKDLg/tJcenAH/anNKQkixO8BXqczAu2/GMYsBBBzkxpPDsjFzVAASOUiVIf3+4ERMPGeWfSdx5o8e0gYhspKoVQQPnGrrq20KWqltv8sN3XjFFuziPI5ZJxHmxPSkFaL6eCGbGxi7QMLt4M6qv3ND0Mg0pYPkSeKmP9 wohlgemuth@leela" 
 
@@ -22,7 +25,10 @@
           ssh_key_bits: 2048
           ssh_key_file: .ssh/id_rsa
           append: true
-          authorized_key:
+
+- name: add key for user diego and host farnsworth          
+  authorized_key:
+                  user: diego
                   state: present
                   key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1vPMB1IfYQoTHktZ7Eh4VXH9Ge1Vyg5qjReLxy6IyoKl0AgwkfoUkTkIJOMJh6Lkk/u1zq829EaJIQgCtZsYfsFfPZovSD67f4oLS1cUVmxaLMf13NVlrFkaZqm6dW5IClneDXT2Qx5HgsfN0Uq9KcB+XLS7MrKXzE0033qjmCIva1s+JdcYMnSs7xC7eDUcP/FkcCbwXiDX1dXM6w3Ru5hLBbuO22ZawhOwVVxBJPRA31s35SL1lHMvuaii8h7u9qvpCmeKg2EpLAjUQ8IG+XdXiFz20swtKJ8Br35zRDMEOd/nUWrbqAsX4I8KxIaRpLJz5QyFpcPExNXY1CwRl diego@farnsworth"
 
@@ -36,7 +42,10 @@
           ssh_key_bits: 2048
           ssh_key_file: .ssh/id_rsa
           append: true
-          authorized_key:
+
+- name: add key for user sajjan and host mpb          
+  authorized_key:
+                  user: sajjan
                   state: present
                   key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHMwcHtupnprBglpu0Vrt/NQMLinnI0cPxLmstYDaIHyvyH4AcoXqPILwiMki5y3WVsYNS/aVRDjqOFoMlT0lvznmwxu7uzXtthkRcSB8dXtSkLZi9TRGewEyf4RQAAcmn9oRB5kR95YUCUXbYrKoXZz9vajY/O/pHqL+biAm4C+eakzPtNFKmGz8/Fbgb3DF1IwebvAOgvW3fkLh5UdQoRF/p+230ZytkuLRD579utlUOb8KvdN0TyRdo7fVsV59dZFOlkQDeyR/onYmZEfFh4/n/62zQp7eJY364XJAwGeZssHBCgeXi3cCPE+pLr9o9TzabY7MYeqxfv1epwA5d sajjan@S-MPB"
 

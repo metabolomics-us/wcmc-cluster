@@ -1,4 +1,10 @@
 ---
+
+- name: "install required pip packages"
+  pip:
+          name: [jsondiff,pyyaml,docker] 
+
+
 - import_role: 
         name: "nickjj.docker"
   tags: ["docker"]
@@ -6,11 +12,6 @@
 - name: "setup the docker swarm cluster"
   include_role:
         name: "atosatto.docker-swarm"
-        apply:
-                tags:
-                        - swarm_labels
-  tags:
-          - always
   vars:
                 skip_engine: True # if true, skip the docker engine installation
                 skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
@@ -34,11 +35,16 @@
         dest: /mnt/git/logging
         clone: true
         update: true
+- name: "configure labels"
+  docker_node:
+         labels_state: merge
+         hostname: "{{item}}"
+         labels: "{{ docker_node_labels }}"
 
+  with_inventory_hostnames:
+          - node
 
-- name: "install required pip packages"
-  pip:
-          name: [jsondiff,pyyaml]  
+  when: "'docker_swarm_manager' in group_names"
 
 
 - name: "deploying monitoring stack"        

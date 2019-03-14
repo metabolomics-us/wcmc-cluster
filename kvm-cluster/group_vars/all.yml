@@ -1,0 +1,5 @@
+ansible_python_interpreter: /usr/bin/python3
+
+# where are all our ISO images located
+image_server: 192.168.111.10
+
