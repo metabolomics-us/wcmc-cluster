@@ -1,3 +1,5 @@
+##
+# this group contains all physical barebone nodes which
 [node]
 
 kvm-node-1	ansible_ssh_host=192.168.5.20
@@ -5,10 +7,28 @@ kvm-node-2	ansible_ssh_host=192.168.5.21
 kvm-node-3	ansible_ssh_host=192.168.5.22
 kvm-node-4	ansible_ssh_host=192.168.5.23
 
+##
+# this group contains nodes which want to become swarm manager
 [docker_swarm_manager]
 kvm-node-1
 
+##
+# this group defines all workers
 [docker_swarm_worker]
+kvm-node-2
+kvm-node-3
+kvm-node-4
+
+##
+# this group defines which nodes should be part of the 
+# gluster fs syste
+[gluster_nodes]
+
+##
+# this group defines which nodes should provide virtual machines
+# and will be setup arcordingly
+[kvm_node]
+kvm-node-1
 kvm-node-2
 kvm-node-3
 kvm-node-4

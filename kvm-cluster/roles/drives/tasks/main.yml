@@ -1,0 +1,47 @@
+---
+
+- name: "evaluate partitions"
+  parted:
+          device: /dev/nvme0n1
+          unit: GiB
+  register: nvme_info          
+ 
+- name: "remove partions"
+  when: nvme_info.partitions | length == 1
+  parted:
+         device: /dev/nvme0n1
+         number: "{{ item.num }}"
+         state: absent
+  with_items:
+         - "{{ nvme_info.partitions }}"
+
+
+- name: "define partion 1 for kvm storage"
+  parted:
+          device: /dev/nvme0n1
+          number: 1
+          state: present
+          part_end: 60%
+          part_start: 1%
+
+- name: "define partion 2 for gluster storage"
+  parted:
+          device: /dev/nvme0n1
+          number: 2
+          state: present
+          part_start: 61%
+          part_end: 99%
+
+
+- name: "format disk in ext4, if not done so"
+  filesystem:
+         dev: /dev/nvme0n1p1
+         fstype: ext4
+         force: False
+
+ 
+- name: "format disk in ext4, if not done so"
+  filesystem:
+         dev: /dev/nvme0n1p2
+         fstype: ext4
+         force: False

@@ -1,18 +1,39 @@
 ---
-  - hosts: node
+  - hosts: all
     gather_facts: True
     become_user: root
     become: true
-    name: "install the KVM cluster"
+    name: "gather facts accross all"
+
+  - hosts: node
+    become_user: root
+    become: true
+    name: "install the barebone system layout"
 
     tasks:
+           - import_role:
+                   name: network
+           - import_role:
+                   name: default
+           - import_role:
+                   name: users
+           - import_role:
+                   name: docker
+           - import_role:
+                   name: drives
+
+  - hosts: kvm_node
+    become_user: root
+    become: true
+    name: "install the actual kvm cluster"   
+    tasks:    
             - import_role:
-                    name: network
-            - import_role:
-                    name: default
-            - import_role:
-                    name: users
-            - import_role:
-                    name: docker
-            - import_role:
-                    name: kvm                   
+                    name: kvm            
+
+  - hosts: test_cluster
+    become_user: root
+    become: true
+    name: "install the docker test cluster on top of the kvm cluster"
+    tasks:
+           - import_role:
+                   name: docker    

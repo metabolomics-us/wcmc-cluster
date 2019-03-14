@@ -1,0 +1,54 @@
+---
+- name: install required software
+  apt:
+          name: [ dos2unix, p7zip-full, cpio, gzip, genisoimage, whois, pwgen, wget, fakeroot, isolinux, xorriso ]
+
+- name: clone git
+  git:
+        repo: https://github.com/metabolomics-us/linux-unattended-installation.git
+        version: master
+        dest: /mnt/git/makeiso
+        update: true 
+        clone: true 
+        force: true
+
+- name: update permissions
+  file:
+          path: /mnt/git/makeiso
+          mode: 0777
+          recurse: true
+
+- name: configure variables
+  stat:
+          path: /mnt/git/makeiso/ubuntu-18.04-netboot-amd64-unattended.iso
+  register: iso_exists
+
+- name: generate kickstart image
+  when: iso_exists == false
+  shell: ./ubuntu/18.04/build-iso.sh
+  become: false
+  args:
+       chdir: /mnt/git/makeiso
+       executable: /bin/bash
+
+- fail:
+        msg: "please ensure you have a vm variable defined"
+  when: vm | mandatory
+
+- name: create virtual machine       
+  include_role: 
+       name: stackhpc.libvirt-vm
+  vars:
+           libvirt_vms:
+                   - state: present
+                   - name: '{{ vm.name }}'
+                     memory_mb: " {{ vm.memory }}"
+                     vcpus: "{{ vm.cpu }}"
+                     volumes:
+                             - name: 'data-{{vm.name}}'
+                               device: 'disk'
+                               capacity: '{{ vm.storage_size }}GB'
+                               pool: '{{ vm.pool }}'
+                     interfaces:
+                             - network: '{{ vm.network }}'
+

@@ -1,0 +1,9 @@
+<!-- sets up the kvm storage pool -->
+<pool type="dir">
+	<name>nvme</name>
+	<target>
+		<path>/mnt/kvm</path>
+	</target>
+</pool>
+
+

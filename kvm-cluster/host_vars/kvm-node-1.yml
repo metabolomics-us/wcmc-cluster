@@ -1,4 +1,4 @@
 docker_node_labels:
         kvm: "true"
-        influxdb: "true"
+        elasticdb: "true"
 

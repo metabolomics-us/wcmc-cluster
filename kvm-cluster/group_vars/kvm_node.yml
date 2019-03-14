@@ -1,0 +1,16 @@
+##
+# configures the virtual machines for this group
+# which require to be created and deployed on each node
+#
+virtual_machines:
+         machine:
+           name: test
+           cpu: 1
+           memory: 8192
+           storage_size: 20
+           network: br31
+           pool: nvme
+
+ansible_python_interpreter: /usr/bin/python3
+
+vm_ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQClOW+HSEzQrNaAxFvOiTagcu/DfRBWawLp/9BTWHi4owtb72AcNxp/pyRCODDUmLezTUItpF39weH24+X+iW/ZzcIUBbUl6zVARJbjDbT+/RTaT5zsSFBZuhYWa/ivHcGiV9TWQ2HPsvckP66A4FMe+TSkcUrJrjRUVIEGHQvpvG9jDo0I88NYq+M6QVQTN+AXCxr3GNqjbbINVhOhRoyP/ZBB8eonL/KlVJpqwLkdMMj4BRKLcU+rq3Ql9ugdp/6OHbmLK4hvE1dtUPOQHPLN1fJvcLO+vjiVEXJW10tc4caBmUeufFfHhomvk8Da7TCP5mX/96CzJNOOfRSLwUvF wohlgemuth@test-ansible-1" 
