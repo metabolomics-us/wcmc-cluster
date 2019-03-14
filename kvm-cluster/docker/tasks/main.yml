@@ -3,8 +3,14 @@
         name: "nickjj.docker"
   tags: ["docker"]
 
-- import_role:
+- name: "setup the docker swarm cluster"
+  include_role:
         name: "atosatto.docker-swarm"
+        apply:
+                tags:
+                        - swarm_labels
+  tags:
+          - always
   vars:
                 skip_engine: True # if true, skip the docker engine installation
                 skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
