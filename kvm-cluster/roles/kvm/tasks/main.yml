@@ -20,10 +20,10 @@
        
 - name: "setup gluster directory"
   mount:
-          path: /mnt/brick/1
-          src: /dev/nvme0n1p2
-          fstype: ext4
-          state: mounted
+        path: /mnt/brick/1
+        src: /dev/nvme0n1p2
+        fstype: ext4
+        state: mounted
 
 - virt_pool:
         command: define
@@ -31,18 +31,28 @@
         xml: '{{ lookup("template","files/pool.xml") }}'        
         autostart: true
 
+- virt_pool:
+        command: build
+        name: nvme
+  ignore_errors: yes
+
+- virt_pool:
+        state: active
+        name: nvme
+  ignore_errors: yes
+
 - name: "generate and deploy virtual machine"
   loop: "{{virtual_machines}}"
   include_role:
           name: kickstartvm
   vars:
-          vm:
-                  memory: "{{ virtual_machine.memory }} "
-                  cpu: " {{ virtual_machine.cores }} "
-                  storage_size: " {{ virtual_machine.storage_size }} "
-                  name: " {{ inventory_hostname }}-{{ virtual_machine.name }} "
-                  pool: " {{ virtual_machine.pool }} "
-                  network: " {{ virtual_machine.network }} "
+          vm_to_install:
+                  memory: "{{virtual_machine.memory}}"
+                  cpu: "{{virtual_machine.cpus}}"
+                  storage_size: "{{virtual_machine.storage_size}}"
+                  name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+                  pool: "{{virtual_machine.pool}}"
+                  network: "{{virtual_machine.network}}"
 
   loop_control:
           loop_var: virtual_machine

@@ -3,9 +3,9 @@
 # which require to be created and deployed on each node
 #
 virtual_machines:
-         machine:
+        -  machine:
            name: test
-           cpu: 1
+           cpus: 1
            memory: 8192
            storage_size: 20
            network: br31

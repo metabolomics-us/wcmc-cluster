@@ -1,26 +1,26 @@
 ---
-  - hosts: all
-    gather_facts: True
-    become_user: root
-    become: true
-    name: "gather facts accross all"
+# - hosts: all
+#   gather_facts: True
+#   become_user: root
+#   become: true
+#   name: "gather facts accross all"
 
-  - hosts: node
-    become_user: root
-    become: true
-    name: "install the barebone system layout"
+# - hosts: node
+#   become_user: root
+#   become: true
+#   name: "install the barebone system layout"
 
-    tasks:
-           - import_role:
-                   name: network
-           - import_role:
-                   name: default
-           - import_role:
-                   name: users
-           - import_role:
-                   name: docker
-           - import_role:
-                   name: drives
+#   tasks:
+#          - import_role:
+#                  name: network
+#          - import_role:
+#                  name: default
+#          - import_role:
+#                  name: users
+#          - import_role:
+#                  name: docker
+#          - import_role:
+#                  name: drives
 
   - hosts: kvm_node
     become_user: root
