@@ -11,7 +11,7 @@
 
 - name: "install default utilities"
   apt:
-    name: [git,mc,mtr,htop,nmap,sysstat,tmux]
+    name: [git,mc,mtr,htop,nmap,sysstat,tmux, python3-pip]
     update_cache: true
     state: latest
 

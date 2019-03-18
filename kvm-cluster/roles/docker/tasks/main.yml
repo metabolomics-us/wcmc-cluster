@@ -2,62 +2,62 @@
 
 - name: "install required pip packages"
   pip:
-          name: [jsondiff,pyyaml,docker] 
+    name: [jsondiff,pyyaml,docker]
 
 
-- import_role: 
-        name: "nickjj.docker"
+- import_role:
+    name: "nickjj.docker"
   tags: ["docker"]
 
 - name: "setup the docker swarm cluster"
   include_role:
-        name: "atosatto.docker-swarm"
+    name: "atosatto.docker-swarm"
   vars:
-                skip_engine: True # if true, skip the docker engine installation
-                skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
-                skip_swarm: False  # if true, skip the swarm setup
-                skip_docker_py: True # if true, skip the docker-py
+    skip_engine: True # if true, skip the docker engine installation
+    skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
+    skip_swarm: False  # if true, skip the swarm setup
+    skip_docker_py: True # if true, skip the docker-py
 
 - name: "cloning monitoring stack"
-  when: "'docker_swarm_manager' in group_names"  
+  when: "'docker_swarm_manager' in group_names"
   git:
-        repo: https://github.com/metabolomics-us/swarmprom.git
-        version: master
-        dest: /mnt/git/swarmprom
-        clone: true
-        update: true
+    repo: "{{docker.swarmprom.repo}}"
+    version: master
+    dest: "{{git.directory}}/swarmprom"
+    clone: true
+    update: true
 
 - name: "cloning logging stack"
-  when: "'docker_swarm_manager' in group_names"  
+  when: "'docker_swarm_manager' in group_names"
   git:
-        repo: https://github.com/metabolomics-us/docker-elk.git
-        version: master
-        dest: /mnt/git/logging
-        clone: true
-        update: true
+    repo: "{{docker.elk.repo}}"
+    version: master
+    dest: "{{git.directory}}/logging"
+    clone: true
+    update: true
 - name: "configure labels"
   docker_node:
-         labels_state: merge
-         hostname: "{{item}}"
-         labels: "{{ docker_node_labels }}"
+    labels_state: merge
+    hostname: "{{item}}"
+    labels: "{{ docker_node_labels }}"
 
   with_inventory_hostnames:
-          - node
+    - node
 
   when: "'docker_swarm_manager' in group_names"
 
 
-- name: "deploying monitoring stack"        
-  when: "'docker_swarm_manager' in group_names"
-  docker_stack:
-          state: present
-          name: monitoring
-          compose: /mnt/git/swarmprom/docker-compose.yml
- 
-- name: "deploying logging stack"        
+- name: "deploying monitoring stack"
   when: "'docker_swarm_manager' in group_names"
   docker_stack:
-          state: present
-          name: logging
-          compose: /mnt/git/logging/docker-stack.yml
+    state: present
+    name: monitoring
+    compose: "{{git.directory}}/swarmprom/docker-compose.yml"
+
+- name: "deploying logging stack"
+  when: "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: logging
+    compose: "{{git.directory}}/logging/docker-stack.yml"
           

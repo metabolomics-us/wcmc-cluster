@@ -13,7 +13,7 @@
 - name: "setup kvm directory"
   mount:
           path: /mnt/kvm
-          src: /dev/nvme0n1p1
+          src: "{{storage.device}}p1"
           fstype: ext4
           state: mounted
 
@@ -21,7 +21,7 @@
 - name: "setup gluster directory"
   mount:
         path: /mnt/brick/1
-        src: /dev/nvme0n1p2
+        src: "{{storage.device}}p2"
         fstype: ext4
         state: mounted
 
