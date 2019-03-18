@@ -1,0 +1,8 @@
+---
+
+##
+# where do we want to store git checkout modules during the install stage
+# these should NOT be ever deleted, you choose wisely
+git:
+  directory: "/mnt/git"
+

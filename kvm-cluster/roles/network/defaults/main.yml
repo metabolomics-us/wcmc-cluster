@@ -1,0 +1,96 @@
+##
+# defines the network configuration for all nodes. Can also be done on the host level if you have different hardware setups
+#
+# this configuration is based on a HP Proliant G7, with 4 onboard network cards
+# and 2 additional 10GB networks cards
+# utilizing a default VLAN
+# and a couple of custom ones. The KVM's will run on the defined bridges! So these are required
+#
+network:
+
+  ##
+  # this contains the general network configuration, which should be adapted to local host needs
+  netplan:
+    configuration:
+      network:
+        ethernets:
+          enp3s0f0: {}
+          enp3s0f1: {}
+          enp4s0f0: {}
+          enp4s0f1: {}
+
+        bonds:
+          bond0:
+            parameters:
+              mode: 802.3ad
+              lacp-rate: fast
+              mii-monitor-interval: 50
+            interfaces:
+              - enp3s0f0
+              - enp3s0f1
+              - enp4s0f0
+              - enp4s0f1
+            mtu: 9000
+            dhcp4: true
+        vlans:
+          # delegate to the bridges
+          vlan.prod:
+            id: 100
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.test:
+            id: 101
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.service:
+            id: 102
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.data:
+            id: 103
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+        # defines brigdes for KVM based interfaces
+        bridges:
+
+          # production cluster resides in this network
+          br.prod:
+            interfaces:
+              - vlan.prod
+            dhcp6: false
+            dhcp4: true
+            dhcp-identifier: mac
+
+          # test cluster resides in this network
+          br.test:
+            interfaces:
+              - vlan.test
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+
+          # shared services reside in this network
+          br.service:
+            interfaces:
+              - vlan.service
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+          # data access resides in this network
+          br.data:
+            interfaces:
+              - vlan.data
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac

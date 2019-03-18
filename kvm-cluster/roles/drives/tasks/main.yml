@@ -5,34 +5,35 @@
     device: "{{storage.device}}"
     unit: GiB
   register: nvme_info
-  tags:
-    - always
+
+- debug:
+    var: nvme_info
+
 - name: "remove partitions if layout is none expected"
   parted:
     device: "{{storage.device}}"
-    number: "{{ item.num }}"
+    number: "{{part.num}}"
     state: absent
-  with_items:
-    - "{{ nvme_info.partitions }}"
-  tags:
-    - force_reset
-    - never
+  with_items: "{{nvme_info.partitions}}"
+  when: nvme_info.partitions | length != 2
+  loop_control:
+    loop_var: part
 
 - name: "define partition 1 for kvm storage"
   parted:
     device: "{{storage.device}}"
     number: 1
     state: present
-    part_end: "{{storage.split_kvm.end}}%"
-    part_start: "{{storage.split_kvm.start}}%"
+    part_end: "{{storage.split_kvm.end}}"
+    part_start: "{{storage.split_kvm.begin}}"
 
 - name: "define partition 2 for gluster storage"
   parted:
     device: "{{storage.device}}"
     number: 2
     state: present
-    part_end: "{{storage.split_gluster.end}}%"
-    part_start: "{{storage.split_gluster.start}}%"
+    part_end: "{{storage.split_gluster.end}}"
+    part_start: "{{storage.split_gluster.begin}}"
 
 - name: "format disk in ext4, if not done so"
   filesystem:

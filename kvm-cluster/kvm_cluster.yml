@@ -10,19 +10,19 @@
   become: true
   name: "install the barebone system layout"
   tasks:
-    - import_role:
-        name: network
-    - import_role:
-        name: default
-    - name: "configure user accounts"
-      include_role:
-        name: users
-      vars:
-        user: "{{item}}"
-      loop: "{{accounts.users}}"
+#   - import_role:
+#       name: network
+#   - import_role:
+#       name: default
+#   - name: "configure user accounts"
+#     include_role:
+#       name: users
+#     vars:
+#       user: "{{item}}"
+#     loop: "{{accounts.users}}"
 
-    - import_role:
-        name: docker
+#   - import_role:
+#       name: docker
     - import_role:
         name: drives
 

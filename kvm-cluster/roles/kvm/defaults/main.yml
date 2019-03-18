@@ -1,0 +1,8 @@
+##
+# configuration of your storage backends
+storage:
+
+  ##
+  # here we will store all KVM related content.
+  #
+  device: "/dev/nvme0n1"

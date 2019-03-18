@@ -1,59 +1,81 @@
 ---
 - name: "install qeme and libvrt related stuff"
   apt:
-                      name: [qemu-kvm, libvirt-clients, libvirt-daemon-system, bridge-utils, libvirt-dev]
-                      update_cache: true
-                      state: latest
+    name: [qemu-kvm, libvirt-clients, libvirt-daemon-system, bridge-utils, libvirt-dev]
+    update_cache: true
+    state: latest
 
 
 - name: "install python modules"
   pip:
-        name: [libvirt-python, lxml]
-       
+    name: [libvirt-python, lxml]
+
 - name: "setup kvm directory"
   mount:
-          path: /mnt/kvm
-          src: "{{storage.device}}p1"
-          fstype: ext4
-          state: mounted
+    path: /mnt/kvm
+    src: "{{storage.device}}p1"
+    fstype: ext4
+    state: mounted
 
-       
+
 - name: "setup gluster directory"
   mount:
-        path: /mnt/brick/1
-        src: "{{storage.device}}p2"
-        fstype: ext4
-        state: mounted
+    path: /mnt/brick/1
+    src: "{{storage.device}}p2"
+    fstype: ext4
+    state: mounted
 
 - virt_pool:
-        command: define
-        name: nvme
-        xml: '{{ lookup("template","files/pool.xml") }}'        
-        autostart: true
+    command: define
+    name: nvme
+    xml: '{{ lookup("template","files/pool.xml") }}'
+    autostart: true
 
 - virt_pool:
-        command: build
-        name: nvme
+    command: build
+    name: nvme
   ignore_errors: yes
 
 - virt_pool:
-        state: active
-        name: nvme
+    state: active
+    name: nvme
   ignore_errors: yes
+
+- virt_net:
+    command: define
+    name: "{{virtual_machine.network}}"
+    xml: '{{ lookup("template", "files/network.xml") }}'
+  loop_control:
+    loop_var: virtual_machine
+  loop: "{{virtual_machines}}"
+
+- virt_net:
+    command: create
+    name: "{{virtual_machine.network}}"
+  loop_control:
+    loop_var: virtual_machine
+  loop: "{{virtual_machines}}"
+
+- virt_net:
+    autostart: true
+    name: "{{virtual_machine.network}}"
+  loop_control:
+    loop_var: virtual_machine
+  loop: "{{virtual_machines}}"
 
 - name: "generate and deploy virtual machine"
   loop: "{{virtual_machines}}"
   include_role:
-          name: kickstartvm
+    name: kickstartvm
   vars:
-          vm_to_install:
-                  memory: "{{virtual_machine.memory}}"
-                  cpu: "{{virtual_machine.cpus}}"
-                  storage_size: "{{virtual_machine.storage_size}}"
-                  name: "{{inventory_hostname}}-{{virtual_machine.name}}"
-                  pool: "{{virtual_machine.pool}}"
-                  network: "{{virtual_machine.network}}"
+    vm_to_install:
+      memory: "{{virtual_machine.memory}}"
+      cpu: "{{virtual_machine.cpus}}"
+      storage_size: "{{virtual_machine.storage_size}}"
+      name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+      pool: "{{virtual_machine.pool}}"
+      network: "{{virtual_machine.network}}"
 
   loop_control:
-          loop_var: virtual_machine
+    loop_var: virtual_machine
 

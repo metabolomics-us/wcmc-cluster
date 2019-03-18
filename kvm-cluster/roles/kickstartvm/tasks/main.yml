@@ -1,26 +1,26 @@
 ---
 - name: install required software
   apt:
-          name: [ dos2unix, p7zip-full, cpio, gzip, genisoimage, whois, pwgen, wget, fakeroot, isolinux, xorriso ]
+    name: [ dos2unix, p7zip-full, cpio, gzip, genisoimage, whois, pwgen, wget, fakeroot, isolinux, xorriso ]
 
 - name: clone git
   git:
-        repo: https://github.com/metabolomics-us/linux-unattended-installation.git
-        version: master
-        dest: /mnt/git/makeiso
-        update: true 
-        clone: true 
-        force: true
+    repo: https://github.com/metabolomics-us/linux-unattended-installation.git
+    version: master
+    dest: "{{git.directory}}/mnt/git/makeiso"
+    update: true
+    clone: true
+    force: true
 
 - name: update permissions
   file:
-          path: /mnt/git/makeiso
-          mode: 0777
-          recurse: true
+    path: "{{git.directory}}/makeiso"
+    mode: 0777
+    recurse: true
 
 - name: configure variables
   stat:
-          path: /mnt/git/makeiso/ubuntu-18.04-netboot-amd64-unattended.iso
+    path: "{{git.directory}}/makeiso/ubuntu-18.04-netboot-amd64-unattended.iso"
   register: iso_exists
 
 - name: generate kickstart image
@@ -28,35 +28,36 @@
   shell: ./ubuntu/18.04/build-iso.sh
   become: false
   args:
-       chdir: /mnt/git/makeiso
-       executable: /bin/bash
+    chdir: "{{git.directory}}/makeiso"
+    executable: /bin/bash
 
 - debug:
-        var: vm_to_install
+    var: vm_to_install
 
-- name: drop vm if exists
-  vars:
-          libvirt_vms:
-                -state: absent
-  ignore_errors: true
+# name: drop vm if exists
+# vars:
+#   libvirt_vms:
+#     -state: absent
+#      name: "{{vm_to_install.name}}"
+# ignore_errors: true
 
-  include_role: 
-       name: stackhpc.libvirt-vm
- 
-- name: create virtual machine       
-  include_role: 
-       name: stackhpc.libvirt-vm
+# include_role:
+#   name: stackhpc.libvirt-vm
+
+- name: create virtual machine
+  include_role:
+    name: stackhpc.libvirt-vm
   vars:
-           libvirt_vms:
-                   - state: present
-                   - name: '{{vm_to_install.name}}'
-                     memory_mb: "{{vm_to_install.memory}}"
-                     vcpus: "{{vm_to_install.cpu}}"
-                     volumes:
-                             - name: 'data-{{vm_to_install.name}}'
-                               device: 'disk'
-                               capacity: '{{vm_to_install.storage_size}}GB'
-                               pool: '{{vm_to_install.pool}}'
-                     interfaces:
-                             - network: '{{vm_to_install.network}}'
+    libvirt_vms:
+      - state: present
+        name: "{{vm_to_install.name}}"
+        memory_mb: "{{vm_to_install.memory}}"
+        vcpus: "{{vm_to_install.cpu}}"
+        volumes:
+          - name: "data-{{vm_to_install.name}}"
+            device: 'disk'
+            capacity: "{{vm_to_install.storage_size}}GB"
+            pool: "{{vm_to_install.pool}}"
+        interfaces:
+          - network: "{{vm_to_install.network}}"
 
