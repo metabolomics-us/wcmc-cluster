@@ -1,0 +1,27 @@
+---
+- name: "destroy vm"
+  virt:
+    command: destroy
+    name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+  ignore_errors: true
+
+- name: "un-define vm"
+  virt:
+    command: undefine
+    name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+  ignore_errors: true
+
+- name: "remove-disk"
+  file:
+    state: absent
+    path: "/mnt/kvm/{{inventory_hostname}}-{{virtual_machine.name}}.disk.qcow2"
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+  ignore_errors: true

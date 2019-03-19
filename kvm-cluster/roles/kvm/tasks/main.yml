@@ -17,65 +17,74 @@
     fstype: ext4
     state: mounted
 
-
-- name: "setup gluster directory"
-  mount:
-    path: /mnt/brick/1
-    src: "{{storage.device}}p2"
-    fstype: ext4
-    state: mounted
-
-- virt_pool:
-    command: define
-    name: nvme
-    xml: '{{ lookup("template","files/pool.xml") }}'
-    autostart: true
-
-- virt_pool:
-    command: build
-    name: nvme
-  ignore_errors: yes
-
-- virt_pool:
-    state: active
-    name: nvme
-  ignore_errors: yes
-
-- virt_net:
-    command: define
-    name: "{{virtual_machine.network}}"
-    xml: '{{ lookup("template", "files/network.xml") }}'
-  loop_control:
-    loop_var: virtual_machine
-  loop: "{{virtual_machines}}"
-
-- virt_net:
-    command: create
-    name: "{{virtual_machine.network}}"
-  loop_control:
-    loop_var: virtual_machine
-  loop: "{{virtual_machines}}"
-
-- virt_net:
-    autostart: true
-    name: "{{virtual_machine.network}}"
-  loop_control:
-    loop_var: virtual_machine
-  loop: "{{virtual_machines}}"
-
-- name: "generate and deploy virtual machine"
-  loop: "{{virtual_machines}}"
+- name: "generate install iso"
   include_role:
     name: kickstartvm
-  vars:
-    vm_to_install:
-      memory: "{{virtual_machine.memory}}"
-      cpu: "{{virtual_machine.cpus}}"
-      storage_size: "{{virtual_machine.storage_size}}"
-      name: "{{inventory_hostname}}-{{virtual_machine.name}}"
-      pool: "{{virtual_machine.pool}}"
-      network: "{{virtual_machine.network}}"
 
+- debug:
+    var: virtual_machines
+
+- include: undefine.yml
+
+- name: "install virtual machine"
+  include_role:
+    name: ansible-kvm
+  vars:
+    kvm_images_path: /mnt/kvm
+
+    kvm_virtual_networks:
+      - name: "{{virtual_machine.network}}"
+        mode: bridge
+        bridge_name: "{{virtual_machine.network}}"
+        autostart: true
+        state: active
+    kvm_vms:
+      - name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+        autostart: true
+        # Define boot devices in order of preference
+        boot_devices:
+          - hd
+          - cdrom
+        graphics: true
+        # Define disks in MB
+        disks:
+          # ide, scsi, virtio, xen, usb, sata or sd
+          - disk_driver: virtio
+            name: "{{inventory_hostname}}-{{virtual_machine.name}}.disk"
+            size: "{{virtual_machine.storage_size}}"
+
+        # Define memory in MB
+        memory: "{{virtual_machine.memory}}"
+        network_interfaces:
+          - source: "{{virtual_machine.network}}"
+            network_driver: virtio
+            type: bridge
+        state: running
+        vcpu: "{{virtual_machine.cpus}}"
+
+    # Define KVM Dir type Storage Pools to create
+    kvm_storage_pools:
+      - name: kvms
+        path: /mnt/kvm/
+        autostart: true
+        state: active
+
+    kvm_config_storage_pools: true
+
+    kvm_enable_libvirtd_syslog: true
+
+    kvm_manage_vms: true
+
+    # Defines if kvm/libvirt should be configured
+    kvm_config: true
+
+    # Defines if kvm_users should be added to libvirtd for managing KVM
+    kvm_config_users: true
+
+    # Defines if kvm virtual networks should be configured
+    # if set to true ensu
+    kvm_config_virtual_networks: true
+
+  loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
-

@@ -23,8 +23,8 @@
 
 #   - import_role:
 #       name: docker
-    - import_role:
-        name: drives
+#   - import_role:
+#       name: drives
 
 - hosts: kvm_node
   become_user: root

@@ -1,5 +1,0 @@
-<network>
-  <name>{{virtual_machine.network}}</name>
-  <forward mode="bridge"/>
-  <bridge name="{{virtual_machine.network}}"/>
-</network>

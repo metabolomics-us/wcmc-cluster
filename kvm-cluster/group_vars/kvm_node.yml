@@ -8,7 +8,7 @@ virtual_machines:
     name: test
     cpus: 1
     memory: 8192
-    storage_size: 20
+    storage_size: 20000
     network: br.test
     pool: nvme
 
@@ -16,7 +16,7 @@ virtual_machines:
     name: prod
     cpus: 1
     memory: 8192
-    storage_size: 20
+    storage_size: 20000
     network: br.prod
     pool: nvme
 
