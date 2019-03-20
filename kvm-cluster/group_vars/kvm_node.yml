@@ -5,21 +5,28 @@
 virtual_machines:
 
   - machine:
-    name: test
-    cpus: 4
-    memory: 8192
+    name: test-2x4
+    cpus: 2
+    memory: 4192
     storage_size: 80000
     network: br.test
     pool: nvme
 
   - machine:
-    name: prod
+    name: prod-16x16
     cpus: 16
     memory: 16192
     storage_size: 160000
     network: br.prod
     pool: nvme
 
+  - machine:
+    name: prod-4x8
+    cpus: 4
+    memory: 8192
+    storage_size: 160000
+    network: br.prod
+    pool: nvme
 
 ##
 # system wide python interpreter
