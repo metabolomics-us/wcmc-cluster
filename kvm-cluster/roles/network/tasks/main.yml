@@ -5,3 +5,6 @@
 - import_role:
     name: mrlesmithjr.netplan
 
+- name: reboot server to apply configurations
+  reboot:
+      reboot_timeout: 86400
