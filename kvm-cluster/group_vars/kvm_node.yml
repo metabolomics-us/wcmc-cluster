@@ -6,17 +6,17 @@ virtual_machines:
 
   - machine:
     name: test
-    cpus: 1
+    cpus: 4
     memory: 8192
-    storage_size: 20000
+    storage_size: 80000
     network: br.test
     pool: nvme
 
   - machine:
     name: prod
-    cpus: 1
-    memory: 8192
-    storage_size: 20000
+    cpus: 16
+    memory: 16192
+    storage_size: 160000
     network: br.prod
     pool: nvme
 
@@ -48,4 +48,98 @@ vm_authorization:
   #  mkpasswd -m sha-512
   #
   # and utilized for all the KVMS
-  root_passwd_hash: $6$YLwGpsxpxT$BOCcMnhYc70tT.AFB7Ch2SBZ81jY0fEER.VzZl770IzH9AKH77T3Ucb44y3Zk3DgTUVmeoFdkSgEDJYaqxbi/0
+  root_passwd_hash: $6$5QOvGG1InVxIl$UQgqCWejnGoNixIhQsIoUlcp5m20YvlFufRQvED2w9z5HACfoPyRL3ugNEUvBDNqwlz.l1zHgBjtB6gUrK3OP1
+
+network:
+
+  ##
+  # this contains the general network configuration, which should be adapted to local host needs
+  netplan:
+    configuration:
+      network:
+        ethernets:
+          enp3s0f0: {}
+          enp3s0f1: {}
+          enp4s0f0: {}
+          enp4s0f1: {}
+          ens2f0:
+            dhcp4: true
+          ens2f1: {}
+
+
+        bonds:
+          bond0:
+            parameters:
+              mode: 802.3ad
+              lacp-rate: fast
+              mii-monitor-interval: 50
+            interfaces:
+              - enp3s0f0
+              - enp3s0f1
+              - enp4s0f0
+              - enp4s0f1
+            mtu: 9000
+            dhcp4: false
+
+        vlans:
+          # delegate to the bridges
+          vlan.prod:
+            id: 30
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.test:
+            id: 31
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nas:
+            id: 111
+            link: ens2f0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nvme:
+            id: 110
+            link: ens2f0
+            dhcp4: false
+            dhcp6: false
+
+        # defines brigdes for KVM based interfaces
+        bridges:
+
+          # production cluster resides in this network
+          br.prod:
+            interfaces:
+              - vlan.prod
+            dhcp6: false
+            dhcp4: true
+            dhcp-identifier: mac
+
+          # test cluster resides in this network
+          br.test:
+            interfaces:
+              - vlan.test
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+
+          # shared services reside in this network
+          br.nvme:
+            interfaces:
+              - vlan.nvme
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+          # data access resides in this network
+          br.nas:
+            interfaces:
+              - vlan.nas
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac

@@ -36,7 +36,7 @@
 - name: generate kickstart image
 #  when: iso_exists == false
   shell: ./ubuntu/18.04/build-iso.sh
-  become: true
+  become: false
   args:
     chdir: "{{git.directory}}/makeiso"
     executable: /bin/bash
