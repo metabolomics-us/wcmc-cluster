@@ -4,7 +4,10 @@
 
 - import_role:
     name: mrlesmithjr.netplan
+    register: netplan
 
 - name: reboot server to apply configurations
+  when: netplan.changed
   reboot:
       reboot_timeout: 86400
+
