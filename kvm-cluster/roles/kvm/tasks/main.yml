@@ -20,6 +20,9 @@
 - name: "generate install iso"
   include_role:
     name: kickstartvm
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
 
 - debug:
     var: virtual_machines
@@ -53,6 +56,11 @@
             name: "{{inventory_hostname}}-{{virtual_machine.name}}.disk"
             size: "{{virtual_machine.storage_size}}"
 
+          # define a cdrom with a specific iso
+          - disk_driver: qemu
+            image: "{{git.directory}}/makeiso/{{inventory_hostname}}-{{virtual_machine.name}}.iso"
+            cdrom: true
+
         # Define memory in MB
         memory: "{{virtual_machine.memory}}"
         network_interfaces:
@@ -84,6 +92,20 @@
     # Defines if kvm virtual networks should be configured
     # if set to true ensu
     kvm_config_virtual_networks: true
+
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+
+- name: wait for the vm to shut down after install
+  virt:
+    command: status
+    name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+  register: vmstatus
+  until: vmstatus.status == 'shutdown'
+  delegate_to: "{{ inventory_hostname }}"
+  retries: 1000
+  delay: 60
 
   loop: "{{virtual_machines}}"
   loop_control:
