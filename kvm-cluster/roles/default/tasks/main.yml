@@ -27,6 +27,6 @@
     state: latest
 
 
-- name: "disable all on UFW"
+- name: "disable UFW"
   ufw:
     state: disabled

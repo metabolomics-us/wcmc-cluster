@@ -16,8 +16,10 @@ docker:
   # which fork do you want to use for swarmprom
   swarmprom:
     repo:  https://github.com/metabolomics-us/swarmprom.git
+    deploy: true
 
   ##
   # which fork do you want to use for the elk logstash
   elk:
     repo: https://github.com/metabolomics-us/docker-elk.git
+    deploy: true

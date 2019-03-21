@@ -19,7 +19,7 @@
     skip_docker_py: True # if true, skip the docker-py
 
 - name: "cloning monitoring stack"
-  when: "'docker_swarm_manager' in group_names"
+  when: "'docker_swarm_manager' in group_names and docker.swarmprom.deploy == true"
   git:
     repo: "{{docker.swarmprom.repo}}"
     version: master
@@ -28,7 +28,7 @@
     update: true
 
 - name: "cloning logging stack"
-  when: "'docker_swarm_manager' in group_names"
+  when: "'docker_swarm_manager' in group_names and docker.elk.deploy == true"
   git:
     repo: "{{docker.elk.repo}}"
     version: master
@@ -48,14 +48,14 @@
 
 
 - name: "deploying monitoring stack"
-  when: "'docker_swarm_manager' in group_names"
+  when: "'docker_swarm_manager' in group_names and docker.swarmprom.deploy == true"
   docker_stack:
     state: present
     name: monitoring
     compose: "{{git.directory}}/swarmprom/docker-compose.yml"
 
 - name: "deploying logging stack"
-  when: "'docker_swarm_manager' in group_names"
+  when: "'docker_swarm_manager' in group_names and docker.elk.deploy == true"
   docker_stack:
     state: present
     name: logging
