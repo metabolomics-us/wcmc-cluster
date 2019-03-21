@@ -26,3 +26,7 @@
     update_cache: true
     state: latest
 
+
+- name: "disable all on UFW"
+  ufw:
+    state: disabled
