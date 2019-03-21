@@ -41,3 +41,12 @@
   tasks:
     - import_role:
         name: docker
+
+
+- hosts: prod_cluster
+  become_user: root
+  become: true
+  name: "install the docker test cluster on top of the kvm cluster"
+  tasks:
+    - import_role:
+        name: docker

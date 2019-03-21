@@ -7,18 +7,20 @@ virtual_machines:
   - machine:
     name: test-2x4
     cpus: 2
-    memory: 4192
+    memory: 4096
     storage_size: 80000
     network: br.test
     pool: nvme
+    association: test
 
   - machine:
     name: prod-16x16
     cpus: 16
-    memory: 16192
+    memory: 16384
     storage_size: 160000
     network: br.prod
     pool: nvme
+    association: prod
 
   - machine:
     name: prod-4x8
@@ -27,7 +29,7 @@ virtual_machines:
     storage_size: 160000
     network: br.prod
     pool: nvme
-
+    association: prod
 ##
 # system wide python interpreter
 ansible_python_interpreter: /usr/bin/python3
