@@ -3,14 +3,10 @@
   apt:
     name: [ dos2unix, p7zip-full, cpio, gzip, genisoimage, whois, pwgen, wget, fakeroot, isolinux, xorriso ]
 
-- name: clone git
-  git:
-    repo: https://github.com/metabolomics-us/linux-unattended-installation.git
-    version: master
-    dest: "{{git.directory}}/makeiso"
-    update: true
-    clone: true
-    force: true
+- name: Creates directory
+  file:
+    path: "{{git.directory}}/makeiso/ubuntu/18.04/custom"
+    state: directory
 
 - name: update permissions
   file:
@@ -24,14 +20,24 @@
   register: iso_exists
 
 - template:
-    backup: true
+    src: "boot-menu.patch"
+    dest:  "{{git.directory}}/makeiso/ubuntu/18.04/custom/boot-menu.patch"
+
+- template:
+    src: "ssh-host-keygen.service"
+    dest:  "{{git.directory}}/makeiso/ubuntu/18.04/custom/ssh-host-keygen.service"
+
+- template:
     src: "preseed.cfg.j2"
     dest:  "{{git.directory}}/makeiso/ubuntu/18.04/custom/preseed.cfg"
 
 - template:
-    backup: true
     src: "build-iso.sh"
     dest:  "{{git.directory}}/makeiso/ubuntu/18.04/build-iso.sh"
+
+- copy:
+    src: "isohdpfx.bin"
+    dest:  "{{git.directory}}/makeiso/ubuntu/18.04/custom/isohdpfx.bin"
 
 - name: generate kickstart image
 #  when: iso_exists == false
