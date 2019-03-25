@@ -1,0 +1,5 @@
+---
+- name: "add host to inventory {{hostname}}:{{group}}"
+  add_host:
+    name: "{{hostname}}"
+    group: "{{group}}"

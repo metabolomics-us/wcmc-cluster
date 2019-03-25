@@ -11,7 +11,7 @@ virtual_machines:
     storage_size: 80000
     network: br.test
     pool: nvme
-    association: test
+    group: test_cluster
 
   - machine:
     name: prod-16x16
@@ -20,7 +20,7 @@ virtual_machines:
     storage_size: 160000
     network: br.prod
     pool: nvme
-    association: prod
+    group: prod_cluster
 
   - machine:
     name: prod-4x8
@@ -29,7 +29,7 @@ virtual_machines:
     storage_size: 160000
     network: br.prod
     pool: nvme
-    association: prod
+    group: prod_cluster
 ##
 # system wide python interpreter
 ansible_python_interpreter: /usr/bin/python3

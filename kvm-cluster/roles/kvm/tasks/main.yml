@@ -110,3 +110,34 @@
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
+
+- name: start virtual machines"
+  virt:
+    name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+    state: running
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+
+- name: Wait 300 seconds for port 22 to become open and contain "OpenSSH"
+  wait_for:
+    port: 22
+    host: "{{inventory_hostname}}-{{virtual_machine.name}}"
+    search_regex: OpenSSH
+    delay: 10
+  vars:
+    ansible_connection: local
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+
+- name: track installed KVMs and build a new inventory file
+  when:  virtual_machine.group
+  include_role:
+    name: inventory
+  vars:
+    hostname: "{{inventory_hostname}}-{{virtual_machine.name}}"
+    group: "{{virtual_machine.group}}"
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
