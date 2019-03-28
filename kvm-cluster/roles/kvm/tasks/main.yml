@@ -27,7 +27,7 @@
 - debug:
     var: virtual_machines
 
-- include: undefine.yml
+#- include: undefine.yml
 
 - name: "install virtual machine"
   include_role:
