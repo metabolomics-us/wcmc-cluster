@@ -59,6 +59,7 @@
     - "docker.swarmprom.deploy == true"
 
   docker_stack:
+    absent_retries: 100
     state: absent
     name: monitoring
     compose: "{{git.directory}}/swarmprom/docker-compose.yml"
@@ -79,6 +80,7 @@
     - "docker.elk.deploy == true"
 
   docker_stack:
+    absent_retries: 100
     state: absent
     name: logging
     compose: "{{git.directory}}/logging/docker-stack.yml"
