@@ -1,0 +1,30 @@
+---
+- sysctl:
+    - "'docker_swarm_manager' in group_names"
+    - "docker.elk.deploy == true"
+    name: vm.max_map_count
+    value: 400000
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: "redeploying logging stack"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - "docker.elk.deploy == true"
+
+  docker_stack:
+    absent_retries: 100
+    state: absent
+    name: logging
+    compose: "{{git.directory}}/logging/docker-stack.yml"
+
+- name: "deploying logging stack"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - "docker.elk.deploy == true"
+
+  docker_stack:
+    state: present
+    name: logging
+    compose: "{{git.directory}}/logging/docker-stack.yml"

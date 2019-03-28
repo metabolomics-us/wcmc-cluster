@@ -1,0 +1,171 @@
+##
+# configures the virtual machines for this group
+# which require to be created and deployed on each node
+#
+virtual_machines:
+
+  - machine:
+    name: test-2x4
+    cpus: 2
+    memory: 4096
+    storage_size: 80000
+    network: br.test
+    pool: nvme
+    group: test_cluster
+
+  - machine:
+    name: prod-16x16
+    cpus: 16
+    memory: 16384
+    storage_size: 160000
+    network: br.prod
+    pool: nvme
+    group: prod_cluster
+
+  - machine:
+    name: prod-4x8
+    cpus: 4
+    memory: 8192
+    storage_size: 160000
+    network: br.prod
+    pool: nvme
+    group: prod_cluster
+##
+# system wide python interpreter
+ansible_python_interpreter: /usr/bin/python3
+
+##
+# defines all user accounts we want to setup
+accounts:
+  users:
+    - name: "wohlgemuth"
+      ssh_keys:
+        - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZKJzrqCjPtHep4JT/qefyKtS9SKhhxlxq/VMkz3jN7QdF/2JEpU3t4omMAtR1f/TCRz3GOMU+JiqUlKM5mYbx31yQfZ75WM7wbkhXVFBSswalYgVmJqaQ1rdqkARxN8TxkLVwtuRJq2ggDIUZCQ8ux9rSQqIOnQNPO7jmFrSg/ZbtwYNePrz/RKS7Kbl/f5g/K1Ea2x4XTcAad5JD6Nq1Pb2Mlq5hxGYjtd0KDAyWT+W4usvFBkoejHA2Mpvr9jAerve0ej7siehPzjQvsQKMpWyE8/xrTTHW2RFAAEJjGhJkK2prJ8L3EeGldQK1K1bUfuDVzuM76nhm3fj4PPYz wohlgemuth@blade"
+        - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQClOW+HSEzQrNaAxFvOiTagcu/DfRBWawLp/9BTWHi4owtb72AcNxp/pyRCODDUmLezTUItpF39weH24+X+iW/ZzcIUBbUl6zVARJbjDbT+/RTaT5zsSFBZuhYWa/ivHcGiV9TWQ2HPsvckP66A4FMe+TSkcUrJrjRUVIEGHQvpvG9jDo0I88NYq+M6QVQTN+AXCxr3GNqjbbINVhOhRoyP/ZBB8eonL/KlVJpqwLkdMMj4BRKLcU+rq3Ql9ugdp/6OHbmLK4hvE1dtUPOQHPLN1fJvcLO+vjiVEXJW10tc4caBmUeufFfHhomvk8Da7TCP5mX/96CzJNOOfRSLwUvF wohlgemuth@test-ansible-1"
+
+##
+# vm authorization settings
+#
+vm_authorization:
+  ##
+  # this is the default key to be used to install all virtual machines
+  #
+  ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZKJzrqCjPtHep4JT/qefyKtS9SKhhxlxq/VMkz3jN7QdF/2JEpU3t4omMAtR1f/TCRz3GOMU+JiqUlKM5mYbx31yQfZ75WM7wbkhXVFBSswalYgVmJqaQ1rdqkARxN8TxkLVwtuRJq2ggDIUZCQ8ux9rSQqIOnQNPO7jmFrSg/ZbtwYNePrz/RKS7Kbl/f5g/K1Ea2x4XTcAad5JD6Nq1Pb2Mlq5hxGYjtd0KDAyWT+W4usvFBkoejHA2Mpvr9jAerve0ej7siehPzjQvsQKMpWyE8/xrTTHW2RFAAEJjGhJkK2prJ8L3EeGldQK1K1bUfuDVzuM76nhm3fj4PPYz wohlgemuth@blade"
+
+  ##
+  # this is your root password hash, which should never be checked into git
+  #  mkpasswd -m sha-512
+  #
+  # and utilized for all the KVMS
+  root_passwd_hash: $6$5QOvGG1InVxIl$UQgqCWejnGoNixIhQsIoUlcp5m20YvlFufRQvED2w9z5HACfoPyRL3ugNEUvBDNqwlz.l1zHgBjtB6gUrK3OP1
+
+network:
+
+  ##
+  # this contains the general network configuration, which should be adapted to local host needs
+  netplan:
+    configuration:
+      network:
+        ethernets:
+          enp3s0f0: {}
+          enp3s0f1: {}
+          enp4s0f0: {}
+          enp4s0f1: {}
+          ens2f0:
+            dhcp4: true
+          ens2f1: {}
+
+
+        bonds:
+          bond0:
+            parameters:
+              mode: 802.3ad
+              lacp-rate: fast
+              mii-monitor-interval: 50
+            interfaces:
+              - enp3s0f0
+              - enp3s0f1
+              - enp4s0f0
+              - enp4s0f1
+            mtu: 9000
+            dhcp4: false
+
+        vlans:
+          # delegate to the bridges
+          vlan.prod:
+            id: 30
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.test:
+            id: 31
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nas:
+            id: 111
+            link: ens2f0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nvme:
+            id: 110
+            link: ens2f0
+            dhcp4: false
+            dhcp6: false
+
+        # defines brigdes for KVM based interfaces
+        bridges:
+
+          # production cluster resides in this network
+          br.prod:
+            interfaces:
+              - vlan.prod
+            dhcp6: false
+            dhcp4: true
+            dhcp-identifier: mac
+
+          # test cluster resides in this network
+          br.test:
+            interfaces:
+              - vlan.test
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+
+          # shared services reside in this network
+          br.nvme:
+            interfaces:
+              - vlan.nvme
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+          # data access resides in this network
+          br.nas:
+            interfaces:
+              - vlan.nas
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+
+##
+# default configurations of things we want to have deployed
+# on the KVM nodes
+docker:
+
+  ##
+  # which fork do you want to use for swarmprom
+  swarmprom:
+    repo:  https://github.com/metabolomics-us/swarmprom.git
+    deploy: true
+
+  ##
+  # which fork do you want to use for the elk logstash
+  elk:
+    repo: https://github.com/metabolomics-us/wcms-cluster-elk.git
+    deploy: true
