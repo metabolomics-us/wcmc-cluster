@@ -110,3 +110,4 @@
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
+
