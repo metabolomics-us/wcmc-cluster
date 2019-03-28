@@ -4,7 +4,6 @@
   pip:
     name: [jsondiff,pyyaml,docker]
 
-
 - import_role:
     name: "nickjj.docker"
   tags: ["docker"]
@@ -18,59 +17,15 @@
     skip_swarm: False  # if true, skip the swarm setup
     skip_docker_py: True # if true, skip the docker-py
 
-- name: "cloning monitoring stack"
-  when:
-    - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
-  git:
-    repo: "{{docker.swarmprom.repo}}"
-    version: master
-    dest: "{{git.directory}}/swarmprom"
-    clone: true
-    update: true
-
-- name: "cloning logging stack"
-  when:
-    - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
-
-  git:
-    repo: "{{docker.elk.repo}}"
-    version: master
-    dest: "{{git.directory}}/logging"
-    clone: true
-    update: true
-
 - name: "configure labels"
+  when: "'docker_swarm_manager' in group_names"
   docker_node:
     labels_state: merge
     hostname: "{{item}}"
     labels: "{{ docker_node_labels }}"
-
   with_inventory_hostnames:
     - node
 
-  when: "'docker_swarm_manager' in group_names"
-
-
-- name: "redeploying monitoring stack"
-  when:
-    - "'docker_swarm_manager' in group_names"
-    - "docker.swarmprom.deploy == true"
-
-  docker_stack:
-    absent_retries: 100
-    state: absent
-    name: monitoring
-    compose: "{{git.directory}}/swarmprom/docker-compose.yml"
-
-- name: "deploying monitoring stack"
-  when:
-    - "'docker_swarm_manager' in group_names"
-    - "docker.swarmprom.deploy == true"
-
-  docker_stack:
-    state: present
-    name: monitoring
-    compose: "{{git.directory}}/swarmprom/docker-compose.yml"
+- include: deploy_elastic.yml
+- include: deploy_monitoring.yml
 

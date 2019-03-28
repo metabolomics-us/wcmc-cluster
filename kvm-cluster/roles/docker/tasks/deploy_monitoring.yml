@@ -1,0 +1,31 @@
+- name: "cloning monitoring stack"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - "docker.elk.deploy == true"
+  git:
+    repo: "{{docker.swarmprom.repo}}"
+    version: master
+    dest: "{{git.directory}}/swarmprom"
+    clone: true
+    update: true
+
+- name: "redeploying monitoring stack"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - "docker.swarmprom.deploy == true"
+
+  docker_stack:
+    absent_retries: 100
+    state: absent
+    name: monitoring
+    compose: "{{git.directory}}/swarmprom/docker-compose.yml"
+
+- name: "deploying monitoring stack"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - "docker.swarmprom.deploy == true"
+
+  docker_stack:
+    state: present
+    name: monitoring
+    compose: "{{git.directory}}/swarmprom/docker-compose.yml"

@@ -1,7 +1,19 @@
----
-- sysctl:
+- name: "cloning logging stack"
+  when:
     - "'docker_swarm_manager' in group_names"
     - "docker.elk.deploy == true"
+
+  git:
+    repo: "{{docker.elk.repo}}"
+    version: master
+    dest: "{{git.directory}}/logging"
+    clone: true
+    update: true
+
+- sysctl:
+    when:
+      - "'docker_swarm_manager' in group_names"
+      - "docker.elk.deploy == true"
     name: vm.max_map_count
     value: 400000
     sysctl_set: yes
