@@ -10,8 +10,13 @@
     that:
       - ansible_play_hosts == ansible_play_hosts_all
 
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
 - import_role:
-        name: ypsman.ipv6_disable
+    name: ypsman.ipv6_disable
 - name: "remove cloud init crap"
   apt:
     name: cloud-init

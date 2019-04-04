@@ -21,3 +21,10 @@
   loop_control:
     loop_var: my_ssh_key
 
+
+- name: "install tmux for user {{ user.name }}"
+  include_role:
+    name: tmux
+  vars:
+    username: "{{ user.name }}"
+

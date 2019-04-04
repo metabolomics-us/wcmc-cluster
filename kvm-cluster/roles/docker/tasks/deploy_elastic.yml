@@ -10,17 +10,19 @@
     clone: true
     update: true
 
-- sysctl:
-    when:
-      - "'docker_swarm_manager' in group_names"
-      - "docker.elk.deploy == true"
-    name: vm.max_map_count
+- name: "configure max map count for elastic"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - "docker.elk.deploy == true"
+    -
+  sysctl:
+    name: 'vm.max_map_count'
     value: 400000
     sysctl_set: yes
     state: present
     reload: yes
 
-- name: "redeploying logging stack"
+- name: "undeploying logging stack"
   when:
     - "'docker_swarm_manager' in group_names"
     - "docker.elk.deploy == true"

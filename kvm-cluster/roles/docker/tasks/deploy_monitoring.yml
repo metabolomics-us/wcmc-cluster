@@ -1,3 +1,4 @@
+---
 - name: "cloning monitoring stack"
   when:
     - "'docker_swarm_manager' in group_names"
@@ -13,7 +14,6 @@
   when:
     - "'docker_swarm_manager' in group_names"
     - "docker.swarmprom.deploy == true"
-
   docker_stack:
     absent_retries: 100
     state: absent
@@ -24,7 +24,6 @@
   when:
     - "'docker_swarm_manager' in group_names"
     - "docker.swarmprom.deploy == true"
-
   docker_stack:
     state: present
     name: monitoring

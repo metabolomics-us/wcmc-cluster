@@ -1,5 +1,4 @@
 ---
-
 - name: "install required pip packages"
   pip:
     name: [jsondiff,pyyaml,docker]

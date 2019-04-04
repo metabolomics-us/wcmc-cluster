@@ -7,3 +7,7 @@
 - src: https://github.com/berlinguyinca/ansible-kvm.git
   version: master
   name: ansible-kvm
+
+- src: https://github.com/berlinguyinca/ansible-tmux.git
+  version: master
+  name: ansible-tmux
