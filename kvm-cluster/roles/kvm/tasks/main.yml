@@ -27,7 +27,14 @@
 - debug:
     var: virtual_machines
 
-#- include: undefine.yml
+- include: undefine.yml
+  tags:
+    - drop_kvm
+
+- name: List remote VMs
+  virt:
+    command: list_vms
+  register: vms_list
 
 - name: "install virtual machine"
   include_role:
@@ -96,6 +103,10 @@
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
+
+  # only install if the vm does not exist already
+  when: "inventory_hostname + '-' + virtual_machine.name not in vms_list"
+
 
 - name: wait for the vm to shut down after install
   virt:

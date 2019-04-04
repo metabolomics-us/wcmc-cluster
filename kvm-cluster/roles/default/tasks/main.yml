@@ -1,15 +1,5 @@
 ---
 
-
-- name: check hosts for ping
-  ping:
-
-- name: fail if hosts not all up
-  run_once: true
-  assert:
-    that:
-      - ansible_play_hosts == ansible_play_hosts_all
-
 - name: upgrade all packages
   yum:
     name: '*'
