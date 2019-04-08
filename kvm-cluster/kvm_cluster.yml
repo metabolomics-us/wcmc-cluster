@@ -5,31 +5,31 @@
   become: true
   name: "gather facts accross all"
 
-- hosts: node
-  become_user: root
-  become: true
-  name: "install the barebone system layout"
-  tasks:
-    - name: "configure user accounts"
-      include_role:
-        name: users
-      vars:
-        user: "{{kvm_user}}"
-      loop: "{{accounts.users}}"
-      loop_control:
-        loop_var: "kvm_user"
-
-    - import_role:
-        name: network
-
-    - import_role:
-        name: default
-
-    - import_role:
-        name: docker
-
-    - import_role:
-        name: drives
+#- hosts: node
+#  become_user: root
+#  become: true
+#  name: "install the barebone system layout"
+#  tasks:
+#    - name: "configure user accounts"
+#      include_role:
+#        name: users
+#      vars:
+#        user: "{{kvm_user}}"
+#      loop: "{{accounts.users}}"
+#      loop_control:
+#        loop_var: "kvm_user"
+#
+#    - import_role:
+#        name: network
+#
+#    - import_role:
+#        name: default
+#
+#    - import_role:
+#        name: docker
+#
+#    - import_role:
+#        name: drives
 
 - hosts: kvm_node
   become_user: root

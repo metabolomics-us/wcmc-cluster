@@ -1,10 +1,14 @@
 ---
+- debug:
+    var: virtual_machines
+  tags:
+    - install_kvm
+
 - name: "install qeme and libvrt related stuff"
   apt:
     name: [qemu-kvm, libvirt-clients, libvirt-daemon-system, bridge-utils, libvirt-dev]
     update_cache: true
     state: latest
-
 
 - name: "install python modules"
   pip:
@@ -24,21 +28,35 @@
   loop_control:
     loop_var: virtual_machine
 
-- debug:
-    var: virtual_machines
-
-- include: undefine.yml
-  tags:
-    - drop_kvm
-
 - name: List remote VMs
   virt:
     command: list_vms
   register: vms_list
+  tags:
+    - install_kvm
 
-- name: "install virtual machine"
+- set_fact:
+    vms_list: "{{vms_list.list_vms}}"
+  tags:
+    - install_kvm
+
+- debug:
+    var: vms_list
+
+- include: undefine.yml
+  tags:
+    - never
+    - drop_kvm
+
+##
+# this can take quite a while!
+- name: "install virtual machine | {{inventory_hostname}}-{{virtual_machine.name}}"
   include_role:
     name: ansible-kvm
+    apply:
+      tags:
+        - config_vms
+
   vars:
     kvm_images_path: /mnt/kvm
 
@@ -106,41 +124,65 @@
 
   # only install if the vm does not exist already
   when: "inventory_hostname + '-' + virtual_machine.name not in vms_list"
+  tags:
+    - install_kvm
 
-
-- name: wait for the vm to shut down after install
+- name: "shutdown all vm's just in case they are not"
   virt:
-    command: status
+    command: shutdown
     name: "{{inventory_hostname}}-{{virtual_machine.name}}"
-  register: vmstatus
-  until: vmstatus.status == 'shutdown'
-  delegate_to: "{{ inventory_hostname }}"
-  retries: 1000
-  delay: 60
 
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
+  ignore_errors: true
+  tags:
+    - install_kvm
 
-- name: start virtual machines"
+- name: "wait for the vm to shut down after install {{inventory_hostname}}-{{virtual_machine.name}}"
+  virt:
+    command: status
+    name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+  register: vmstatus
+  until: "'status' in vmstatus and vmstatus.status == 'shutdown'"
+  delegate_to: "{{ inventory_hostname }}"
+  retries: 1000
+  delay: 5
+
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+  tags:
+    - install_kvm
+
+- name: start virtual machines
   virt:
     name: "{{inventory_hostname}}-{{virtual_machine.name}}"
     state: running
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
-
-- name: Wait 300 seconds for port 22 to become open and contain "OpenSSH"
-  wait_for:
-    port: 22
-    host: "{{inventory_hostname}}-{{virtual_machine.name}}"
-    search_regex: OpenSSH
-    delay: 10
-  vars:
-    ansible_connection: local
+  tags:
+    - install_kvm
+    - generate_inventory
+    -
+- name: wait for vm to be up and running
+  virt:
+    name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+    command: status
+    uri: "qemu:///session"
+  register: result
+  until: result.status == 'running'
+  delay: 1
+  retries: 1000
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
+  tags:
+    - install_kvm
+    - generate_inventory
+##
+# this builds new environment files
 
 - name: track installed KVMs and build a new inventory file
   when:  virtual_machine.group
@@ -152,3 +194,5 @@
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
+  tags:
+    - generate_inventory
