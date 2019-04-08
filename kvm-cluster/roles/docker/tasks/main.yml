@@ -3,18 +3,93 @@
   pip:
     name: [jsondiff,pyyaml,docker]
 
-- import_role:
-    name: "nickjj.docker"
-  tags: ["docker"]
+#- import_role:
+#    name: "nickjj.docker"
+#  tags: ["docker"]
+#
+#- name: "setup the docker swarm cluster"
+#  include_role:
+#    name: "atosatto.docker-swarm"
+#  vars:
+#    skip_engine: True # if true, skip the docker engine installation
+#    skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
+#    skip_swarm: False  # if true, skip the swarm setup
+#    skip_docker_py: True # if true, skip the docker-py
 
-- name: "setup the docker swarm cluster"
-  include_role:
-    name: "atosatto.docker-swarm"
-  vars:
-    skip_engine: True # if true, skip the docker engine installation
-    skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
-    skip_swarm: False  # if true, skip the swarm setup
-    skip_docker_py: True # if true, skip the docker-py
+- name: destroy swarm
+  docker_swarm:
+    state: absent
+    force: true
+  tags:
+    - destroy_swarm
+    - never
+
+- set_fact:
+    manager: "{{groups['docker_swarm_manager'][0]}}"
+  tags:
+    - always
+
+- debug:
+    var: "{{hostvars[manager]}}"
+  tags:
+    - always
+
+- set_fact:
+    manager_addr: "{{hostvars[manager]['ansible_ssh_host']}}"
+  tags:
+    - always
+- debug:
+    var: manager_addr
+  tags:
+    - always
+
+- name: setup swarm | manager
+  docker_swarm:
+    advertise_addr: manager_addr
+    state: present
+  tags:
+    - swarm
+  when:
+    - "'docker_swarm_manager' in group_names"
+
+- name: setup swarm | get token
+  shell: docker swarm join-token -q worker
+  register: docker_join_token_result
+  when:
+    - "'docker_swarm_manager' in group_names"
+  tags:
+    - swarm
+    - destroy_swarm
+  run_once: true
+
+- debug:
+    var: docker_join_token_result
+  tags:
+    - always
+
+- set_fact:
+    docker_join_token: "{{docker_join_token_result['stdout']}}"
+  tags:
+    - always
+  when:
+    - "'docker_swarm_manager' in group_names"
+  run_once: true
+
+- debug:
+    var: docker_join_token
+  tags:
+    - always
+
+- name: setup swarm | node
+  docker_swarm:
+    state: join
+    advertise_addr: manager_addr
+    remote_addrs: [ "{{manager_addr}}:2377" ]
+    join_token: docker_join_token
+  tags:
+    - swarm
+  when:
+    - "'docker_swarm_manager' not in group_names"
 
 - name: "configure labels"
   when: "'docker_swarm_manager' in group_names"
@@ -24,6 +99,8 @@
     labels: "{{ docker_node_labels }}"
   with_inventory_hostnames:
     - node
+  tags:
+    - swarm
 
 - include: deploy_elastic.yml
 - include: deploy_monitoring.yml

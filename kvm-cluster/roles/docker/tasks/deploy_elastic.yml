@@ -3,6 +3,9 @@
     - "'docker_swarm_manager' in group_names"
     - "docker.elk.deploy == true"
 
+  tags:
+    - deploy_logging
+
   git:
     repo: "{{docker.elk.repo}}"
     version: master
@@ -21,7 +24,9 @@
     sysctl_set: yes
     state: present
     reload: yes
-
+  become: true
+  tags:
+    - deploy_logging
 - name: "undeploying logging stack"
   when:
     - "'docker_swarm_manager' in group_names"
@@ -33,6 +38,8 @@
     name: logging
     compose: "{{git.directory}}/logging/docker-stack.yml"
 
+  tags:
+    - deploy_logging
 - name: "deploying logging stack"
   when:
     - "'docker_swarm_manager' in group_names"
@@ -42,3 +49,6 @@
     state: present
     name: logging
     compose: "{{git.directory}}/logging/docker-stack.yml"
+
+  tags:
+    - deploy_logging

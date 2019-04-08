@@ -181,6 +181,23 @@
   tags:
     - install_kvm
     - generate_inventory
+
+- name: generate list of configured and running virtual machines
+  set_fact:
+    deployed_vms: "{{ deployed_vms | default([]) + [{'name': inventory_hostname + '-' + virtual_machine.name, 'group' : virtual_machine.group}]}}"
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+  tags:
+    - generate_inventory
+  delegate_to: 127.0.0.1
+
+- debug:
+    var: deployed_vms
+  tags:
+    - generate_inventory
+  delegate_to: 127.0.0.1
+
 ##
 # this builds new environment files
 
