@@ -23,3 +23,7 @@ docker:
   elk:
     repo: https://github.com/metabolomics-us/docker-elk.git
     deploy: true
+
+  ##
+  # network specific settings, basically on waht do we want to advertise our ips
+  nic: ens2f0

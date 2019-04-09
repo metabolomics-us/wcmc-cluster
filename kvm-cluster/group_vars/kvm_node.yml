@@ -169,3 +169,6 @@ docker:
   elk:
     repo: https://github.com/metabolomics-us/wcms-cluster-elk.git
     deploy: true
+
+
+  nic: ens2f0

@@ -9,6 +9,8 @@
     dest: "{{git.directory}}/swarmprom"
     clone: true
     update: true
+  tags:
+    - deploy_monitoring
 
 - name: "redeploying monitoring stack"
   when:
@@ -20,6 +22,9 @@
     name: monitoring
     compose: "{{git.directory}}/swarmprom/docker-compose.yml"
 
+  tags:
+    - deploy_monitoring
+
 - name: "deploying monitoring stack"
   when:
     - "'docker_swarm_manager' in group_names"
@@ -28,3 +33,6 @@
     state: present
     name: monitoring
     compose: "{{git.directory}}/swarmprom/docker-compose.yml"
+
+  tags:
+    - deploy_monitoring

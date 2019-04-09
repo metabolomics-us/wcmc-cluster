@@ -1,12 +1,11 @@
 ---
 
-- name: upgrade all packages
-  yum:
-    name: '*'
-    state: latest
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
+  tags:
+    - always
 
-- import_role:
-    name: ypsman.ipv6_disable
 - name: "remove cloud init crap"
   apt:
     name: cloud-init
@@ -25,3 +24,7 @@
 - name: "disable UFW"
   ufw:
     state: disabled
+
+- name: "configure ntp clients"
+  include_role:
+    name: geerlingguy.ntp

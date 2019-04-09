@@ -3,18 +3,19 @@
   pip:
     name: [jsondiff,pyyaml,docker]
 
-#- import_role:
-#    name: "nickjj.docker"
-#  tags: ["docker"]
-#
-#- name: "setup the docker swarm cluster"
-#  include_role:
-#    name: "atosatto.docker-swarm"
-#  vars:
-#    skip_engine: True # if true, skip the docker engine installation
-#    skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
-#    skip_swarm: False  # if true, skip the swarm setup
-#    skip_docker_py: True # if true, skip the docker-py
+- name: "install docker | install"
+  block:
+    - include_role:
+        name: geerlingguy.docker
+      vars:
+        docker_package: "docker-{{ docker_edition }}=18.06.3~ce~3-0~ubuntu"
+  tags:
+    - swarm
+
+- debug:
+    var: docker
+  tags:
+    - always
 
 - name: destroy swarm
   docker_swarm:
@@ -29,11 +30,6 @@
   tags:
     - always
 
-- debug:
-    var: "{{hostvars[manager]}}"
-  tags:
-    - always
-
 - set_fact:
     manager_addr: "{{hostvars[manager]['ansible_ssh_host']}}"
   tags:
@@ -45,8 +41,9 @@
 
 - name: setup swarm | manager
   docker_swarm:
-    advertise_addr: manager_addr
     state: present
+    advertise_addr: "{{ docker.nic }}:4567"
+    listen_addr: "{{ docker.nic }}:2377"
   tags:
     - swarm
   when:
@@ -59,33 +56,22 @@
     - "'docker_swarm_manager' in group_names"
   tags:
     - swarm
-    - destroy_swarm
   run_once: true
-
-- debug:
-    var: docker_join_token_result
-  tags:
-    - always
 
 - set_fact:
     docker_join_token: "{{docker_join_token_result['stdout']}}"
   tags:
-    - always
+    - swarm
   when:
     - "'docker_swarm_manager' in group_names"
   run_once: true
 
-- debug:
-    var: docker_join_token
-  tags:
-    - always
-
 - name: setup swarm | node
   docker_swarm:
     state: join
-    advertise_addr: manager_addr
-    remote_addrs: [ "{{manager_addr}}:2377" ]
-    join_token: docker_join_token
+    advertise_addr: "{{docker.nic}}:4567"
+    remote_addrs: [ "{{manager_addr}}" ]
+    join_token: "{{docker_join_token}}"
   tags:
     - swarm
   when:
@@ -101,7 +87,17 @@
     - node
   tags:
     - swarm
+  ignore_errors: yes
 
 - include: deploy_elastic.yml
 - include: deploy_monitoring.yml
 
+- name: "install docker | remove"
+  block:
+    - include_role:
+        name: geerlingguy.docker
+      vars:
+        docker_package_state: absent
+  tags:
+    - destroy_swarm
+    - never
