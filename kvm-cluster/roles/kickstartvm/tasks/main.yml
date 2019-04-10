@@ -7,43 +7,54 @@
   file:
     path: "{{git.directory}}/makeiso/ubuntu/18.04/custom"
     state: directory
+  tags:
+    - kickstart
 
 - name: update permissions
   file:
     path: "{{git.directory}}/makeiso"
     mode: 0777
     recurse: true
+  tags:
+    - kickstart
 
 - name: configure variables
   stat:
     path: "{{git.directory}}/makeiso/{{inventory_hostname}}-{{virtual_machine['name']}}.iso"
   register: iso_exists
-
+  tags:
+    - kickstart
 - template:
     src: "boot-menu.patch"
     dest:  "{{git.directory}}/makeiso/ubuntu/18.04/custom/boot-menu.patch"
-
+  tags:
+    - kickstart
 - template:
     src: "ssh-host-keygen.service"
     dest:  "{{git.directory}}/makeiso/ubuntu/18.04/custom/ssh-host-keygen.service"
-
+  tags:
+    - kickstart
 - template:
     src: "preseed.cfg.j2"
     dest:  "{{git.directory}}/makeiso/ubuntu/18.04/custom/preseed.cfg"
-
+  tags:
+    - kickstart
 - template:
     src: "build-iso.sh"
     dest:  "{{git.directory}}/makeiso/ubuntu/18.04/build-iso.sh"
-
+  tags:
+    - kickstart
 - copy:
     src: "isohdpfx.bin"
     dest:  "{{git.directory}}/makeiso/ubuntu/18.04/custom/isohdpfx.bin"
-
+  tags:
+    - kickstart
 - name: generate kickstart image
-#  when: iso_exists == false
+  #  when: iso_exists == false
   shell: ./ubuntu/18.04/build-iso.sh
   become: true
   args:
     chdir: "{{git.directory}}/makeiso"
     executable: /bin/bash
-
+  tags:
+    - kickstart

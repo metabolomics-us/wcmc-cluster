@@ -22,11 +22,14 @@
     state: mounted
 
 - name: "generate install iso"
-  include_role:
-    name: kickstartvm
-  loop: "{{virtual_machines}}"
-  loop_control:
-    loop_var: virtual_machine
+  block:
+    - include_role:
+        name: kickstartvm
+      loop: "{{virtual_machines}}"
+      loop_control:
+        loop_var: virtual_machine
+  tags:
+    - kickstart
 
 - name: List remote VMs
   virt:
@@ -165,7 +168,7 @@
   tags:
     - install_kvm
     - generate_inventory
-    -
+
 - name: wait for vm to be up and running
   virt:
     name: "{{inventory_hostname}}-{{virtual_machine.name}}"
@@ -184,32 +187,31 @@
 
 - name: generate list of configured and running virtual machines
   set_fact:
-    deployed_vms: "{{ deployed_vms | default([]) + [{'name': inventory_hostname + '-' + virtual_machine.name, 'group' : virtual_machine.group}]}}"
+    deployed_vms: "{{ deployed_vms | default([]) + [{'name': inventory_hostname + '-' + virtual_machine.name, 'group' : virtual_machine.group, 'domain':virtual_machine.domain}]}}"
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
   tags:
     - generate_inventory
-  delegate_to: 127.0.0.1
 
 - debug:
     var: deployed_vms
   tags:
     - generate_inventory
-  delegate_to: 127.0.0.1
 
 ##
 # this builds new environment files
 
 - name: track installed KVMs and build a new inventory file
-  when:  virtual_machine.group
-  include_role:
-    name: inventory
-  vars:
-    hostname: "{{inventory_hostname}}-{{virtual_machine.name}}"
-    group: "{{virtual_machine.group}}"
-  loop: "{{virtual_machines}}"
-  loop_control:
-    loop_var: virtual_machine
+  block:
+    - include_role:
+        name: inventory
+      vars:
+        hostname: "{{inventory_hostname}}-{{virtual_machine.name}}"
+        domain: "{{virtual_machine.domain}}"
+        group: "{{virtual_machine.group}}"
+      loop: "{{virtual_machines}}"
+      loop_control:
+        loop_var: virtual_machine
   tags:
     - generate_inventory

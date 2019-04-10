@@ -12,6 +12,7 @@ virtual_machines:
     network: br.test
     pool: nvme
     group: test_cluster
+    domain: test.fiehnlab.ucdavis.edu
 
   - machine:
     name: prod-16x16
@@ -21,6 +22,7 @@ virtual_machines:
     network: br.prod
     pool: nvme
     group: prod_cluster
+    domain: prod.fiehnlab.ucdavis.edu
 
   - machine:
     name: prod-4x8
@@ -30,6 +32,8 @@ virtual_machines:
     network: br.prod
     pool: nvme
     group: prod_cluster
+    domain: prod.fiehnlab.ucdavis.edu
+
 ##
 # system wide python interpreter
 ansible_python_interpreter: /usr/bin/python3
@@ -47,17 +51,13 @@ accounts:
 # vm authorization settings
 #
 vm_authorization:
-  ##
-  # this is the default key to be used to install all virtual machines
-  #
-  ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZKJzrqCjPtHep4JT/qefyKtS9SKhhxlxq/VMkz3jN7QdF/2JEpU3t4omMAtR1f/TCRz3GOMU+JiqUlKM5mYbx31yQfZ75WM7wbkhXVFBSswalYgVmJqaQ1rdqkARxN8TxkLVwtuRJq2ggDIUZCQ8ux9rSQqIOnQNPO7jmFrSg/ZbtwYNePrz/RKS7Kbl/f5g/K1Ea2x4XTcAad5JD6Nq1Pb2Mlq5hxGYjtd0KDAyWT+W4usvFBkoejHA2Mpvr9jAerve0ej7siehPzjQvsQKMpWyE8/xrTTHW2RFAAEJjGhJkK2prJ8L3EeGldQK1K1bUfuDVzuM76nhm3fj4PPYz wohlgemuth@blade"
 
   ##
   # this is your root password hash, which should never be checked into git
   #  mkpasswd -m sha-512
   #
   # and utilized for all the KVMS
-  root_passwd_hash: $6$5QOvGG1InVxIl$UQgqCWejnGoNixIhQsIoUlcp5m20YvlFufRQvED2w9z5HACfoPyRL3ugNEUvBDNqwlz.l1zHgBjtB6gUrK3OP1
+  root_passwd_hash: $6$3kIBSa.Cn$LGGcnq4WklBpWsmBCkALocO.ZnrutkkLmrs1YFQurFxXB9RMhGXbBisM94NMRhHiJpBGae0.tOOGUYlVxLQUf0
 
 network:
 
