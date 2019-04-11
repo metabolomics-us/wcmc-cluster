@@ -141,6 +141,7 @@
   ignore_errors: true
   tags:
     - install_kvm
+  when: "inventory_hostname + '-' + virtual_machine.name not in vms_list"
 
 - name: "wait for the vm to shut down after install {{inventory_hostname}}-{{virtual_machine.name}}"
   virt:
@@ -157,7 +158,8 @@
     loop_var: virtual_machine
   tags:
     - install_kvm
-
+  when: "inventory_hostname + '-' + virtual_machine.name not in vms_list"
+ 
 - name: start virtual machines
   virt:
     name: "{{inventory_hostname}}-{{virtual_machine.name}}"
