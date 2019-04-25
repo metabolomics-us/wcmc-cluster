@@ -2,8 +2,8 @@
 - name: "be the vim with you {{ username }}!"
   become_user: "{{ username }}"
   shell: "curl -sLf https://spacevim.org/install.sh | bash"
-  warn: false
   args:
+    warn: false
     executable: /bin/bash
   tags:
     spacevim
