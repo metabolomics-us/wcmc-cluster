@@ -30,6 +30,10 @@
   become_user: "{{username}}"
   git: repo=https://github.com/tmux-plugins/tpm dest="{{ home_path }}/.tmux/plugins/tpm" update=yes
   when: tmux_plugin_manager
+  retries: 3
+  delay: 3
+  register: result
+  until: result |succeeded
 
 - name: Copy over .tmux.conf
   become_user: "{{username}}"

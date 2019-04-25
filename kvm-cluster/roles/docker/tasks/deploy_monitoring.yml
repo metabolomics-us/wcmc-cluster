@@ -9,6 +9,10 @@
     dest: "{{git.directory}}/swarmprom"
     clone: true
     update: true
+  retries: 3
+  delay: 3
+  register: result
+  until: result |succeeded
   tags:
     - deploy_monitoring
 

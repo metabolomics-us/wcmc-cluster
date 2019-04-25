@@ -12,6 +12,10 @@
     dest: "{{git.directory}}/logging"
     clone: true
     update: true
+  retries: 3
+  delay: 3
+  register: result
+  until: result|succeeded
 
 - name: "configure max map count for elastic"
   when:
