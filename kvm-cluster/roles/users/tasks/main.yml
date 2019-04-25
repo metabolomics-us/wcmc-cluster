@@ -1,5 +1,8 @@
 - debug:
     msg: "{{ user.keys }}"
+- group:
+    name: docker
+    state: present
 
 - name: "Add user {{ user.name }}"
   user:
