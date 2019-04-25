@@ -11,11 +11,7 @@
         docker_package: "docker-{{ docker_edition }}=18.06.3~ce~3-0~ubuntu"
   tags:
     - swarm
-
-- debug:
-    var: docker
-  tags:
-    - always
+    - destroy_swarm
 
 - name: destroy swarm
   docker_swarm:
@@ -92,12 +88,3 @@
 - include: deploy_elastic.yml
 - include: deploy_monitoring.yml
 
-- name: "install docker | remove"
-  block:
-    - include_role:
-        name: geerlingguy.docker
-      vars:
-        docker_package_state: absent
-  tags:
-    - destroy_swarm
-    - never

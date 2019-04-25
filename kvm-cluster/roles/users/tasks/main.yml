@@ -31,3 +31,8 @@
   vars:
     username: "{{ user.name }}"
 
+- name: "install space vim for user"
+  include_role:
+    name: space
+  vars:
+    username: "{{ user.name }}"
