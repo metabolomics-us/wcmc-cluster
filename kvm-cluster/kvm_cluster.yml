@@ -39,11 +39,24 @@
     - import_role:
         name: kvm
 
+
+
 - hosts: test_cluster
   become_user: root
   become: true
+  gather_facts: no
   name: "install the docker test cluster on top of the kvm cluster"
   tasks:
+    - name: Wait for system to become reachable
+      wait_for_connection:
+        timeout: 10
+
+    - name: Gather facts for first time
+      setup:
+
+    - import_role:
+        name: default
+
     - import_role:
         name: docker
 

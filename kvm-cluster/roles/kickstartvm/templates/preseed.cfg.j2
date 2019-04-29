@@ -189,6 +189,8 @@ d-i preseed/late_command string \
  in-target sh -c 'echo "IPv4: \\\4" >> /etc/issue && echo "IPv6: \\\6" >> /etc/issue && echo "" >> /etc/issue'; \
  in-target sh -c 'eject || true'; \
  in-target sh -c 'mkdir -p --mode=0700 /home/wohlgemuth/.ssh && cat /custom/userkey.pub > /home/wohlgemuth/.ssh/authorized_keys && chmod 0600 /home/wohlgemuth/.ssh/authorized_keys && chown -R wohlgemuth /home/wohlgemuth';  \
+ in-target sh -c 'echo "wohlgemuth ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/wohlgemuth' ; \
+ in-target chmod 440 /etc/sudoers.d/wohlgemuth ; \
  rm -r /target/custom;
 d-i debian-installer/splash boolean false
 d-i cdrom-detect/eject boolean true
