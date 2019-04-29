@@ -6,4 +6,5 @@
     warn: false
     executable: /bin/bash
   tags:
-    spacevim
+    - never
+    - spacevim

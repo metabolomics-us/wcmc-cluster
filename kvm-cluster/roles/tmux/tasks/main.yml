@@ -8,6 +8,9 @@
     - git
   when: install
   become: true
+  tags:
+    - never
+    - tmux
 
 - name: Enable history sharing in .bashrc
   become_user: "{{username}}"
@@ -15,7 +18,9 @@
   with_items:
     - export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
   when: share_history
-
+  tags:
+    - never
+    - tmux
 - name: Enable aliases .bashrc
   become_user: "{{username}}"
   lineinfile: dest="{{ home_path }}/.bashrc" state=present line={{ item }}
@@ -24,19 +29,26 @@
     - alias ta='tmux attach -t'
     - alias tk='tmux kill-session -t'
   when: aliases
-
+  tags:
+    - never
+    - tmux
 
 - name: Install tmux plugin manager
   become_user: "{{username}}"
   git: repo=https://github.com/tmux-plugins/tpm dest="{{ home_path }}/.tmux/plugins/tpm" update=yes
   when: tmux_plugin_manager
-  retries: 3
-  delay: 3
+  retries: 30
+  delay: 10
   register: result
   until: result |succeeded
-
+  tags:
+    - never
+    - tmux
 - name: Copy over .tmux.conf
   become_user: "{{username}}"
   template:
     src: ".tmux.conf.j2"
     dest: "{{home_path}}/.tmux.conf"
+  tags:
+    - never
+    - tmux

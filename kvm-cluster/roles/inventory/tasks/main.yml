@@ -3,6 +3,7 @@
   add_host:
     name: "{{hostname}}.{{domain}}"
     group: "{{group}}"
+  become: yes
 
 - debug:
     var: groups['test_cluster']

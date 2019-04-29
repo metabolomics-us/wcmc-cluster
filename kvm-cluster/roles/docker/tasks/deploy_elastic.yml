@@ -12,8 +12,8 @@
     dest: "{{git.directory}}/logging"
     clone: true
     update: true
-  retries: 3
-  delay: 3
+  retries: 30
+  delay: 10
   register: result
   until: result|succeeded
 
