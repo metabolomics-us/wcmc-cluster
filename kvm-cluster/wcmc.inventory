@@ -27,7 +27,7 @@ kvm-node-6
 
 ##
 # this group defines which nodes should be part of the 
-# gluster fs syste
+# gluster fs system
 [gluster_nodes]
 
 ##

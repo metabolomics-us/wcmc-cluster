@@ -7,8 +7,6 @@
   block:
     - include_role:
         name: geerlingguy.docker
-      vars:
-        docker_package: "docker-{{ docker_edition }}=18.06.3~ce~3-0~ubuntu"
   tags:
     - swarm
     - destroy_swarm

@@ -170,6 +170,7 @@
   tags:
     - install_kvm
     - generate_inventory
+    - kvm_cluster
 
 - name: wait for vm to be up and running
   virt:
@@ -186,34 +187,74 @@
   tags:
     - install_kvm
     - generate_inventory
+    - kvm_cluster
 
 - name: generate list of configured and running virtual machines
   set_fact:
-    deployed_vms: "{{ deployed_vms | default([]) + [{'name': inventory_hostname + '-' + virtual_machine.name, 'group' : virtual_machine.group, 'domain':virtual_machine.domain}]}}"
+    deployed_vms: "{{ deployed_vms | default([]) + [{'name': inventory_hostname + '-' + virtual_machine.name, 'group' : virtual_machine.group, 'domain':virtual_machine.domain, 'node' : inventory_hostname, 'manager' : 'docker_swarm_manager' in group_names and virtual_machine.manager_possible  }]}}"
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
   tags:
     - generate_inventory
+    - kvm_cluster
+
+##
+# this builds new environment files
+
+- name: track installed KVMs in the internal inventory
+  block:
+    - include_role:
+        name: inventory
+      vars:
+        hostname: "{{virtual_machine.name}}"
+        domain: "{{virtual_machine.domain}}"
+        group: "{{virtual_machine.group}}"
+      loop: "{{deployed_vms}}"
+      loop_control:
+        loop_var: virtual_machine
+  tags:
+    - generate_inventory
+    - kvm_cluster
+
+
+- name: "install jmespath locally"
+  pip:
+    name: jmespath
+  tags:
+    - generate_inventory
+    - kvm_cluster
+  delegate_to: 127.0.0.1
+
+- name: "generate names of clusters"
+  set_fact:
+    clusters_to_generate: "{{ deployed_vms | json_query('[*].group') | list | unique }}"
+  tags:
+    - generate_inventory
+    - kvm_cluster
+
+  delegate_to: 127.0.0.1
+- debug:
+    var: clusters_to_generate
+  tags:
+    - generate_inventory
+    - kvm_cluster
 
 - debug:
     var: deployed_vms
   tags:
     - generate_inventory
-
-##
-# this builds new environment files
-
-- name: track installed KVMs and build a new inventory file
-  block:
-    - include_role:
-        name: inventory
-      vars:
-        hostname: "{{inventory_hostname}}-{{virtual_machine.name}}"
-        domain: "{{virtual_machine.domain}}"
-        group: "{{virtual_machine.group}}"
-      loop: "{{virtual_machines}}"
-      loop_control:
-        loop_var: virtual_machine
+    - kvm_cluster
+    -
+- name: "generate inventory files for all defined clusters"
+  template:
+    src: inventory.ini.j2
+    dest: "./cluster-{{cluster}}.ini"
+    force: yes
+  delegate_to: 127.0.0.1
+  loop: "{{clusters_to_generate}}"
+  loop_control:
+    loop_var: cluster
   tags:
     - generate_inventory
+    - kvm_cluster

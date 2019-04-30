@@ -1,0 +1,26 @@
+[all]
+{% for item in deployed_vms %}
+{% if item.group == cluster %}
+{{ item.name }}
+{% endif %}
+{% endfor %}
+
+[docker_swarm_worker]
+
+{% for item in deployed_vms %}
+{% if item.group == cluster %}
+{% if item.manager == false %}
+{{ item.name }}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+[docker_swarm_manager]
+
+{% for item in deployed_vms %}
+{% if item.group == cluster %}
+{% if item.manager == true %}
+{{ item.name }}
+{% endif %}
+{% endif %}
+{% endfor %}

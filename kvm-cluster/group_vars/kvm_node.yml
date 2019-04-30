@@ -13,6 +13,7 @@ virtual_machines:
     pool: nvme
     group: test_cluster
     domain: test.fiehnlab.ucdavis.edu
+    manager_possible: true # possible to be a manager, if running on a manager node
 
   - machine:
     name: prod-16x16
@@ -22,7 +23,8 @@ virtual_machines:
     network: br.prod
     pool: nvme
     group: prod_cluster
-    domain: prod.fiehnlab.ucdavis.edu
+    domain: cluster.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
 
   - machine:
     name: prod-4x8
@@ -32,8 +34,8 @@ virtual_machines:
     network: br.prod
     pool: nvme
     group: prod_cluster
-    domain: prod.fiehnlab.ucdavis.edu
-
+    domain: cluster.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
 ##
 # system wide python interpreter
 ansible_python_interpreter: /usr/bin/python3
