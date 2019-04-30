@@ -1,12 +1,11 @@
 [all]
 {% for item in deployed_vms %}
 {% if item.group == cluster %}
-{{ item.name }}
+{{ item.name }} ansible_ssh_host={{ item.name }}.{{ item.domain }}
 {% endif %}
 {% endfor %}
 
 [docker_swarm_worker]
-
 {% for item in deployed_vms %}
 {% if item.group == cluster %}
 {% if item.manager == false %}
@@ -16,7 +15,6 @@
 {% endfor %}
 
 [docker_swarm_manager]
-
 {% for item in deployed_vms %}
 {% if item.group == cluster %}
 {% if item.manager == true %}

@@ -200,6 +200,9 @@
     - kvm_cluster
 
 ##
+# here we somehow need to combine all the host variables into 1
+
+##
 # this builds new environment files
 
 - name: track installed KVMs in the internal inventory
@@ -217,6 +220,7 @@
     - generate_inventory
     - kvm_cluster
 
+  delegate_to: 127.0.0.1
 
 - name: "install jmespath locally"
   pip:
