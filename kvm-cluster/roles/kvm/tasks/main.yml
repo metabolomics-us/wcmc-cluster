@@ -199,8 +199,9 @@
     - generate_inventory
     - kvm_cluster
 
-##
-# here we somehow need to combine all the host variables into 1
+  ##
+  # here we somehow need to combine all the host variables into 1
+  # - name: aggregate into one varaible
 
 ##
 # this builds new environment files
@@ -219,7 +220,6 @@
   tags:
     - generate_inventory
     - kvm_cluster
-
   delegate_to: 127.0.0.1
 
 - name: "install jmespath locally"
@@ -249,7 +249,7 @@
   tags:
     - generate_inventory
     - kvm_cluster
-    -
+
 - name: "generate inventory files for all defined clusters"
   template:
     src: inventory.ini.j2
@@ -262,3 +262,4 @@
   tags:
     - generate_inventory
     - kvm_cluster
+  run_once: true
