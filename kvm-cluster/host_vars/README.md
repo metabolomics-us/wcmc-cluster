@@ -1,3 +1,18 @@
+# Host Vars
+
+these *.yaml files defines specific sections for all hosts, which are defined here. 
+And have to match the unique hostname as utilized in the playbooks. These settings will overwrite the variables defines for the group!
+
+So the same sections as for groups apply.
+
+## Use cases
+
+The main use case is for now, if one of the hosts need special network settings, for example if it's supposed to work as a public gateway node and
+so exposes an additions bridge, as can be seen in this example.
+
+Or to specify docker labels for the given host.
+
+```.env
 docker_node_labels:
   kvm: "true"
   elasticdb: "true"
@@ -108,3 +123,4 @@ network:
             dhcp4: true
             dhcp6: false
             dhcp-identifier: mac
+```

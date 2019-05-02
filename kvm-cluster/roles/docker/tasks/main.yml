@@ -50,7 +50,6 @@
     - "'docker_swarm_manager' in group_names"
   tags:
     - swarm
-  run_once: true
 
 - set_fact:
     docker_join_token: "{{docker_join_token_result['stdout']}}"
@@ -58,14 +57,13 @@
     - swarm
   when:
     - "'docker_swarm_manager' in group_names"
-  run_once: true
 
 - name: setup swarm | node
   docker_swarm:
     state: join
     advertise_addr: "{{docker.nic}}:4567"
     remote_addrs: [ "{{manager_addr}}" ]
-    join_token: "{{docker_join_token}}"
+    join_token: "{{hostvars[groups['docker_swarm_manager'][0]].docker_join_token}}"
   tags:
     - swarm
   when:
