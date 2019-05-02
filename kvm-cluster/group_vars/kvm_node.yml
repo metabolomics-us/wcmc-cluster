@@ -36,18 +36,17 @@ virtual_machines:
     group: prod_cluster
     domain: cluster.fiehnlab.ucdavis.edu
     manager_possible: true # possible to be a manager, if running on a manager node
-##
-# system wide python interpreter
-ansible_python_interpreter: /usr/bin/python3
 
-##
-# defines all user accounts we want to setup
-accounts:
-  users:
-    - name: "wohlgemuth"
-      ssh_keys:
-        - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZKJzrqCjPtHep4JT/qefyKtS9SKhhxlxq/VMkz3jN7QdF/2JEpU3t4omMAtR1f/TCRz3GOMU+JiqUlKM5mYbx31yQfZ75WM7wbkhXVFBSswalYgVmJqaQ1rdqkARxN8TxkLVwtuRJq2ggDIUZCQ8ux9rSQqIOnQNPO7jmFrSg/ZbtwYNePrz/RKS7Kbl/f5g/K1Ea2x4XTcAad5JD6Nq1Pb2Mlq5hxGYjtd0KDAyWT+W4usvFBkoejHA2Mpvr9jAerve0ej7siehPzjQvsQKMpWyE8/xrTTHW2RFAAEJjGhJkK2prJ8L3EeGldQK1K1bUfuDVzuM76nhm3fj4PPYz wohlgemuth@blade"
-        - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQClOW+HSEzQrNaAxFvOiTagcu/DfRBWawLp/9BTWHi4owtb72AcNxp/pyRCODDUmLezTUItpF39weH24+X+iW/ZzcIUBbUl6zVARJbjDbT+/RTaT5zsSFBZuhYWa/ivHcGiV9TWQ2HPsvckP66A4FMe+TSkcUrJrjRUVIEGHQvpvG9jDo0I88NYq+M6QVQTN+AXCxr3GNqjbbINVhOhRoyP/ZBB8eonL/KlVJpqwLkdMMj4BRKLcU+rq3Ql9ugdp/6OHbmLK4hvE1dtUPOQHPLN1fJvcLO+vjiVEXJW10tc4caBmUeufFfHhomvk8Da7TCP5mX/96CzJNOOfRSLwUvF wohlgemuth@test-ansible-1"
+  - machine:
+    name: dev-4x16
+    cpus: 4
+    memory: 16384
+    storage_size: 160000
+    network: br.dev
+    pool: nvme
+    group: dev_cluster
+    domain: dev.fiehnlab.ucdavis.edu
+    manager_possible: true # possible to be a manager, if running on a manager node
 
 ##
 # vm authorization settings
@@ -101,6 +100,13 @@ network:
             dhcp6: false
 
           # delegate to the bridges
+          vlan.dev:
+            id: 32
+            link: ens2f0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
           vlan.test:
             id: 31
             link: bond0
@@ -136,6 +142,14 @@ network:
           br.test:
             interfaces:
               - vlan.test
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+
+          # devel cluster resides in this network
+          br.dev:
+            interfaces:
+              - vlan.dev
             dhcp4: true
             dhcp6: false
             dhcp-identifier: mac
