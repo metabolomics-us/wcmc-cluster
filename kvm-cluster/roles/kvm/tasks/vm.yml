@@ -1,0 +1,83 @@
+---
+
+# this can take quite a while!
+- name: "install virtual machine | {{inventory_hostname}}-{{virtual_machine.name}} | non gateway"
+  include_role:
+    name: ansible-kvm
+    apply:
+      tags:
+        - config_vms
+
+  vars:
+    kvm_images_path: /mnt/kvm
+
+    kvm_virtual_networks:
+      - name: "{{virtual_machine.network[0]}}"
+        mode: bridge
+        bridge_name: "{{virtual_machine.network[0]}}"
+        autostart: true
+        state: active
+
+    kvm_vms:
+      - name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+        autostart: true
+        # Define boot devices in order of preference
+        boot_devices:
+          - hd
+          - cdrom
+        graphics: true
+        # Define disks in MB
+        disks:
+          # ide, scsi, virtio, xen, usb, sata or sd
+          - disk_driver: virtio
+            name: "{{inventory_hostname}}-{{virtual_machine.name}}.disk"
+            size: "{{virtual_machine.storage_size}}"
+
+          # define a cdrom with a specific iso
+          - disk_driver: qemu
+            image: "{{git.directory}}/makeiso/{{inventory_hostname}}-{{virtual_machine.name}}.iso"
+            cdrom: true
+
+        # Define memory in MB
+        memory: "{{virtual_machine.memory}}"
+        network_interfaces:
+          - source: "{{virtual_machine.network[0]}}"
+            network_driver: virtio
+            type: bridge
+        state: running
+        vcpu: "{{virtual_machine.cpus}}"
+
+    # Define KVM Dir type Storage Pools to create
+    kvm_storage_pools:
+      - name: kvms
+        path: /mnt/kvm/
+        autostart: true
+        state: active
+
+    kvm_config_storage_pools: true
+
+    kvm_enable_libvirtd_syslog: true
+
+    kvm_manage_vms: true
+
+    # Defines if kvm/libvirt should be configured
+    kvm_config: true
+
+    # Defines if kvm_users should be added to libvirtd for managing KVM
+    kvm_config_users: true
+
+    # Defines if kvm virtual networks should be configured
+    # if set to true ensu
+    kvm_config_virtual_networks: true
+
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+
+  # only install if the vm does not exist already
+  when:
+    - "inventory_hostname + '-' + virtual_machine.name not in vms_list"
+    - "virtual_machine.gateway is not defined"
+
+  tags:
+    - install_kvm
