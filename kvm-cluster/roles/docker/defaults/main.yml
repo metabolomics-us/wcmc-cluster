@@ -13,17 +13,5 @@ git:
 docker:
 
   ##
-  # which fork do you want to use for swarmprom
-  swarmprom:
-    repo:  https://github.com/metabolomics-us/swarmprom.git
-    deploy: true
-
-  ##
-  # which fork do you want to use for the elk logstash
-  elk:
-    repo: https://github.com/metabolomics-us/docker-elk.git
-    deploy: true
-
-  ##
   # network specific settings, basically on waht do we want to advertise our ips
   nic: ens2f0

@@ -1,13 +1,13 @@
 - name: "cloning logging stack"
   when:
     - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
+    - "elk.deploy == true"
 
   tags:
     - deploy_logging
 
   git:
-    repo: "{{docker.elk.repo}}"
+    repo: "{{elk.repo}}"
     version: master
     dest: "{{git.directory}}/logging"
     clone: true
@@ -20,7 +20,7 @@
 - name: "configure max map count for elastic"
   when:
     - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
+    - "elk.deploy == true"
     -
   sysctl:
     name: 'vm.max_map_count'
@@ -34,7 +34,7 @@
 - name: "undeploying logging stack"
   when:
     - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
+    - "elk.deploy == true"
 
   docker_stack:
     absent_retries: 100
@@ -47,7 +47,7 @@
 - name: "deploying logging stack"
   when:
     - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
+    - "elk.deploy == true"
 
   docker_stack:
     state: present

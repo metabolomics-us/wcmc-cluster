@@ -81,6 +81,3 @@
     - swarm
   ignore_errors: yes
 
-- include: deploy_elastic.yml
-- include: deploy_monitoring.yml
-

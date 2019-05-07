@@ -2,9 +2,9 @@
 - name: "cloning monitoring stack"
   when:
     - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
+    - "monitoring.deploy == true"
   git:
-    repo: "{{docker.swarmprom.repo}}"
+    repo: "{{monitoring.repo}}"
     version: master
     dest: "{{git.directory}}/swarmprom"
     clone: true
@@ -19,7 +19,7 @@
 - name: "redeploying monitoring stack"
   when:
     - "'docker_swarm_manager' in group_names"
-    - "docker.swarmprom.deploy == true"
+    - "monitoring.deploy == true"
   docker_stack:
     absent_retries: 100
     state: absent
@@ -32,7 +32,7 @@
 - name: "deploying monitoring stack"
   when:
     - "'docker_swarm_manager' in group_names"
-    - "docker.swarmprom.deploy == true"
+    - "monitoring.deploy == true"
   docker_stack:
     state: present
     name: monitoring
