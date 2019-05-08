@@ -1,0 +1,95 @@
+# automatically renumber windows whenever a window is closed
+set-option -g renumber-windows on
+
+# enable history
+set -g history-limit 10000
+
+##
+# simple relaoding of tmux config files
+##
+bind r source-file ~/.tmux.conf \; display "Reloaded!"
+
+##
+# splitting panes
+##
+bind | split-window -h
+bind - split-window -v
+
+##
+# enable vim mode
+##
+setw -g mode-keys vi
+
+# vim like copy and paste
+bind Escape copy-mode
+bind -T vi-copy 'v' send-keys -X begin-selection
+bind -T vi-copy 'y' send-keys -X copy-selection
+unbind p
+bind p paste-buffer
+
+##
+# set mouse on
+##
+set -g mouse on
+
+
+##
+# start window indexing at 1
+##
+set -g base-index 1
+set -g pane-base-index 1
+
+##
+# we want multi color mode
+# and prettyfy some stuff
+##
+set -g default-terminal "screen-256color"
+setw -g window-status-style fg=white,bg=black
+setw -g window-status-current-style fg=white,bold,bg=red
+setw -g pane-border-style fg=blue,bg=black
+setw -g pane-active-border-style fg=green,bg=black
+setw -g window-style fg=colour240,bg=colour235
+setw -g window-active-style fg=white,bg=black
+##
+# prefix pass throigh
+bind C-a send-prefix
+
+##
+# update prefix
+set -g prefix C-a
+
+##
+# moving of split lanes
+#
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 5
+bind -r K resize-pane -U 5
+bind -r L resize-pane -R 5
+
+
+##
+# command line
+set -g message-style fg=white,bold,bg=black
+
+##
+# status bar setup
+##
+set -g status-left-length 40
+set -g status-left '#[fg=white]Session: #S #[fg=yellow]#I #[fg=white]#P'
+set -g status-right "#[fg=white]%d %b %R"
+set -g status-justify centre
+
+##
+# monitor active windows
+##
+setw -g monitor-activity on
+set -g visual-activity on
+
+# tmux plugins
+#########################
+{% for plugin in tmux_plugins %}
+{{ plugin }}
+{% endfor %}
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+{{ "run '~/.tmux/plugins/tpm/tpm'" if tmux_plugin_manager else '' }}

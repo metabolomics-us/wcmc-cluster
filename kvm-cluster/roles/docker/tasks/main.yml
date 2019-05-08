@@ -1,75 +1,83 @@
 ---
-
 - name: "install required pip packages"
   pip:
     name: [jsondiff,pyyaml,docker]
 
+- name: "install docker | install"
+  block:
+    - include_role:
+        name: geerlingguy.docker
+  tags:
+    - swarm
+    - destroy_swarm
 
-- import_role:
-    name: "nickjj.docker"
-  tags: ["docker"]
+- name: destroy swarm
+  docker_swarm:
+    state: absent
+    force: true
+  tags:
+    - destroy_swarm
+    - never
 
-- name: "setup the docker swarm cluster"
-  include_role:
-    name: "atosatto.docker-swarm"
-  vars:
-    skip_engine: True # if true, skip the docker engine installation
-    skip_group: True  # if true, does not add the docker_admin_users to the docker_group_name
-    skip_swarm: False  # if true, skip the swarm setup
-    skip_docker_py: True # if true, skip the docker-py
+- set_fact:
+    manager: "{{groups['docker_swarm_manager'][0]}}"
+  tags:
+    - always
 
-- name: "cloning monitoring stack"
+- set_fact:
+    manager_addr: "{{hostvars[manager]['ansible_ssh_host']}}"
+  tags:
+    - always
+- debug:
+    var: manager_addr
+  tags:
+    - always
+
+- name: setup swarm | manager
+  docker_swarm:
+    state: present
+    advertise_addr: "{{ docker.nic }}:4567"
+    listen_addr: "{{ docker.nic }}:2377"
+  tags:
+    - swarm
   when:
     - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
-  git:
-    repo: "{{docker.swarmprom.repo}}"
-    version: master
-    dest: "{{git.directory}}/swarmprom"
-    clone: true
-    update: true
 
-- name: "cloning logging stack"
+- name: setup swarm | get token
+  shell: docker swarm join-token -q worker
+  register: docker_join_token_result
   when:
     - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
+  tags:
+    - swarm
 
-  git:
-    repo: "{{docker.elk.repo}}"
-    version: master
-    dest: "{{git.directory}}/logging"
-    clone: true
-    update: true
+- set_fact:
+    docker_join_token: "{{docker_join_token_result['stdout']}}"
+  tags:
+    - swarm
+  when:
+    - "'docker_swarm_manager' in group_names"
+
+- name: setup swarm | node
+  docker_swarm:
+    state: join
+    advertise_addr: "{{docker.nic}}:4567"
+    remote_addrs: [ "{{manager_addr}}" ]
+    join_token: "{{hostvars[groups['docker_swarm_manager'][0]].docker_join_token}}"
+  tags:
+    - swarm
+  when:
+    - "'docker_swarm_manager' not in group_names"
 
 - name: "configure labels"
+  when: "'docker_swarm_manager' in group_names"
   docker_node:
     labels_state: merge
     hostname: "{{item}}"
     labels: "{{ docker_node_labels }}"
-
   with_inventory_hostnames:
     - node
+  tags:
+    - swarm
+  ignore_errors: yes
 
-  when: "'docker_swarm_manager' in group_names"
-
-
-- name: "deploying monitoring stack"
-  when:
-    - "'docker_swarm_manager' in group_names"
-    - "docker.swarmprom.deploy == true"
-
-  docker_stack:
-    state: present
-    name: monitoring
-    compose: "{{git.directory}}/swarmprom/docker-compose.yml"
-
-- name: "deploying logging stack"
-  when:
-    - "'docker_swarm_manager' in group_names"
-    - "docker.elk.deploy == true"
-
-  docker_stack:
-    state: present
-    name: logging
-    compose: "{{git.directory}}/logging/docker-stack.yml"
-          

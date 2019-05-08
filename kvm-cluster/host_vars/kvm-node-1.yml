@@ -1,4 +1,185 @@
 docker_node_labels:
-        kvm: "true"
-        elasticdb: "true"
+  kvm: "true"
+  elasticdb: "true"
 
+virtual_machines:
+
+  - machine:
+    name: test-2x4
+    cpus: 2
+    memory: 4096
+    storage_size: 80000
+    network:
+      - br.test
+    pool: nvme
+    group: test_cluster
+    domain: test.fiehnlab.ucdavis.edu
+    manager_possible: true # possible to be a manager, if running on a manager node
+
+  - machine:
+    name: prod-8x16
+    cpus: 8
+    memory: 16384
+    storage_size: 160000
+    network:
+      - br.prod
+    pool: nvme
+    group: prod_cluster
+    domain: cluster.fiehnlab.ucdavis.edu
+    manager_possible: true # possible to be a manager, if running on a manager node
+
+  - machine:
+    name: dev-4x16
+    cpus: 4
+    memory: 16384
+    storage_size: 160000
+    network:
+      - br.dev
+    pool: nvme
+    group: dev_cluster
+    domain: dev.fiehnlab.ucdavis.edu
+    manager_possible: true # possible to be a manager, if running on a manager node
+
+    ##
+    # this is a special gateway machine, which is accessible from the public genome center network, as well as from the internal cluster network
+  - machine:
+    gateway: true
+    name: gateway-prod
+    cpus: 2
+    memory: 8192
+    storage_size: 32000
+    network:
+      - br.prod
+      - br.public
+    pool: nvme
+    group: prod_cluster
+    domain: cluster.fiehnlab.ucdavis.edu
+    manager_possible: false # there can only be one manager!!!
+
+    ##
+    # this is a special gateway machine, which is accessible from the public genome center network, as well as from the internal cluster network
+  - machine:
+    gateway: true
+    name: gateway-test
+    cpus: 2
+    memory: 8192
+    storage_size: 32000
+    network:
+      - br.test
+      - br.public
+    pool: nvme
+    group: test_cluster
+    domain: test.fiehnlab.ucdavis.edu
+    manager_possible: false # there can only be one manager!!!
+
+##
+network:
+
+  ##
+  # this contains the general network configuration, which should be adapted to local host needs
+  netplan:
+    configuration:
+      network:
+        ethernets:
+          enp3s0f0: {}
+          enp3s0f1: {}
+          enp4s0f0: {}
+          enp4s0f1: {}
+
+          ##
+          # cluster internal network
+          ens2f0:
+            dhcp4: true
+
+          ##
+          # public facing network configuration
+          ens2f1:
+            dhcp4: false
+
+        bonds:
+          bond0:
+            parameters:
+              mode: 802.3ad
+              lacp-rate: fast
+              mii-monitor-interval: 50
+            interfaces:
+              - enp3s0f0
+              - enp3s0f1
+              - enp4s0f0
+              - enp4s0f1
+            mtu: 9000
+            dhcp4: false
+
+        vlans:
+          # delegate to the bridges
+          vlan.prod:
+            id: 30
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.test:
+            id: 31
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nas:
+            id: 111
+            link: ens2f0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nvme:
+            id: 110
+            link: ens2f0
+            dhcp4: false
+            dhcp6: false
+
+        # defines brigdes for KVM based interfaces
+        bridges:
+
+          # bridge to the public outside network to be utilized by this node
+          br.public:
+            interfaces:
+              - ens2f1
+            addresses:
+              - 128.120.143.175/24
+            gateway4: 128.120.143.1
+            nameservers:
+              addresses:
+                - 192.168.5.1
+
+          # production cluster resides in this network
+          br.prod:
+            interfaces:
+              - vlan.prod
+            dhcp6: false
+            dhcp4: true
+            dhcp-identifier: mac
+
+          # test cluster resides in this network
+          br.test:
+            interfaces:
+              - vlan.test
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+
+          # shared services reside in this network
+          br.nvme:
+            interfaces:
+              - vlan.nvme
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+          # data access resides in this network
+          br.nas:
+            interfaces:
+              - vlan.nas
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac

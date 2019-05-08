@@ -1,0 +1,8 @@
+ansible_python_interpreter: /usr/bin/python3
+
+# defines all user accounts we want to setup
+accounts:
+  users:
+    - name: "wohlgemuth"
+      ssh_keys:
+        - "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
