@@ -1,10 +1,10 @@
 ---
 - hosts: all
   gather_facts: True
-  become_user: root
-  become: true
+#  become_user: root
+#  become: true
 
-- hosts: kvm_vm
+- hosts: kvm_vm_test_cluster
   tasks:
     - name: "configure user accounts"
       include_role:
@@ -24,8 +24,3 @@
     - import_role:
         name: docker
 
-    - import_role:
-        name: elk
-
-    - import_role:
-        name: monitoring

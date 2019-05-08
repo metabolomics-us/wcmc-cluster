@@ -4,7 +4,7 @@
   become_user: root
   become: true
 
-- hosts: kvm_vm
+- hosts: kvm_vm_prod_cluster
   tasks:
     - name: "configure user accounts"
       include_role:

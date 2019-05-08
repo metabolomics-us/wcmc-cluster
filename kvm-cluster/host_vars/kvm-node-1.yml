@@ -26,7 +26,7 @@ virtual_machines:
     pool: nvme
     group: prod_cluster
     domain: cluster.fiehnlab.ucdavis.edu
-    manager_possible: false # possible to be a manager, if running on a manager node
+    manager_possible: true # possible to be a manager, if running on a manager node
 
   - machine:
     name: dev-4x16
