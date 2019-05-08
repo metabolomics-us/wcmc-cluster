@@ -21,7 +21,7 @@ kvm-node-1
 
 ##
 # this group defines which nodes should provide virtual machines
-# and will be setup arcordingly
+# and will be setup accordingly
 [kvm_node]
 kvm-node-1
 

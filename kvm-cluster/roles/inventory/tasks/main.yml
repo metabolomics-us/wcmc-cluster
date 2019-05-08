@@ -1,5 +1,6 @@
 ---
 - name: "add host to inventory {{hostname}}:{{group}}"
   add_host:
-    name: "{{hostname}}"
+    name: "{{hostname}}.{{domain}}"
     group: "{{group}}"
+  become: yes

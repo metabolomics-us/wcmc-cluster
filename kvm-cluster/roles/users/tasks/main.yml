@@ -1,11 +1,27 @@
 - debug:
     msg: "{{ user.keys }}"
+- group:
+    name: docker
+    state: present
+
+- name: Make sure we have a 'wheel' group
+  group:
+    name: wheel
+    state: present
+
+- name: Allow 'wheel' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
 
 - name: "Add user {{ user.name }}"
   user:
     name: "{{ user.name }}"
     comment: "{{ user.name }}"
-    groups: docker
+    groups: docker, wheel
     shell: /bin/bash
     generate_ssh_key: yes
     ssh_key_bits: 2048
@@ -20,4 +36,17 @@
   loop: "{{ user.ssh_keys }}"
   loop_control:
     loop_var: my_ssh_key
+
+
+- name: "install tmux for user {{ user.name }}"
+  include_role:
+    name: tmux
+  vars:
+    username: "{{ user.name }}"
+
+- name: "install space vim for user"
+  include_role:
+    name: space
+  vars:
+    username: "{{ user.name }}"
 
