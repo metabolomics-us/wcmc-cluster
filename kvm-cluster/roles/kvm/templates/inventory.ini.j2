@@ -1,0 +1,55 @@
+[all]
+{% for pn in groups['node'] %}
+{%  if 'deployed_vms' in hostvars[pn] %}
+{%   for vn in hostvars[pn]['deployed_vms']%}
+{%    if vn.group == cluster %}
+{{ vn.name }} ansible_ssh_host={{ vn.name }}.{{ vn.domain }}
+{%    endif %}
+{%   endfor %}
+{%  endif %}
+{% endfor %}
+
+[kvm_vm]
+{% for pn in groups['node'] %}
+{%  if 'deployed_vms' in hostvars[pn] %}
+{%   for vn in hostvars[pn]['deployed_vms']%}
+{%    if vn.group == cluster %}
+{{ vn.name }} ansible_ssh_host={{ vn.name }}.{{ vn.domain }}
+{%    endif %}
+{%   endfor %}
+{%  endif %}
+{% endfor %}
+
+[kvm_vm_{{cluster}}]
+{% for pn in groups['node'] %}
+{%  if 'deployed_vms' in hostvars[pn] %}
+{%   for vn in hostvars[pn]['deployed_vms']%}
+{%    if vn.group == cluster %}
+{{ vn.name }} ansible_ssh_host={{ vn.name }}.{{ vn.domain }}
+{%    endif %}
+{%   endfor %}
+{%  endif %}
+{% endfor %}
+
+[docker_swarm_worker]
+{% for pn in groups['node'] %}
+{%  if 'deployed_vms' in hostvars[pn] %}
+{%   for vn in hostvars[pn]['deployed_vms']%}
+{%    if vn.group == cluster and vn.manager == false%}
+{{ vn.name }}
+{%    endif %}
+{%   endfor %}
+{%  endif %}
+{% endfor %}
+
+
+[docker_swarm_manager]
+{% for pn in groups['node'] %}
+{%  if 'deployed_vms' in hostvars[pn] %}
+{%   for vn in hostvars[pn]['deployed_vms']%}
+{%    if vn.group == cluster and vn.manager == true%}
+{{ vn.name }}
+{%    endif %}
+{%   endfor %}
+{%  endif %}
+{% endfor %}

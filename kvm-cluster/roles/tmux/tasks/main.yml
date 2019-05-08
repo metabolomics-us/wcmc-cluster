@@ -1,0 +1,55 @@
+- set_fact:
+    home_path: "/home/{{username}}"
+
+- name: Install tmux and git
+  apt: name={{ item }} state=present
+  with_items:
+    - tmux
+    - git
+  when: install
+  become: true
+  tags:
+    - tmux
+
+- name: "Enable history sharing in .bashrc for {{username}} | tmux"
+  become_user: "{{username}}"
+  become: true
+  lineinfile: dest="{{ home_path }}/.bashrc" state=present line={{ item }}
+  with_items:
+    - export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+  when: share_history
+  tags:
+    - tmux
+
+- name: "Enable aliases .bashrc {{username}} | tmux"
+  become: true
+  become_user: "{{username}}"
+  lineinfile: dest="{{ home_path }}/.bashrc" state=present line={{ item }}
+  with_items:
+    - alias tl='tmux ls'
+    - alias ta='tmux attach -t'
+    - alias tk='tmux kill-session -t'
+  when: aliases
+  tags:
+    - tmux
+
+- name: "Install tmux plugin manager {{username}} | tmux"
+  become_user: "{{username}}"
+  become: true
+  git: repo=https://github.com/tmux-plugins/tpm dest="{{ home_path }}/.tmux/plugins/tpm" update=yes
+  when: tmux_plugin_manager
+  retries: 30
+  delay: 10
+  register: result
+  until: result |succeeded
+  tags:
+    - tmux
+
+- name: Copy over .tmux.conf
+  become_user: "{{username}}"
+  become: true
+  template:
+    src: ".tmux.conf.j2"
+    dest: "{{home_path}}/.tmux.conf"
+  tags:
+    - tmux

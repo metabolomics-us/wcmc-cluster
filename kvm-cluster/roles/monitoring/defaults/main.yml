@@ -1,0 +1,4 @@
+monitoring:
+  repo:  https://github.com/metabolomics-us/swarmprom.git
+  deploy: true
+

@@ -1,2 +1,3 @@
 docker_node_labels:
         kvm: "true"
+        elasticdb: "false"

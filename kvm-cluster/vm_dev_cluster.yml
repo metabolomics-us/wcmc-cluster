@@ -1,0 +1,26 @@
+---
+- hosts: all
+  gather_facts: True
+  become_user: root
+  become: true
+
+- hosts: kvm_vm_dev_cluster
+  tasks:
+    - name: "configure user accounts"
+      include_role:
+        name: users
+      vars:
+        user: "{{kvm_user}}"
+      loop: "{{accounts.users}}"
+      loop_control:
+        loop_var: "kvm_user"
+
+    - import_role:
+        name: network
+
+    - import_role:
+        name: default
+
+    - import_role:
+        name: docker
+

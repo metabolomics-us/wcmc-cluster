@@ -22,13 +22,14 @@ Which will provide you with a basic architecture to work off.
 - cd cluster/kvm-cluster
 - ansible-galaxy install -r requirements
 
-## 2. installing/updating the kvm-cluster
+## 2. installing/updating the kvm-cluster of your barebone nodes
 
 - make sure your barebone inventory list matches your local env
 - configure your group_vars/kvm_node.yml to represent your local setup
 - ansible-playbook -i barebone.inventory --become --ask-become-pass kvm_cluster_playbook.yml
 
-This should now provide you with a complete install of your cluster.
+This should now provide you with a complete install of your KVM cluster and generating you the inventory
+files for you configured clusters running on top of it
 
 ### Requirements:
 

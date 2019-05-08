@@ -1,0 +1,2 @@
+# ignore our default files in this, since they are local configuration specific!
+kvm_node.yml
