@@ -14,34 +14,66 @@
   gluster_volume:
     state: stopped
     name: "{{ gluster_brick_name}}"
+  ignore_errors: true
+  tags:
+    - never
+    - drop_gluster
+
 - pause:
     minutes: 2
+  tags:
+    - never
+    - drop_gluster
 
 - name: "remove gluster volume | gluster"
   gluster_volume:
     state: absent
     name: "{{ gluster_brick_name}}"
+  tags:
+    - never
+    - drop_gluster
 
+  ignore_errors: true
 - pause:
     minutes: 2
+  tags:
+    - never
+    - drop_gluster
 
-- name: "forced umount of existing gluster share. | gluster"
+- name: "forced unmount of existing gluster share. | gluster"
   mount:
     name: "{{ gluster_mount_dir }}"
     src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
     state: absent
+  tags:
+    - never
+    - drop_gluster
 
-- name: "forced unmount of existing gluster disk. | gluster"
+- name: "forced unmount of existing gluster disk {{storage.device}}p2. | gluster"
+  mount:
+    path: "{{ gluster_brick_dir }}"
+    src: "{{storage.device}}p2"
+    state: unmounted
+  tags:
+    - never
+    - drop_gluster
+- name: "forced removal from fstab of existing gluster disk {{storage.device}}p2. | gluster"
   mount:
     path: "{{ gluster_brick_dir }}"
     src: "{{storage.device}}p2"
     state: absent
+  tags:
+    - never
+    - drop_gluster
 
 - name: "format disk in ext4, if not done so | gluster"
   filesystem:
     dev: "{{storage.device}}p2"
     fstype: ext4
     force: true
+  tags:
+    - never
+    - drop_gluster
 
 - name: "mount nvme at gluster brick directory | gluster"
   mount:
@@ -61,7 +93,7 @@
     force: yes
   run_once: true
 
-- name: "Ensure Gluster volume is mounted. | gluster"
+- name: "Ensure Gluster volume is mounted at share directory. | gluster"
   mount:
     name: "{{ gluster_mount_dir }}"
     src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
