@@ -1,3 +1,6 @@
+- apt:
+    name: [curl, vim]
+    state: present
 
 - name: "be the vim with you {{ username }}!"
   become_user: "{{ username }}"
