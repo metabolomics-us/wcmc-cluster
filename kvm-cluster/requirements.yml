@@ -9,5 +9,8 @@
 - src: https://github.com/berlinguyinca/ansible-tmux.git
   version: master
   name: ansible-tmux
+
 - src: geerlingguy.ntp
 - src: geerlingguy.docker
+- src: geerlingguy.firewall
+- src: geerlingguy.glusterfs

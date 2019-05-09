@@ -1,0 +1,3 @@
+gluster_mount_dir: /mnt/shares/gluster
+gluster_brick_dir: /mnt/gluster/brick
+gluster_brick_name: gluster

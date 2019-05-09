@@ -28,13 +28,16 @@ kvm-node-6
 ##
 # this group defines which nodes should be part of the 
 # gluster fs system
-[gluster_nodes]
+[gluster]
+kvm-node-1.nvme.fiehnlab.ucdavis.edu
+kvm-node-2.nvme.fiehnlab.ucdavis.edu
+kvm-node-4.nvme.fiehnlab.ucdavis.edu
+kvm-node-5.nvme.fiehnlab.ucdavis.edu
 
 ##
 # this group defines which nodes should provide virtual machines
 # and will be setup accordingly
 [kvm_node]
-
 kvm-node-1
 kvm-node-2
 kvm-node-3

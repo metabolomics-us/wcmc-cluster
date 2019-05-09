@@ -1,0 +1,70 @@
+---
+- name: "setup gluster | gluster"
+  include_role:
+    name: geerlingguy.glusterfs
+
+
+- name: "Ensure Gluster brick and mount directories exist. | gluster"
+  file: "path={{ item }} state=directory mode=0775"
+  with_items:
+    - "{{ gluster_brick_dir }}"
+    - "{{ gluster_mount_dir }}"
+
+- name: "stop gluster volume | gluster"
+  gluster_volume:
+    state: stopped
+    name: "{{ gluster_brick_name}}"
+- pause:
+    minutes: 2
+
+- name: "remove gluster volume | gluster"
+  gluster_volume:
+    state: absent
+    name: "{{ gluster_brick_name}}"
+
+- pause:
+    minutes: 2
+
+- name: "forced umount of existing gluster share. | gluster"
+  mount:
+    name: "{{ gluster_mount_dir }}"
+    src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
+    state: absent
+
+- name: "forced unmount of existing gluster disk. | gluster"
+  mount:
+    path: "{{ gluster_brick_dir }}"
+    src: "{{storage.device}}p2"
+    state: absent
+
+- name: "format disk in ext4, if not done so | gluster"
+  filesystem:
+    dev: "{{storage.device}}p2"
+    fstype: ext4
+    force: true
+
+- name: "mount nvme at gluster brick directory | gluster"
+  mount:
+    path: "{{ gluster_brick_dir }}"
+    src: "{{storage.device}}p2"
+    fstype: ext4
+    state: mounted
+
+- name: "Configure Gluster volume. | gluster"
+  gluster_volume:
+    state: present
+    name: "{{ gluster_brick_name }}"
+    brick: "{{ gluster_brick_dir }}"
+    replicas: 2
+    cluster: "{{ groups.gluster | join(',') }}"
+    host: "{{ inventory_hostname }}"
+    force: yes
+  run_once: true
+
+- name: "Ensure Gluster volume is mounted. | gluster"
+  mount:
+    name: "{{ gluster_mount_dir }}"
+    src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
+    fstype: glusterfs
+    opts: "defaults,_netdev"
+    state: mounted
