@@ -84,13 +84,11 @@
 
 - name: "Configure Gluster volume. | gluster"
   gluster_volume:
+    rebalance: yes
     state: present
     name: "{{ gluster_brick_name }}"
-    brick: "{{ gluster_brick_dir }}"
-    replicas: 2
-    cluster: "{{ groups.gluster | join(',') }}"
-    host: "{{ inventory_hostname }}"
-    force: yes
+    bricks: "{{ gluster_brick_dir }}"
+    cluster: "{{ groups.gluster | list }}"
   run_once: true
 
 - name: "Ensure Gluster volume is mounted at share directory. | gluster"
