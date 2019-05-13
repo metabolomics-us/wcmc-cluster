@@ -30,6 +30,8 @@ Which will provide you with a basic architecture to work off.
 3. drive for kvm and glusterfs. Please ensure this drive has no partitions, we will define these automatically during the setup. If you want to force deletion of partions, apply the --tags force_reset option
 4. switch with support for VLANS
 5. 4x1GB on board network cards, which will be bonded
+6. Ansible 2.8
+7. correctly configured dns server, which automatically registers the names of the generated kvm-vm machines.
 
 
 ### What does this do on the barebone servers
@@ -55,3 +57,22 @@ which will each define one virtualized cluster. These inventory files can than u
 as desired.
 
 We recommend to define specific playbooks for this, outside of this repo.
+
+
+### Example deployment of a test cluster
+
+1. copy 'test_cluster.yml' to 'my_test_cluster.yml'
+2. add roles to 'my_test_cluster.yml'
+3. 
+
+```bash
+
+ansible-playbook -i cluster-test_cluster.ini --become my_test_cluster.yml
+
+```
+
+Please ensure that all roles are locally in the playbook, or in a requirements-test.yml file. Which is required to be installed with
+
+```bash
+ansible-galaxy install -R requirements-test.yml
+```
