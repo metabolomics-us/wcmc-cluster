@@ -82,16 +82,28 @@
     fstype: ext4
     state: mounted
 
-- name: "Configure Gluster volume. | gluster"
+
+#- name: "Configure Gluster volume. | gluster"
+# gluster_volume:
+#   rebalance: yes
+#   state: present
+#   replicas: 2
+#   name: "{{ gluster_brick_name }}"
+#   bricks: "{{ gluster_brick_dir }}/bricks"
+#   cluster: "{{ groups.gluster | list }}"
+# run_once: true
+
+- name: Set multiple options on GlusterFS volume
   gluster_volume:
-    rebalance: yes
     state: present
     name: "{{ gluster_brick_name }}"
-    bricks: "{{ gluster_brick_dir }}"
-    cluster: "{{ groups.gluster | list }}"
-  run_once: true
+    options:
+      { performance.cache-size: 256MB,
+        write-behind: 'off',
+        quick-read: 'on'
+      }
 
-- name: "Ensure Gluster volume is mounted at share directory. | gluster"
+- name: "Ensure Gluster volume is mounted at shared directory. | gluster"
   mount:
     name: "{{ gluster_mount_dir }}"
     src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
