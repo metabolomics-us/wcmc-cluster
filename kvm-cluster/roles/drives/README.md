@@ -28,3 +28,7 @@ storage:
     begin: 61%
     end: 99%
 ```
+
+this role is directly related to the glusterfs role, regarding the split of the partition. The 2nd partion will always be
+used
+for gluster fs, while the first for the kvm shares.

@@ -22,14 +22,6 @@ Which will provide you with a basic architecture to work off.
 - cd cluster/kvm-cluster
 - ansible-galaxy install -r requirements
 
-## 2. installing/updating the kvm-cluster of your barebone nodes
-
-- make sure your barebone inventory list matches your local env
-- configure your group_vars/kvm_node.yml to represent your local setup
-- ansible-playbook -i barebone.inventory --become --ask-become-pass kvm_cluster_playbook.yml
-
-This should now provide you with a complete install of your KVM cluster and generating you the inventory
-files for you configured clusters running on top of it
 
 ### Requirements:
 
@@ -38,18 +30,11 @@ files for you configured clusters running on top of it
 3. drive for kvm and glusterfs. Please ensure this drive has no partitions, we will define these automatically during the setup. If you want to force deletion of partions, apply the --tags force_reset option
 4. switch with support for VLANS
 5. 4x1GB on board network cards, which will be bonded
+6. Ansible 2.8
+7. correctly configured dns server, which automatically registers the names of the generated kvm-vm machines.
 
-### Vlans:
 
-This setup is defined around 5 dedicated vlans:
-
-1. ID:1 for the default VLAN utilized to setup the cluster, this should be a static ip address
-2. ID:100 for the production system
-3. ID:101 for the test system
-4. ID:102 for shared services, which production and test need access for
-5. ID:103 for data transfer and backup. This is a dedicated vlan, which is only used for glusterfs and NAS services.
-
-### What does this do
+### What does this do on the barebone servers
 
 - setup user accounts
 - install docker
@@ -61,4 +46,33 @@ This setup is defined around 5 dedicated vlans:
 - configure kvm storage pool
 - setup a swarmprom monitoring service
 - setup an elastic search logstash environment
-- tie the physical cluster and logical clusters logging together. To avoid redundant services
+
+### Inventory
+
+During the installation process, you will have several new inventory files being generated, following the following pattern
+
+```cluster-<GROUP>_cluster.ini```
+
+which will each define one virtualized cluster. These inventory files can than utilized to actually setup these virtual hosts
+as desired.
+
+We recommend to define specific playbooks for this, outside of this repo.
+
+
+### Example deployment of a test cluster
+
+1. copy 'test_cluster.yml' to 'my_test_cluster.yml'
+2. add roles to 'my_test_cluster.yml'
+3. 
+
+```bash
+
+ansible-playbook -i cluster-test_cluster.ini --become my_test_cluster.yml
+
+```
+
+Please ensure that all roles are locally in the playbook, or in a requirements-test.yml file. Which is required to be installed with
+
+```bash
+ansible-galaxy install -R requirements-test.yml
+```

@@ -1,0 +1,112 @@
+---
+- name: "setup gluster | gluster"
+  include_role:
+    name: geerlingguy.glusterfs
+
+
+- name: "Ensure Gluster brick and mount directories exist. | gluster"
+  file: "path={{ item }} state=directory mode=0775"
+  with_items:
+    - "{{ gluster_brick_dir }}"
+    - "{{ gluster_mount_dir }}"
+
+- name: "stop gluster volume | gluster"
+  gluster_volume:
+    state: stopped
+    name: "{{ gluster_brick_name}}"
+  ignore_errors: true
+  tags:
+    - never
+    - drop_gluster
+
+- pause:
+    minutes: 2
+  tags:
+    - never
+    - drop_gluster
+
+- name: "remove gluster volume | gluster"
+  gluster_volume:
+    state: absent
+    name: "{{ gluster_brick_name}}"
+  tags:
+    - never
+    - drop_gluster
+
+  ignore_errors: true
+- pause:
+    minutes: 2
+  tags:
+    - never
+    - drop_gluster
+
+- name: "forced unmount of existing gluster share. | gluster"
+  mount:
+    name: "{{ gluster_mount_dir }}"
+    src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
+    state: absent
+  tags:
+    - never
+    - drop_gluster
+
+- name: "forced unmount of existing gluster disk {{storage.device}}p2. | gluster"
+  mount:
+    path: "{{ gluster_brick_dir }}"
+    src: "{{storage.device}}p2"
+    state: unmounted
+  tags:
+    - never
+    - drop_gluster
+- name: "forced removal from fstab of existing gluster disk {{storage.device}}p2. | gluster"
+  mount:
+    path: "{{ gluster_brick_dir }}"
+    src: "{{storage.device}}p2"
+    state: absent
+  tags:
+    - never
+    - drop_gluster
+
+- name: "format disk in ext4, if not done so | gluster"
+  filesystem:
+    dev: "{{storage.device}}p2"
+    fstype: ext4
+    force: true
+  tags:
+    - never
+    - drop_gluster
+
+- name: "mount nvme at gluster brick directory | gluster"
+  mount:
+    path: "{{ gluster_brick_dir }}"
+    src: "{{storage.device}}p2"
+    fstype: ext4
+    state: mounted
+
+
+#- name: "Configure Gluster volume. | gluster"
+# gluster_volume:
+#   rebalance: yes
+#   state: present
+#   replicas: 2
+#   name: "{{ gluster_brick_name }}"
+#   bricks: "{{ gluster_brick_dir }}/bricks"
+#   cluster: "{{ groups.gluster | list }}"
+# run_once: true
+
+- name: Set multiple options on GlusterFS volume
+  gluster_volume:
+    state: present
+    name: "{{ gluster_brick_name }}"
+    options:
+      { performance.cache-size: 256MB,
+        write-behind: 'off',
+        quick-read: 'on'
+      }
+
+- name: "Ensure Gluster volume is mounted at shared directory. | gluster"
+  mount:
+    name: "{{ gluster_mount_dir }}"
+    src: "{{ inventory_hostname }}:/{{ gluster_brick_name }}"
+    fstype: glusterfs
+    opts: "defaults,_netdev"
+    state: mounted

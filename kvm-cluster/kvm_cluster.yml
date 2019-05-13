@@ -1,15 +1,15 @@
----
+##
+# this applies these settings to any host in the whole inventory
+# we are also gathering system wide facts to be reused
+# during the installation
+##
 - hosts: all
   gather_facts: True
   become_user: root
   become: true
-  name: "gather facts accross all"
-
-- hosts: node
-  become_user: root
-  become: true
-  name: "install the barebone system layout"
+  name: "install the basic system layouts"
   tasks:
+
     - name: "configure user accounts"
       include_role:
         name: users
@@ -24,12 +24,18 @@
 
     - import_role:
         name: default
+##
+# this section will install all nodes in a docker swarm cluster
+# with basic monitoring
+##
+- hosts: node
+  become_user: root
+  become: true
+  name: "setup a docker swarm for the barebone "
+  tasks:
 
     - import_role:
         name: docker
-
-    - import_role:
-        name: drives
 
     - import_role:
         name: elk
@@ -37,10 +43,35 @@
     - import_role:
         name: monitoring
 
+##
+# this section will install all the glusterfs servers
+# and systems
+# ensure you do not change the group name
+# it's config dependent!
+#
+# also ensure that the count of hosts, must be divideable by
+# or the install will fail!
+##
+- hosts: gluster
+  name: "configure gluster fs"
+  become_user: root
+  become: true
+  tasks:
+    - import_role:
+        name: drives
+    - import_role:
+        name: gluster
+
+##
+#  this section will install the physical KVM nodes
+#  and all virtual machines
+##
 - hosts: kvm_node
   become_user: root
   become: true
   name: "install the physical kvm cluster and generate all our inventory files"
   tasks:
+    - import_role:
+        name: drives
     - import_role:
         name: kvm
