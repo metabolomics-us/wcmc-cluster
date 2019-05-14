@@ -1,0 +1,4 @@
+---
+git:
+  local_directory: "/tmp/docker-swarm-cluster"
+  remote_directory: "/mnt/git/docker-swarm-cluster"

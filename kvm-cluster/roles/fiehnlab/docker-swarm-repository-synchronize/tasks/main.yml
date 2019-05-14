@@ -1,0 +1,9 @@
+---
+- name: "synchronizing fiehnlab service definitions with master node"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  synchronize:
+    src: "{{git.local_directory}}"
+    dest: "{{git.remote_directory}}"
+  tags:
+    - docker_swarm_repository
