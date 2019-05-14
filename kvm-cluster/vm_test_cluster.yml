@@ -29,3 +29,6 @@
 
     - import_role:
         name: monitoring
+
+    - import_role:
+        name: jenkins
