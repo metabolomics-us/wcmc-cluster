@@ -38,6 +38,17 @@
     - import_role:
         name: monitoring
 
+    #
+    # Fiehn Lab service definitions
+    #
+
     # Second step in updating docker swarm config on manager nodes
     - import_role:
         name: fiehnlab/docker-swarm-repository-synchronize
+
+    - import_role:
+        name: fiehnlab/proxy
+
+    - import_role:
+        name: fiehnlab/cfb
+
