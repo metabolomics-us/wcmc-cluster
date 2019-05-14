@@ -1,0 +1,11 @@
+---
+- name: "deploying MS-FLO"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: msflo
+    compose: "{{git.remote_directory}}/msflo/docker-compose.yml"
+  tags:
+    - deploy_msflo
+

@@ -1,0 +1,20 @@
+---
+- name: "creating proxy network"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_network:
+    name: proxy
+    driver: overlay
+  tags:
+    - deploy_proxy
+
+- name: "deploying proxy stack"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - "fiehnlab.deploy == true"
+  docker_stack:
+    state: present
+    name: proxy
+    compose: "{{git.remote_directory}}/proxy/docker-compose-stack.yml"
+  tags:
+    - deploy_proxy
