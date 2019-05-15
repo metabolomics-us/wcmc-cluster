@@ -74,5 +74,5 @@ ansible-playbook -i cluster-test_cluster.ini --become my_test_cluster.yml
 Please ensure that all roles are locally in the playbook, or in a requirements-test.yml file. Which is required to be installed with
 
 ```bash
-ansible-galaxy install -R requirements-test.yml
+ansible-galaxy install -r requirements-test.yml
 ```
