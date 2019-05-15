@@ -52,3 +52,5 @@
     - import_role:
         name: fiehnlab/cfb
 
+    - import_role:
+        name: jenkins
