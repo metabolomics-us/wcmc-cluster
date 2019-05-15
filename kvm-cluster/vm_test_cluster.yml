@@ -4,6 +4,14 @@
   become_user: root
   become: true
 
+# Clone docker-swarm-cluster repository locally first which will later be
+# pushed to the manager nodes. Requires git ssh access to BitBucket repository
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+    - import_role:
+        name: fiehnlab/docker-swarm-repository-clone
+
 - hosts: kvm_vm_test_cluster
   tasks:
     - name: "configure user accounts"
@@ -30,5 +38,19 @@
     - import_role:
         name: monitoring
 
+    #
+    # Fiehn Lab service definitions
+    #
+
+    # Second step in updating docker swarm config on manager nodes
     - import_role:
-        name: jenkins
+        name: fiehnlab/docker-swarm-repository-synchronize
+
+    - import_role:
+        name: fiehnlab/proxy
+
+    - import_role:
+        name: fiehnlab/cfb
+
+    - import_role:
+        name: fiehnlab/jenkins

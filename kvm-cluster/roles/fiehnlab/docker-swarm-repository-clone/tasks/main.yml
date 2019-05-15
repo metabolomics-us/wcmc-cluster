@@ -1,0 +1,9 @@
+---
+- name: "cloning fiehnlab cluster repository locally"
+  git:
+    repo: "{{git.repo}}"
+    dest: "{{git.local_directory}}"
+    version: "{{git.branch}}"
+    accept_hostkey: true
+  tags:
+    - docker_swarm_repository
