@@ -1,0 +1,11 @@
+---
+- name: "deploying Jenkins"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: jenkins
+    compose: "{{git.remote_directory}}/jenkins-dind/docker-compose.yml"
+  tags:
+    - deploy_jenkins
+

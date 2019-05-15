@@ -1,0 +1,2 @@
+git:
+  remote_directory: "/mnt/git/docker-swarm-cluster"
