@@ -1,0 +1,3 @@
+jenkins:
+  repo:  https://github.com/metabolomics-us/docker-jenkins-dind.git
+  deploy: true
