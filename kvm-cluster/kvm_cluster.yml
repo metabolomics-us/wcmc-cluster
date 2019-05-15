@@ -44,25 +44,6 @@
         name: monitoring
 
 ##
-# this section will install all the glusterfs servers
-# and systems
-# ensure you do not change the group name
-# it's config dependent!
-#
-# also ensure that the count of hosts, must be divideable by
-# or the install will fail!
-##
-- hosts: gluster
-  name: "configure gluster fs"
-  become_user: root
-  become: true
-  tasks:
-    - import_role:
-        name: drives
-    - import_role:
-        name: gluster
-
-##
 #  this section will install the physical KVM nodes
 #  and all virtual machines
 ##
