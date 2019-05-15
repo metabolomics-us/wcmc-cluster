@@ -2,9 +2,10 @@
 - set_fact:
     netplan_configuration: "{{ network.netplan.configuration  }}"
 
-- import_role:
+- include_role:
     name: mrlesmithjr.netplan
 
-- name: reboot server to apply configurations
-  reboot:
-      reboot_timeout: 86400
+# - name: reboot server to apply configurations
+#  reboot:
+#      reboot_timeout: 86400
+

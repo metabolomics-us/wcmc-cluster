@@ -1,11 +1,11 @@
 ---
 
-- name: check if host is reachable and fail otherwise
-  ping:
+- name: Remove dependencies that are no longer required
+  apt:
+    autoremove: yes
+  tags:
+    - always
 
-
-- import_role:
-        name: ypsman.ipv6_disable
 - name: "remove cloud init crap"
   apt:
     name: cloud-init
@@ -16,7 +16,7 @@
 
 - name: "install default utilities"
   apt:
-    name: [git,mc,mtr,htop,nmap,sysstat,tmux, python3-pip]
+    name: [git,mc,mtr,htop,nmap,sysstat,tmux, python3-pip, curl]
     update_cache: true
     state: latest
 
@@ -24,3 +24,7 @@
 - name: "disable UFW"
   ufw:
     state: disabled
+
+- name: "configure ntp clients"
+  include_role:
+    name: geerlingguy.ntp

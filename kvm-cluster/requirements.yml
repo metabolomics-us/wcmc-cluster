@@ -1,9 +1,16 @@
 - src: mrlesmithjr.netplan
 - src: ypsman.ipv6_disable
-- src: nickjj.docker
-- src: atosatto.docker-swarm  
 - src: openmicroscopy.nfs-mount
 
 - src: https://github.com/berlinguyinca/ansible-kvm.git
   version: master
   name: ansible-kvm
+
+- src: https://github.com/berlinguyinca/ansible-tmux.git
+  version: master
+  name: ansible-tmux
+
+- src: geerlingguy.ntp
+- src: geerlingguy.docker
+- src: geerlingguy.firewall
+- src: geerlingguy.glusterfs

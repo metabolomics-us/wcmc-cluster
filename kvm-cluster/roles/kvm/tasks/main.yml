@@ -1,10 +1,14 @@
 ---
+- debug:
+    var: virtual_machines
+  tags:
+    - install_kvm
+
 - name: "install qeme and libvrt related stuff"
   apt:
     name: [qemu-kvm, libvirt-clients, libvirt-daemon-system, bridge-utils, libvirt-dev]
     update_cache: true
     state: latest
-
 
 - name: "install python modules"
   pip:
@@ -18,96 +22,160 @@
     state: mounted
 
 - name: "generate install iso"
-  include_role:
-    name: kickstartvm
-  loop: "{{virtual_machines}}"
-  loop_control:
-    loop_var: virtual_machine
+  block:
+    - include_role:
+        name: kickstartvm
+      loop: "{{virtual_machines}}"
+      loop_control:
+        loop_var: virtual_machine
+  tags:
+    - kickstart
+
+- name: List remote VMs
+  virt:
+    command: list_vms
+  register: vms_list
+  tags:
+    - install_kvm
+
+- set_fact:
+    vms_list: "{{vms_list.list_vms}}"
+  tags:
+    - install_kvm
 
 - debug:
-    var: virtual_machines
+    var: vms_list
 
 - include: undefine.yml
+  tags:
+    - never
+    - drop_kvm
 
-- name: "install virtual machine"
-  include_role:
-    name: ansible-kvm
-  vars:
-    kvm_images_path: /mnt/kvm
+- include: gateway.yml
+  tags:
+    - install_kvm
 
-    kvm_virtual_networks:
-      - name: "{{virtual_machine.network}}"
-        mode: bridge
-        bridge_name: "{{virtual_machine.network}}"
-        autostart: true
-        state: active
-    kvm_vms:
-      - name: "{{inventory_hostname}}-{{virtual_machine.name}}"
-        autostart: true
-        # Define boot devices in order of preference
-        boot_devices:
-          - hd
-          - cdrom
-        graphics: true
-        # Define disks in MB
-        disks:
-          # ide, scsi, virtio, xen, usb, sata or sd
-          - disk_driver: virtio
-            name: "{{inventory_hostname}}-{{virtual_machine.name}}.disk"
-            size: "{{virtual_machine.storage_size}}"
+- include: vm.yml
+  tags:
+    - install_kvm
 
-          # define a cdrom with a specific iso
-          - disk_driver: qemu
-            image: "{{git.directory}}/makeiso/{{inventory_hostname}}-{{virtual_machine.name}}.iso"
-            cdrom: true
-
-        # Define memory in MB
-        memory: "{{virtual_machine.memory}}"
-        network_interfaces:
-          - source: "{{virtual_machine.network}}"
-            network_driver: virtio
-            type: bridge
-        state: running
-        vcpu: "{{virtual_machine.cpus}}"
-
-    # Define KVM Dir type Storage Pools to create
-    kvm_storage_pools:
-      - name: kvms
-        path: /mnt/kvm/
-        autostart: true
-        state: active
-
-    kvm_config_storage_pools: true
-
-    kvm_enable_libvirtd_syslog: true
-
-    kvm_manage_vms: true
-
-    # Defines if kvm/libvirt should be configured
-    kvm_config: true
-
-    # Defines if kvm_users should be added to libvirtd for managing KVM
-    kvm_config_users: true
-
-    # Defines if kvm virtual networks should be configured
-    # if set to true ensu
-    kvm_config_virtual_networks: true
-
-  loop: "{{virtual_machines}}"
-  loop_control:
-    loop_var: virtual_machine
-
-- name: wait for the vm to shut down after install
+- name: "wait for the vm to shut down after install {{inventory_hostname}}-{{virtual_machine.name}}"
   virt:
     command: status
     name: "{{inventory_hostname}}-{{virtual_machine.name}}"
   register: vmstatus
-  until: vmstatus.status == 'shutdown'
+  until: "'status' in vmstatus and vmstatus.status == 'shutdown'"
   delegate_to: "{{ inventory_hostname }}"
   retries: 1000
-  delay: 60
+  delay: 5
 
   loop: "{{virtual_machines}}"
   loop_control:
     loop_var: virtual_machine
+  tags:
+    - install_kvm
+  when: "inventory_hostname + '-' + virtual_machine.name not in vms_list"
 
+- name: start virtual machines
+  virt:
+    name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+    state: running
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+  tags:
+    - install_kvm
+    - generate_inventory
+    - kvm_cluster
+
+- name: wait for vm to be up and running
+  virt:
+    name: "{{inventory_hostname}}-{{virtual_machine.name}}"
+    command: status
+    uri: "qemu:///session"
+  register: result
+  until: result.status == 'running'
+  delay: 1
+  retries: 1000
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+  tags:
+    - install_kvm
+    - generate_inventory
+    - kvm_cluster
+
+- name: generate list of configured and running virtual machines
+  set_fact:
+    deployed_vms: "{{ deployed_vms | default([]) + [{'name': inventory_hostname + '-' + virtual_machine.name, 'group' : virtual_machine.group, 'domain':virtual_machine.domain, 'node' : inventory_hostname, 'manager' : 'docker_swarm_manager' in group_names and virtual_machine.manager_possible  }]}}"
+  loop: "{{virtual_machines}}"
+  loop_control:
+    loop_var: virtual_machine
+  tags:
+    - generate_inventory
+    - kvm_cluster
+
+  ##
+  # here we somehow need to combine all the host variables into 1
+  # - name: aggregate into one varaible
+
+##
+# this builds new environment files
+
+- name: track installed KVMs in the internal inventory
+  block:
+    - include_role:
+        name: inventory
+      vars:
+        hostname: "{{virtual_machine.name}}"
+        domain: "{{virtual_machine.domain}}"
+        group: "{{virtual_machine.group}}"
+      loop: "{{deployed_vms}}"
+      loop_control:
+        loop_var: virtual_machine
+  tags:
+    - generate_inventory
+    - kvm_cluster
+  delegate_to: 127.0.0.1
+
+- name: "install jmespath locally"
+  pip:
+    name: jmespath
+  tags:
+    - generate_inventory
+    - kvm_cluster
+  delegate_to: 127.0.0.1
+
+- name: "generate names of clusters"
+  set_fact:
+    clusters_to_generate: "{{ deployed_vms | json_query('[*].group') | list | unique }}"
+  tags:
+    - generate_inventory
+    - kvm_cluster
+
+  delegate_to: 127.0.0.1
+- debug:
+    var: clusters_to_generate
+  tags:
+    - generate_inventory
+    - kvm_cluster
+
+- debug:
+    var: deployed_vms
+  tags:
+    - generate_inventory
+    - kvm_cluster
+
+- name: "generate inventory files for all defined clusters"
+  template:
+    src: inventory.ini.j2
+    dest: "./cluster-{{cluster}}.ini"
+    force: yes
+  delegate_to: 127.0.0.1
+  loop: "{{clusters_to_generate}}"
+  loop_control:
+    loop_var: cluster
+  tags:
+    - generate_inventory
+    - kvm_cluster
+  run_once: true

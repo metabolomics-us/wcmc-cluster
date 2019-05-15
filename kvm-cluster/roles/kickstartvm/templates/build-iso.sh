@@ -25,7 +25,7 @@ TMP_DISC_DIR="`mktemp -d`"
 TMP_INITRD_DIR="`mktemp -d`"
 
 # download and extract netboot iso
-SOURCE_ISO_URL="http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/mini.iso"
+SOURCE_ISO_URL="http://archive.ubuntu.com/ubuntu/dists/cosmic-updates/main/installer-amd64/current/images/netboot/mini.iso"
 cd "$TMP_DOWNLOAD_DIR"
 if [ ! -f netboot.iso ]; then
     wget -4 "$SOURCE_ISO_URL" -O "./netboot.iso"

@@ -1,43 +1,58 @@
----
+##
+# this applies these settings to any host in the whole inventory
+# we are also gathering system wide facts to be reused
+# during the installation
+##
 - hosts: all
   gather_facts: True
   become_user: root
   become: true
-  name: "gather facts accross all"
-
-- hosts: node
-  become_user: root
-  become: true
-  name: "install the barebone system layout"
+  name: "install the basic system layouts"
   tasks:
-    - import_role:
-        name: network
-    - import_role:
-        name: default
+
     - name: "configure user accounts"
       include_role:
         name: users
       vars:
-        user: "{{item}}"
+        user: "{{kvm_user}}"
       loop: "{{accounts.users}}"
+      loop_control:
+        loop_var: "kvm_user"
+
+    - import_role:
+        name: network
+
+    - import_role:
+        name: default
+##
+# this section will install all nodes in a docker swarm cluster
+# with basic monitoring
+##
+- hosts: node
+  become_user: root
+  become: true
+  name: "setup a docker swarm for the barebone "
+  tasks:
 
     - import_role:
         name: docker
-    - import_role:
-        name: drives
 
+    - import_role:
+        name: elk
+
+    - import_role:
+        name: monitoring
+
+##
+#  this section will install the physical KVM nodes
+#  and all virtual machines
+##
 - hosts: kvm_node
   become_user: root
   become: true
-  name: "install the actual kvm cluster"
+  name: "install the physical kvm cluster and generate all our inventory files"
   tasks:
+    - import_role:
+        name: drives
     - import_role:
         name: kvm
-
-- hosts: test_cluster
-  become_user: root
-  become: true
-  name: "install the docker test cluster on top of the kvm cluster"
-  tasks:
-    - import_role:
-        name: docker

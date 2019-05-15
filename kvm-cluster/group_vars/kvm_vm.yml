@@ -1,0 +1,33 @@
+##
+# network configuration for a virtual kvm machine
+# which always follow the same basic hardware config
+network:
+  netplan:
+    configuration:
+      network:
+        version: 2
+        rendered: networkd
+        ethernets:
+          ens3:
+            dhcp4: yes
+
+##
+# docker specific configuration
+docker:
+
+  ##
+  # which fork do you want to use for swarmprom
+  swarmprom:
+    repo:  https://github.com/metabolomics-us/swarmprom.git
+    deploy: true
+
+  ##
+  # which fork do you want to use for the elk logstash
+  elk:
+    repo: https://github.com/metabolomics-us/wcms-cluster-elk.git
+    deploy: true
+
+
+  ##
+  # vms always have this as a network interface
+  nic: ens3
