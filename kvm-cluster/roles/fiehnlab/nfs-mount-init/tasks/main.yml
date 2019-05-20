@@ -1,0 +1,47 @@
+---
+- name: "make local mount directory"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  file:
+    path: /mnt/nfs
+    state: directory
+  tags:
+    -nfs
+
+- name: "mount the desired nfs folder"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  mount:
+    path: /mnt/nfs
+    src: "nas1.nas.fiehnlab.ucdavis.edu:/mnt/prod"
+    fstype: nfs
+    state: mounted
+  tags:
+    -nfs
+
+- name: "create service folder on nfs mount"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  file:
+    path: /mnt/nfs/test
+    state: directory
+  tags:
+    -nfs
+
+- name: "create placeholder file to enable nfs mounting from docker"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  file:
+    path: /mnt/nfs/test/.docker
+    state: touch
+  tags:
+    -nfs
+
+- name: "unmount nfs folder"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  mount:
+    path: /mnt/nfs
+    state: absent
+  tags:
+    -nfs
