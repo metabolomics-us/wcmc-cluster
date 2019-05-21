@@ -1,4 +1,13 @@
 ---
+- name: "configure nfs mount"
+  include_role:
+    name: fiehnlab/nfs-mount-init
+  vars:
+    mount: prod
+    dir: msflo
+  tags:
+    - deploy_msflo
+
 - name: "deploying MS-FLO"
   when:
     - "'docker_swarm_manager' in group_names"
