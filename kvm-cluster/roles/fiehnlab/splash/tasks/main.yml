@@ -1,0 +1,10 @@
+---
+- name: "deploying SPALSH"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: splash
+    compose: "{{git.remote_directory}}/splash/docker-compose.yml"
+  tags:
+    - deploy_splash

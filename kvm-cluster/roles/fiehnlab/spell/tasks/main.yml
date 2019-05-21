@@ -1,0 +1,10 @@
+---
+- name: "deploying Spell"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: spell
+    compose: "{{git.remote_directory}}/spell/docker-compose.yml"
+  tags:
+    - deploy_spell
