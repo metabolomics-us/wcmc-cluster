@@ -1,19 +1,10 @@
 ---
-- name: "make local mount directory"
-  when:
-    - "'docker_swarm_manager' in group_names"
-  file:
-    path: /mnt/nfs
-    state: directory
-  tags:
-    -nfs
-
 - name: "mount the desired nfs folder"
   when:
     - "'docker_swarm_manager' in group_names"
   mount:
     path: /mnt/nfs
-    src: "nas1.nas.fiehnlab.ucdavis.edu:/mnt/prod"
+    src: "nas1.nas.fiehnlab.ucdavis.edu:/mnt/{{mount}}"
     fstype: nfs
     state: mounted
   tags:
@@ -23,7 +14,7 @@
   when:
     - "'docker_swarm_manager' in group_names"
   file:
-    path: /mnt/nfs/test
+    path: "/mnt/nfs/{{dir}}"
     state: directory
   tags:
     -nfs
@@ -32,7 +23,7 @@
   when:
     - "'docker_swarm_manager' in group_names"
   file:
-    path: /mnt/nfs/test/.docker
+    path: "/mnt/nfs/{{dir}}/.docker"
     state: touch
   tags:
     -nfs
