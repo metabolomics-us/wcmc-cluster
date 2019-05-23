@@ -4,7 +4,7 @@
     - "'docker_swarm_manager' in group_names"
   mount:
     path: /mnt/nfs
-    src: "nas1.nas.fiehnlab.ucdavis.edu:/mnt/{{mount}}"
+    src: "nas1.nas.fiehnlab.ucdavis.edu:/mnt/{{nfs_cluster}}"
     fstype: nfs
     state: mounted
   tags:
@@ -14,16 +14,25 @@
   when:
     - "'docker_swarm_manager' in group_names"
   file:
-    path: "/mnt/nfs/{{dir}}"
+    path: "/mnt/nfs/{{nfs_dir}}"
     state: directory
   tags:
     -nfs
+
+# - name: "set ownership of service mount directory"
+#   when:
+#     - "'docker_swarm_manager' in group_names"
+#   file:
+#     path: "/mnt/nfs/{{nfs_dir}}"
+#     state: directory
+#   tags:
+#     -nfs
 
 - name: "create placeholder file to enable nfs mounting from docker"
   when:
     - "'docker_swarm_manager' in group_names"
   file:
-    path: "/mnt/nfs/{{dir}}/.docker"
+    path: "/mnt/nfs/{{nfs_dir}}/.docker"
     state: touch
   tags:
     -nfs

@@ -54,3 +54,6 @@
 
     - import_role:
         name: fiehnlab/jenkins
+      vars:
+        nfs_cluster: test
+        nfs_dir: jenkins

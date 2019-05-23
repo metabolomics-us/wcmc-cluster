@@ -2,9 +2,6 @@
 - name: "configure nfs mount"
   include_role:
     name: fiehnlab/nfs-mount-init
-  vars:
-    mount: test
-    dir: jenkins
   tags:
     - deploy_jenkins
 
@@ -15,6 +12,8 @@
     state: present
     name: jenkins
     compose: "{{git.remote_directory}}/jenkins-dind/docker-compose.yml"
+  environment:
+    MNT_HOST: "{{nfs.host}}"
+    MNT_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
   tags:
     - deploy_jenkins
-

@@ -51,6 +51,9 @@
 
     - import_role:
         name: fiehnlab/msflo
+      vars:
+        nfs_cluster: prod
+        nfs_dir: msflo
 
     - import_role:
         name: fiehnlab/cfb

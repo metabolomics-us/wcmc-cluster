@@ -2,9 +2,6 @@
 - name: "configure nfs mount"
   include_role:
     name: fiehnlab/nfs-mount-init
-  vars:
-    mount: prod
-    dir: msflo
   tags:
     - deploy_msflo
 
@@ -14,7 +11,10 @@
   docker_stack:
     state: present
     name: msflo
-    compose: "{{git.remote_directory}}/msflo/docker-compose.yml"
+    compose: "{{git.remote_directory}}/msflo/docker-compose-nfs.yml"
+  environment:
+    MNT_HOST: "{{nfs.host}}"
+    MNT_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
+
   tags:
     - deploy_msflo
-
