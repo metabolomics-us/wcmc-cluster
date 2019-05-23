@@ -1,0 +1,10 @@
+---
+- name: "deploying ChemRICH"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: chemrich
+    compose: "{{git.remote_directory}}/chemrich/docker-compose.yml"
+  tags:
+    - deploy_chemrich
