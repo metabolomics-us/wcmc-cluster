@@ -1,0 +1,10 @@
+---
+- name: "deploying BinBase services"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: binbase
+    compose: "{{git.remote_directory}}/binbase/docker-compose.yml"
+  tags:
+    - deploy_binbase

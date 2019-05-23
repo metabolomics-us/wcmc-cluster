@@ -1,0 +1,10 @@
+---
+- name: "deploying Docker Registry"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: docker_registry
+    compose: "{{git.remote_directory}}/docker-registry/docker-compose.yml"
+  tags:
+    - deploy_docker_registry
