@@ -1,7 +1,7 @@
 ---
 - name: "configure nfs mount"
   include_role:
-    name: fiehnlab/nfs-mount-init
+    name: fiehnlab-utils/nfs-mount-init
   tags:
     - deploy_chemrich
 

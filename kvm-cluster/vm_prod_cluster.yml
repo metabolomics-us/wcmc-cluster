@@ -10,7 +10,7 @@
   connection: local
   tasks:
     - import_role:
-        name: fiehnlab/docker-swarm-repository-clone
+        name: fiehnlab-utils/docker-swarm-repository-clone
 
 - hosts: kvm_vm_prod_cluster
   tasks:
@@ -44,7 +44,7 @@
 
     # Second step in updating docker swarm config on manager nodes
     - import_role:
-        name: fiehnlab/docker-swarm-repository-synchronize
+        name: fiehnlab-utils/docker-swarm-repository-synchronize
 
     - import_role:
         name: fiehnlab/proxy
