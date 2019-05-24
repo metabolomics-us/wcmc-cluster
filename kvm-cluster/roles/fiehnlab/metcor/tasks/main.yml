@@ -1,0 +1,10 @@
+---
+- name: "deploying Metcor"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: metcor
+    compose: "{{git.remote_directory}}/metcor/docker-compose.yml"
+  tags:
+    - deploy_metcor

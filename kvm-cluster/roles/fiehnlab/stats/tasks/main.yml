@@ -1,0 +1,10 @@
+---
+- name: "deploying R Stats"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: stats
+    compose: "{{git.remote_directory}}/stats/docker-compose.yml"
+  tags:
+    - deploy_stats

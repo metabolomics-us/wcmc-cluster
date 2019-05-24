@@ -1,0 +1,10 @@
+---
+- name: "deploying MetaMapp"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: metamapp
+    compose: "{{git.remote_directory}}/metamapp/docker-compose.yml"
+  tags:
+    - deploy_metamapp

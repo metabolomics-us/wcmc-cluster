@@ -1,0 +1,10 @@
+---
+- name: "deploying MetDA"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: metda
+    compose: "{{git.remote_directory}}/metda/docker-compose.yml"
+  tags:
+    - deploy_metda

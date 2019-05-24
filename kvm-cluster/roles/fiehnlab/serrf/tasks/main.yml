@@ -1,0 +1,10 @@
+---
+- name: "deploying SERRF"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: serrf
+    compose: "{{git.remote_directory}}/serrf/docker-compose.yml"
+  tags:
+    - deploy_serrf

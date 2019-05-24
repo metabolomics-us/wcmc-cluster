@@ -1,0 +1,10 @@
+---
+- name: "deploying BinVestigate"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: binvestigate
+    compose: "{{git.remote_directory}}/binvestigate/docker-compose.yml"
+  tags:
+    - deploy_binvestigate
