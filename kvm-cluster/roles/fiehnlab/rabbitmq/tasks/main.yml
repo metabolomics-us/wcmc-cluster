@@ -1,0 +1,10 @@
+---
+- name: "deploying RabbitMQ"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: rabbitmq
+    compose: "{{git.remote_directory}}/rabbitmq/docker-compose.yml"
+  tags:
+    - deploy_rabbitmq
