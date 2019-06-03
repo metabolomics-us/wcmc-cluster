@@ -2,6 +2,7 @@
 - name: "configure nfs mount"
   include_role:
     name: fiehnlab-utils/nfs-mount-init
+      - downloads
   tags:
     - deploy_chemrich
 
@@ -13,7 +14,7 @@
     name: chemrich
     compose: "{{git.remote_directory}}/chemrich/docker-compose-nfs.yml"
   environment:
-    MNT_HOST: "{{nfs.host}}"
-    MNT_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
+    NFS_HOST: "{{nfs.host}}"
+    NFS_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
   tags:
     - deploy_chemrich
