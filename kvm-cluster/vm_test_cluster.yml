@@ -34,6 +34,9 @@
 
     - import_role:
         name: elk
+      vars:
+        nfs_cluster: test
+        nfs_dir: logging_elasticsearch
 
     - import_role:
         name: monitoring
@@ -48,9 +51,6 @@
 
     - import_role:
         name: fiehnlab/proxy
-
-    - import_role:
-        name: fiehnlab/cfb
 
     - import_role:
         name: fiehnlab/jenkins

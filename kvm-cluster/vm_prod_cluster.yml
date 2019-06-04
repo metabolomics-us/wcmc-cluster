@@ -34,6 +34,9 @@
 
     - import_role:
         name: elk
+      vars:
+        nfs_cluster: prod
+        nfs_dir: logging_elasticsearch
 
     - import_role:
         name: monitoring
@@ -46,8 +49,70 @@
     - import_role:
         name: fiehnlab-utils/docker-swarm-repository-synchronize
 
+    # Docker Swarm Proxy
     - import_role:
         name: fiehnlab/proxy
+
+    # Services
+    - import_role:
+        name: fiehnlab/binbase
+
+    - import_role:
+        name: fiehnlab/binvestigate
+
+    - import_role:
+        name: fiehnlab/binview
+
+    - import_role:
+        name: fiehnlab/cdn
+
+    - import_role:
+        name: fiehnlab/cfb
+
+    - import_role:
+        name: fiehnlab/chemrich
+
+    - import_role:
+        name: fiehnlab/cts
+
+    - import_role:
+        name: fiehnlab/docker-registry
+      vars:
+        nfs_cluster: prod
+        nfs_dir: docker-registry
+
+    - import_role:
+        name: fiehnlab/eureka
+
+    - import_role:
+        name: fiehnlab/exposome
+
+    - import_role:
+        name: fiehnlab/mida
+
+    - import_role:
+        name: fiehnlab/metabox
+
+    - import_role:
+        name: fiehnlab/metamapp
+
+    - import_role:
+        name: fiehnlab/metcor
+
+    - import_role:
+        name: fiehnlab/metda
+
+    - import_role:
+        name: fiehnlab/metsys
+
+    - import_role:
+        name: fiehnlab/minix
+    
+    - import_role:
+        name: fiehnlab/mona
+      vars:
+        nfs_cluster: prod
+        nfs_dir: mona
 
     - import_role:
         name: fiehnlab/msflo
@@ -56,5 +121,22 @@
         nfs_dir: msflo
 
     - import_role:
-        name: fiehnlab/cfb
+        name: fiehnlab/ontology
 
+    - import_role:
+        name: fiehnlab/rabbitmq
+
+    - import_role:
+        name: fiehnlab/serrf
+
+    - import_role:
+        name: fiehnlab/spell
+
+    - import_role:
+        name: fiehnlab/splash
+
+    - import_role:
+        name: fiehnlab/stats
+
+    - import_role:
+        name: fiehnlab/testfserv
