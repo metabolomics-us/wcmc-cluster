@@ -2,10 +2,8 @@
   when:
     - "'docker_swarm_manager' in group_names"
     - "elk.deploy == true"
-
   tags:
     - deploy_logging
-
   git:
     repo: "{{elk.repo}}"
     version: master
