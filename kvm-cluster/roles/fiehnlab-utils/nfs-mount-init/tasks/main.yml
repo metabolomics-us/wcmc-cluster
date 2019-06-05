@@ -19,14 +19,16 @@
   tags:
     -nfs
 
-# - name: "set ownership of service mount directory"
-#   when:
-#     - "'docker_swarm_manager' in group_names"
-#   file:
-#     path: "/mnt/nfs/{{nfs_dir}}"
-#     state: directory
-#   tags:
-#     -nfs
+- name: "create subdirectories if specified"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - subdirectories is defined
+  file:
+    path: "/mnt/nfs/{{nfs_dir}}/{{item}}"
+    state: directory
+  with_items: "{{subdirectories}}"
+  tags:
+    -nfs
 
 - name: "create placeholder file to enable nfs mounting from docker"
   when:
@@ -34,6 +36,17 @@
   file:
     path: "/mnt/nfs/{{nfs_dir}}/.docker"
     state: touch
+  tags:
+    -nfs
+
+- name: "create placeholder files for subdirectories if specified"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - subdirectories is defined
+  file:
+    path: "/mnt/nfs/{{nfs_dir}}/{{item}}/.docker"
+    state: touch
+  with_items: "{{subdirectories}}"
   tags:
     -nfs
 
