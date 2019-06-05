@@ -1,10 +1,24 @@
 ---
+- name: "configure nfs mount"
+  include_role:
+    name: fiehnlab-utils/nfs-mount-init
+  vars:
+    subdirectories:
+      - mongo
+      - repository
+      - downloads
+  tags:
+    - deploy_mona
+
 - name: "deploying MoNA"
   when:
     - "'docker_swarm_manager' in group_names"
   docker_stack:
     state: present
     name: mona
-    compose: "{{git.remote_directory}}/mona/docker-compose-stack-megamona.yml"
+    compose: "{{git.remote_directory}}/mona/docker-compose-nfs.yml"
+  environment:
+    NFS_HOST: "{{nfs.host}}"
+    NFS_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
   tags:
     - deploy_mona
