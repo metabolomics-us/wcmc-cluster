@@ -66,13 +66,80 @@ We recommend to define specific playbooks for this, outside of this repo.
 3. 
 
 ```bash
-
 ansible-playbook -i cluster-test_cluster.ini --become my_test_cluster.yml
-
 ```
 
 Please ensure that all roles are locally in the playbook, or in a requirements-test.yml file. Which is required to be installed with
 
 ```bash
 ansible-galaxy install -r requirements-test.yml
+```
+
+### Configuring roles with NFS mounts
+
+For Docker services to function with nfs volumes, the mount point must be an existing and non-empty directory.  The `fiehnlab-utils/nfs-mount-init` role enables automatic configuration of these mount directories.
+
+First add your volume using the nfs driver to your Docker stack (note that compose `version: '3.2'` or higher is required):
+
+```yaml
+version: '3.3'
+
+volumes:
+  nfs-data:
+    driver: local
+    driver_opts:
+      type: "nfs"
+      o: "addr=${NFS_HOST},nolock,soft,rw"
+      device: ":${NFS_PATH}"
+
+services:
+  test_service:
+    image: hello-world
+    volumes:
+      - nfs-data:/path/to/volume/in/container
+```
+
+The import `fiehnlab-utils/nfs-mount-init` into your role's `tasks/main.yml` and define the `$NFS_HOST` and `$NFS_PATH` environmental variables when deploying your stack:
+
+```yaml
+- name: "configure nfs mount"
+  include_role:
+    name: fiehnlab-utils/nfs-mount-init
+
+- name: "deploying Hello World"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: hello-world
+    compose: "docker-compose.yml"
+  environment:
+    NFS_HOST: "{{nfs.host}}"
+    NFS_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
+  tags:
+    - deploy_mona
+```
+
+Finally, specify the `nfs.host`, `nfs_cluster`, and `nfs_dir` variables in either your role's defaults or in your playbook:
+
+```yaml
+    - import_role:
+        name: fiehnlab/docker-registry
+      vars:
+        nfs:
+          host: nas.example.com
+        nfs_cluster: prod
+        nfs_dir: hello-world
+```
+
+If you wish to utilize multiple mount points in your stack, you can set up multiple subdirectories in your `nfs_dir` by adding the `subdirectories` variable to your playbook or role vars:
+
+```yaml
+- name: "configure nfs mount"
+  include_role:
+    name: fiehnlab-utils/nfs-mount-init
+  vars:
+    subdirectories:
+      - mount_A
+      - mount_B
 ```
