@@ -1,0 +1,8 @@
+- name: add repository | yubi
+  apt_repository:
+    repo: ppa:yubico/stable
+    state: present
+
+- name: install | yubi
+  apt:
+    name: [yubikey-personalization-gui,yubioath-desktop,yubikey-manager-qt]
