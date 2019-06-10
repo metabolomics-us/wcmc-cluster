@@ -1,0 +1,63 @@
+##
+# this applies these settings to any host in the whole inventory
+# we are also gathering system wide facts to be reused
+# during the installation
+##
+- hosts: all
+  gather_facts: True
+  become_user: root
+  become: true
+  name: "install the basic system layouts"
+  tasks:
+
+    - name: Upgrade all packages to the latest version
+      apt:
+        name: "*"
+        state: latest
+
+    - name: "Remove dependencies that are no longer required"
+      apt:
+        autoremove: yes
+      tags:
+        - always
+
+    - name: "remove cloud init crap"
+      apt:
+        name: cloud-init
+        state: absent
+
+    - name: "install default utilities"
+      apt:
+        name: [git, mc, mtr, htop, nmap, sysstat, tmux, python3-pip, curl, nfs-common, vim]
+        update_cache: true
+        state: latest
+
+    - name: "install brave browser"
+      include_role:
+        name: software/brave
+
+    - name: "install yubikey"
+      include_role:
+        name: software/yubikey
+
+    - name: "configure user accounts"
+      include_role:
+        name: users
+      vars:
+        user: "{{kvm_user}}"
+      loop: "{{accounts.users}}"
+      loop_control:
+        loop_var: "kvm_user"
+
+    - name: "install pycharm"
+      snap:
+        classic: yes
+        name:
+          - spotify
+          - pycharm-professional
+          - postman
+          - intellij-idea-ultimate
+          - slack
+          - atom
+          - gitkraken
+          - skype

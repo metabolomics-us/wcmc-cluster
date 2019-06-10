@@ -1,0 +1,14 @@
+- name: register key | brave
+  apt_key:
+    url: https://brave-browser-apt-release.s3.brave.com/brave-core.asc
+    state: present
+
+
+- name: add repository | brave
+  apt_repository:
+    repo: deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ disco main
+    state: present
+
+- name: install browser | brave
+  apt:
+    name: [brave-keyring,brave-browser]
