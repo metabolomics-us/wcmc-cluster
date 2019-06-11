@@ -73,11 +73,8 @@
   when: "'docker_swarm_manager' in group_names"
   docker_node:
     labels_state: merge
-    hostname: "{{item}}"
-    labels: "{{ docker_node_labels }}"
-  with_inventory_hostnames:
-    - node
+    hostname: "{{item.key}}"
+    labels: "{{item.value}}"
+  with_dict: "{{docker_node_labels}}"
   tags:
     - swarm
-  ignore_errors: yes
-
