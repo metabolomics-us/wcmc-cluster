@@ -1,10 +1,19 @@
 ---
+- name: "configure nfs mount"
+  include_role:
+    name: fiehnlab-utils/nfs-mount-init
+  tags:
+    - deploy_docker_registry
+
 - name: "deploying Docker Registry"
   when:
     - "'docker_swarm_manager' in group_names"
   docker_stack:
     state: present
     name: docker_registry
-    compose: "{{git.remote_directory}}/docker-registry/docker-compose.yml"
+    compose: "{{git.remote_directory}}/docker-registry/docker-compose-nfs.yml"
+  environment:
+    MNT_HOST: "{{nfs.host}}"
+    MNT_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
   tags:
     - deploy_docker_registry
