@@ -75,3 +75,13 @@
           - atom
           - gitkraken
           - skype
+
+    - name: "install sshuttle"
+      include_role:
+        name: vpn/sshuttle
+
+      vars:
+        user: "{{kvm_user}}"
+      loop: "{{accounts.users}}"
+      loop_control:
+        loop_var: "kvm_user"
