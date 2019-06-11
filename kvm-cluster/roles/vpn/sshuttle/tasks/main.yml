@@ -7,7 +7,7 @@
   lineinfile:
     dest=/home/{{user.name}}/.bashrc
     line="alias {{route.alias}}='sshuttle -r {{route.gateway}} -vv {{route.destination}}'"
-    regexp='^alias {{route.alias}}='sshuttle -r {{route.gateway}} -vv {{route.destination}}'$'
+    regexp="^alias {{route.alias}}='sshuttle -r {{route.gateway}} -vv {{route.destination}}'$"
     state=present
     insertafter=EOF
     create=True
