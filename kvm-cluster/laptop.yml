@@ -28,9 +28,23 @@
 
     - name: "install default utilities"
       apt:
-        name: [git, mc, mtr, htop, nmap, sysstat, tmux, python3-pip, curl, nfs-common, vim]
+        name: [mc, mtr, htop, nmap, sysstat, tmux, python3-pip, curl, nfs-common]
         update_cache: true
         state: latest
+
+    - name: "setup git"
+      include_role:
+        name: software/git
+      vars:
+        user: "{{kvm_user}}"
+      loop: "{{accounts.users}}"
+      loop_control:
+        loop_var: "kvm_user"
+
+    - name: "install power management based utilities"
+      apt:
+        name: [powerstat, powertop]
+
 
     - name: "install brave browser"
       include_role:
@@ -49,7 +63,7 @@
       loop_control:
         loop_var: "kvm_user"
 
-    - name: "install pycharm"
+    - name: "install snap based software"
       snap:
         classic: yes
         name:
