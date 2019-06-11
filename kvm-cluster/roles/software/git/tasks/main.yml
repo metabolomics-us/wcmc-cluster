@@ -33,5 +33,11 @@
         name: user.email
         value: "{{user.git.email}}"
         scope: global
+
+    - git_config:
+        name: credential.helper
+        value: store
+        scope: global
+
   become: true
   become_user: "{{user.name}}"
