@@ -1,0 +1,27 @@
+---
+- name: "install snap based software"
+  snap:
+    classic: yes
+    name:
+      - spotify
+      - pycharm-professional
+      - postman
+      - intellij-idea-ultimate
+      - slack
+      - atom
+      - gitkraken
+      - skype
+
+- name: "install yubikey"
+  include_role:
+    name: software/yubikey
+
+
+- name: "setup git"
+  include_role:
+    name: software/git
+  vars:
+    user: "{{kvm_user}}"
+  loop: "{{accounts.users}}"
+  loop_control:
+    loop_var: "kvm_user"

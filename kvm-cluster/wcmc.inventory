@@ -10,8 +10,39 @@ kvm-node-4	ansible_ssh_host=kvm-node-4.server.fiehnlab.ucdavis.edu
 kvm-node-5	ansible_ssh_host=kvm-node-5.server.fiehnlab.ucdavis.edu
 kvm-node-6	ansible_ssh_host=kvm-node-6.server.fiehnlab.ucdavis.edu
 
+##
+# workstations
+[workstations]
+workstation-wohlgemuth ansible_ssh_host=leela.office.fiehnlab.ucdavis.edu
 
 ##
+# laptops
+[laptops]
+thinkpad-wohlgemuth   ansible_ssh_host=thinkpad-t480s.office.fiehnlab.ucdavis.edu
+
+##
+# servers
+[servers]
+
+
+######
+# special variables for machines
+# based on the users group file
+##
+[wohlgemuth]
+workstation-wohlgemuth
+thinkpad-wohlgemuth
+
+[sajjan]
+
+[diego]
+
+
+
+#########
+# no need to touch beyond here
+#########
+
 # this group contains nodes which want to become swarm manager
 [docker_swarm_manager]
 kvm-node-1
@@ -36,7 +67,8 @@ kvm-node-4
 kvm-node-5
 kvm-node-6
 
-[workstation]
 
-[laptop]
-thinkpad-wohlgemuth   ansible_ssh_host=192.168.40.250
+[systems:children]
+laptops
+workstations
+servers

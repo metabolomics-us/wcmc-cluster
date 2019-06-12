@@ -1,14 +1,15 @@
 ##
-# this applies these settings to any host in the whole inventory
-# we are also gathering system wide facts to be reused
-# during the installation
+# applies to all configured systems
 ##
-- hosts: all
+- hosts: systems
   gather_facts: True
   become_user: root
   become: true
   name: "install the basic system layouts"
   tasks:
+
+    - debug:
+        var: accounts
 
     - name: Upgrade all packages to the latest version
       apt:
@@ -32,27 +33,9 @@
         update_cache: true
         state: latest
 
-    - name: "setup git"
-      include_role:
-        name: software/git
-      vars:
-        user: "{{kvm_user}}"
-      loop: "{{accounts.users}}"
-      loop_control:
-        loop_var: "kvm_user"
-
-    - name: "install power management based utilities"
-      apt:
-        name: [powerstat, powertop]
-
-
     - name: "install brave browser"
       include_role:
         name: software/brave
-
-    - name: "install yubikey"
-      include_role:
-        name: software/yubikey
 
     - name: "configure user accounts"
       include_role:
@@ -63,25 +46,36 @@
       loop_control:
         loop_var: "kvm_user"
 
-    - name: "install snap based software"
-      snap:
-        classic: yes
-        name:
-          - spotify
-          - pycharm-professional
-          - postman
-          - intellij-idea-ultimate
-          - slack
-          - atom
-          - gitkraken
-          - skype
-
-    - name: "install sshuttle"
+    - name: "configure vpns"
       include_role:
         name: vpn/sshuttle
 
-      vars:
-        user: "{{kvm_user}}"
-      loop: "{{accounts.users}}"
-      loop_control:
-        loop_var: "kvm_user"
+    - name: "configure alias"
+      include_role:
+        name: purpose/alias
+##
+# general workstation setup
+- hosts: workstations
+  become_user: root
+  become: true
+  name: "workstation specific setup"
+  tasks:
+    - name: "configure software development"
+      include_role:
+        name: purpose/development
+
+
+##
+# general laptop setup
+- hosts: laptops
+  become_user: root
+  become: true
+  name: "laptop specific setup"
+  tasks:
+    - name: "configure software development"
+      include_role:
+        name: purpose/development
+
+    - name: "install power management based utilities"
+      apt:
+        name: [powerstat, powertop]

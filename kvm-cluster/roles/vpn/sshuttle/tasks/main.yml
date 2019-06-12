@@ -3,9 +3,11 @@
   apt:
     name: [sshuttle]
 
-- name: "configure aliases for {{user}} | sshuttle"
+- debug:
+    var: sshuttle
+- name: "configure aliases | sshuttle"
   lineinfile:
-    dest=/home/{{user.name}}/.bashrc
+    dest=/home/{{route.owner}}/.bashrc
     line="alias {{route.alias}}='sshuttle -r {{route.gateway}} -vv {{route.destination}}'"
     regexp="^alias {{route.alias}}='sshuttle -r {{route.gateway}} -vv {{route.destination}}'$"
     state=present
