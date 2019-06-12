@@ -3,12 +3,12 @@
 # please configure accordingly!
 [node]
 
-kvm-node-1	ansible_ssh_host=kvm-node-1.server.fiehnlab.ucdavis.edu
-kvm-node-2	ansible_ssh_host=kvm-node-2.server.fiehnlab.ucdavis.edu
-kvm-node-3	ansible_ssh_host=kvm-node-3.server.fiehnlab.ucdavis.edu
-kvm-node-4	ansible_ssh_host=kvm-node-4.server.fiehnlab.ucdavis.edu
-kvm-node-5	ansible_ssh_host=kvm-node-5.server.fiehnlab.ucdavis.edu
-kvm-node-6	ansible_ssh_host=kvm-node-6.server.fiehnlab.ucdavis.edu
+kvm-node-1	ansible_ssh_host=kvm-node-1
+kvm-node-2	ansible_ssh_host=kvm-node-2
+kvm-node-3	ansible_ssh_host=kvm-node-3
+kvm-node-4	ansible_ssh_host=kvm-node-4
+kvm-node-5	ansible_ssh_host=kvm-node-5
+kvm-node-6	ansible_ssh_host=kvm-node-6
 
 ##
 # workstations

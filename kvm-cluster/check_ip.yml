@@ -1,5 +1,0 @@
----
-  - hosts: all
-    gather_facts: True
-    become: false
-    name: "gathing facts only..."
