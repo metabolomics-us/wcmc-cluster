@@ -66,7 +66,7 @@ We recommend to define specific playbooks for this, outside of this repo.
 3. 
 
 ```bash
-ansible-playbook -i cluster-test_cluster.ini --become my_test_cluster.yml
+ansible-playbook -K -i cluster-test_cluster.ini --become my_test_cluster.yml
 ```
 
 Please ensure that all roles are locally in the playbook, or in a requirements-test.yml file. Which is required to be installed with

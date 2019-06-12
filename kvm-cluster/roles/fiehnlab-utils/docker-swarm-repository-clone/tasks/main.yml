@@ -1,4 +1,11 @@
 ---
+- name: "remove temporary git store"
+  file:
+    dest: "{{git.local_directory}}"
+    state: absent
+  tags:
+    - docker_swarm_repository
+
 - name: "cloning fiehnlab cluster repository locally"
   git:
     repo: "{{git.repo}}"
