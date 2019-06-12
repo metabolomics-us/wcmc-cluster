@@ -1,0 +1,101 @@
+##
+network:
+  ##
+  # this contains the general network configuration, which should be adapted to local host needs
+  netplan:
+    configuration:
+      network:
+        ethernets:
+          enp10s0f0:
+            dhcp4: false
+          enp10s0f1:
+            dhcp4: false
+        vlans:
+          # delegate to the bridges
+          vlan.prod:
+            id: 30
+            link: enp10s0f0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.test:
+            id: 31
+            link: enp10s0f0
+            dhcp4: false
+            dhcp6: false
+
+          vlan.office:
+            id: 50
+            link: enp10s0f0
+            dhcp4: false
+            dhcp6: false
+
+          vlan.mmgt:
+            id: 40
+            link: enp10s0f0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nas:
+            id: 111
+            link: enp10s0f0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nvme:
+            id: 110
+            link: enp10s0f0
+            dhcp4: false
+            dhcp6: false
+
+        # defines brigdes for KVM based interfaces
+        bridges:
+
+          # production cluster resides in this network
+          br.prod:
+            interfaces:
+              - vlan.prod
+            dhcp6: false
+            dhcp4: true
+            dhcp-identifier: mac
+
+          br.office:
+            interfaces:
+              - vlan.office
+            dhcp6: false
+            dhcp4: true
+            dhcp-identifier: mac
+
+          br.mmgt:
+            interfaces:
+              - vlan.mmgt
+            dhcp6: false
+            dhcp4: true
+            dhcp-identifier: mac
+
+          # test cluster resides in this network
+          br.test:
+            interfaces:
+              - vlan.test
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+
+          # shared services reside in this network
+          br.nvme:
+            interfaces:
+              - vlan.nvme
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac
+
+          # data access resides in this network
+          br.nas:
+            interfaces:
+              - vlan.nas
+            dhcp4: true
+            dhcp6: false
+            dhcp-identifier: mac

@@ -13,7 +13,8 @@ kvm-node-6	ansible_ssh_host=kvm-node-6.server.fiehnlab.ucdavis.edu
 ##
 # workstations
 [workstations]
-workstation-wohlgemuth ansible_ssh_host=leela.office.fiehnlab.ucdavis.edu
+workstation-wohlgemuth ansible_ssh_host=192.168.30.231 #leela.cluster.fiehnlab.ucdavis.edu
+
 
 ##
 # laptops

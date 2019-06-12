@@ -15,7 +15,7 @@ accounts:
 
 
 ##
-# poor mans vpn
+# poor mans vpn configurations
 #
 sshuttle:
   - route:
@@ -25,6 +25,15 @@ sshuttle:
     destination: "192.168.88.20/32"
     alias: "tunnel.home"
 
+##
+# most simple default network setup
+#
+network:
+  netplan:
+    configuration:
+      network:
+        version: 2
+        renderer: NetworkManager
 ##
 # defined aliases
 alias:

@@ -8,8 +8,9 @@
   name: "install the basic system layouts"
   tasks:
 
-    - debug:
-        var: accounts
+    - name: "configure ntp clients"
+      include_role:
+        name: geerlingguy.ntp
 
     - name: Upgrade all packages to the latest version
       apt:
@@ -60,6 +61,10 @@
   become: true
   name: "workstation specific setup"
   tasks:
+
+    - import_role:
+        name: network
+
     - name: "configure software development"
       include_role:
         name: purpose/development

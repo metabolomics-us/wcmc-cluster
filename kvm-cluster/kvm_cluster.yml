@@ -1,13 +1,12 @@
 ##
-# this applies these settings to any host in the whole inventory
-# we are also gathering system wide facts to be reused
-# during the installation
+# this section will install all nodes in a docker swarm cluster
+# with basic monitoring
 ##
-- hosts: all
+- hosts: node
   gather_facts: True
   become_user: root
   become: true
-  name: "install the basic system layouts"
+  name: "setup a docker swarm for the barebone "
   tasks:
 
     - name: "configure user accounts"
@@ -24,15 +23,6 @@
 
     - import_role:
         name: default
-##
-# this section will install all nodes in a docker swarm cluster
-# with basic monitoring
-##
-- hosts: node
-  become_user: root
-  become: true
-  name: "setup a docker swarm for the barebone "
-  tasks:
 
     - import_role:
         name: docker
