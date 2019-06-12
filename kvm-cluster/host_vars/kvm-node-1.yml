@@ -1,9 +1,4 @@
-docker_node_labels:
-  kvm: "true"
-  elasticdb: "true"
-
 virtual_machines:
-
   - machine:
     name: test-2x4
     cpus: 2
