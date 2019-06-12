@@ -1,0 +1,12 @@
+- name: "configure aliases | alias"
+  lineinfile:
+    dest=/home/{{command.owner}}/.bashrc
+    line="alias {{command.alias}}='{{command.name}}'"
+    regexp="^alias {{command.alias}}='{{command.name}}'$"
+    state=present
+    insertafter=EOF
+    create=True
+
+  loop: "{{alias}}"
+  loop_control:
+    loop_var: command

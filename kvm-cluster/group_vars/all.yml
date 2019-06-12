@@ -12,3 +12,43 @@ accounts:
     - name: "diego"
       ssh_keys:
         - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1vPMB1IfYQoTHktZ7Eh4VXH9Ge1Vyg5qjReLxy6IyoKl0AgwkfoUkTkIJOMJh6Lkk/u1zq829EaJIQgCtZsYfsFfPZovSD67f4oLS1cUVmxaLMf13NVlrFkaZqm6dW5IClneDXT2Qx5HgsfN0Uq9KcB+XLS7MrKXzE0033qjmCIva1s+JdcYMnSs7xC7eDUcP/FkcCbwXiDX1dXM6w3Ru5hLBbuO22ZawhOwVVxBJPRA31s35SL1lHMvuaii8h7u9qvpCmeKg2EpLAjUQ8IG+XdXiFz20swtKJ8Br35zRDMEOd/nUWrbqAsX4I8KxIaRpLJz5QyFpcPExNXY1CwRl diego@farnsworth"
+
+
+##
+# poor mans vpn
+#
+sshuttle:
+  - route:
+    owner: wohlgemuth
+    # we want to route all traffic using this host
+    gateway: "a2800903d1e0.sn.mynetname.net:2022"
+    destination: "192.168.88.20/32"
+    alias: "tunnel.home"
+
+##
+# defined aliases
+alias:
+  - command:
+    owner: wohlgemuth
+    name: ssh venus.fiehnlab.ucdavis.edu
+    alias: ssh.venus
+
+  - command:
+    owner: wohlgemuth
+    name: ssh blonde.fiehnlab.ucdavis.edu
+    alias: ssh.blonde
+
+  - command:
+    owner: wohlgemuth
+    name: ssh a2800903d1e0.sn.mynetname.net -p 2022
+    alias: ssh.home
+
+  - command:
+    owner: wohlgemuth
+    name: ssh main.fiehnlab.ucdavis.edu
+    alias: ssh.work
+
+  - command:
+    owner: wohlgemuth
+    name: ssh thinkpad-t480s.office.fiehnlab.ucdavis.edu
+    alias: ssh.thinkpad

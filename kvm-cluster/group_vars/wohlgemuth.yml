@@ -9,16 +9,5 @@ accounts:
         email: "berlinguyinca@gmail.com"
 
 
-##
-# poor mans vpn
-#
-sshuttle:
-
-  - route:
-    # we want to route all traffic using this host
-    gateway: "a2800903d1e0.sn.mynetname.net:2022"
-    destination: "192.168.88.20/32"
-    alias: "tunnel.mainframe"
-
 
 

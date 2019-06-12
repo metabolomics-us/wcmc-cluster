@@ -27,10 +27,16 @@ thinkpad-wohlgemuth   ansible_ssh_host=thinkpad-t480s.office.fiehnlab.ucdavis.ed
 
 ######
 # special variables for machines
+# based on the users group file
 ##
 [wohlgemuth]
 workstation-wohlgemuth
 thinkpad-wohlgemuth
+
+[sajjan]
+
+[diego]
+
 
 
 #########

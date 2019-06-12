@@ -49,11 +49,10 @@
     - name: "configure vpns"
       include_role:
         name: vpn/sshuttle
-      vars:
-        user: "{{kvm_user}}"
-      loop: "{{accounts.users}}"
-      loop_control:
-        loop_var: "kvm_user"
+
+    - name: "configure alias"
+      include_role:
+        name: purpose/alias
 ##
 # general workstation setup
 - hosts: workstations
