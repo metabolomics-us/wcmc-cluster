@@ -1,0 +1,5 @@
+docker_node_labels:
+  kvm-node-1-gateway-test:
+    gateway: "true"
+  kvm-node-1-test-2x4:
+    elasticdb: "true"
