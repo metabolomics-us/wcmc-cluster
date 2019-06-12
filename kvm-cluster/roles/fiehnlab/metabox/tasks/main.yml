@@ -1,0 +1,10 @@
+---
+- name: "deploying MetaBox"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: metabox
+    compose: "{{git.remote_directory}}/metabox/docker-compose.yml"
+  tags:
+    - deploy_metabox

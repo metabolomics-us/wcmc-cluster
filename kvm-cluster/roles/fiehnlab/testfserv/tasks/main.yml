@@ -1,0 +1,10 @@
+---
+- name: "deploying TestFServ"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: testfserv
+    compose: "{{git.remote_directory}}/testfserv/docker-compose.yml"
+  tags:
+    - deploy_testfserv

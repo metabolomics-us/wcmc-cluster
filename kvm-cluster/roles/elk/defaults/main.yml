@@ -5,9 +5,12 @@
 # these should NOT be ever deleted, you choose wisely
 git:
   directory: "/mnt/git"
-elk:
 
+elk:
   ##
   # which fork do you want to use for the elk logstash
   repo: https://github.com/metabolomics-us/docker-elk.git
   deploy: true
+
+nfs:
+  host: "nas1.nas.fiehnlab.ucdavis.edu"

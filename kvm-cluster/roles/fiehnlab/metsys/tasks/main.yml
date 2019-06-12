@@ -1,0 +1,10 @@
+---
+- name: "deploying Metsys"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: metsys
+    compose: "{{git.remote_directory}}/metsys/docker-compose.yml"
+  tags:
+    - deploy_metsys

@@ -2,10 +2,8 @@
   when:
     - "'docker_swarm_manager' in group_names"
     - "elk.deploy == true"
-
   tags:
     - deploy_logging
-
   git:
     repo: "{{elk.repo}}"
     version: master
@@ -31,28 +29,40 @@
   become: true
   tags:
     - deploy_logging
+
+- name: "configure nfs mount"
+  when:
+    - "elk.deploy == true"
+  include_role:
+    name: fiehnlab-utils/nfs-mount-init
+  tags:
+    - deploy_logging
+
 - name: "undeploying logging stack"
   when:
     - "'docker_swarm_manager' in group_names"
     - "elk.deploy == true"
-
   docker_stack:
     absent_retries: 100
     state: absent
     name: logging
-    compose: "{{git.directory}}/logging/docker-stack.yml"
-
+    compose: "{{git.directory}}/logging/docker-stack-nfs.yml"
+  environment:
+    NFS_HOST: "{{nfs.host}}"
+    NFS_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
   tags:
     - deploy_logging
+
 - name: "deploying logging stack"
   when:
     - "'docker_swarm_manager' in group_names"
     - "elk.deploy == true"
-
   docker_stack:
     state: present
     name: logging
-    compose: "{{git.directory}}/logging/docker-stack.yml"
-
+    compose: "{{git.directory}}/logging/docker-stack-nfs.yml"
+  environment:
+    NFS_HOST: "{{nfs.host}}"
+    NFS_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
   tags:
     - deploy_logging
