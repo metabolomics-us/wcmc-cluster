@@ -35,3 +35,8 @@ kvm-node-3
 kvm-node-4
 kvm-node-5
 kvm-node-6
+
+[workstation]
+
+[laptop]
+thinkpad-wohlgemuth   ansible_ssh_host=192.168.40.250

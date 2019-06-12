@@ -1,0 +1,43 @@
+##
+# installs git and configures some
+# defaults
+
+- name: install | git
+  become: true
+  become_user: root
+  apt:
+    name: git
+
+- debug:
+    msg: "{{user}}"
+
+##
+# block required to escalate options correctly
+- block:
+    - git_config:
+        name: core.editor
+        scope: global
+        value: vim
+
+    - git_config:
+        name: color.ui
+        value: auto
+        scope: global
+
+    - git_config:
+        name: user.name
+        value: "{{user.git.name}}"
+        scope: global
+
+    - git_config:
+        name: user.email
+        value: "{{user.git.email}}"
+        scope: global
+
+    - git_config:
+        name: credential.helper
+        value: store
+        scope: global
+
+  become: true
+  become_user: "{{user.name}}"

@@ -14,3 +14,7 @@
 - src: geerlingguy.docker
 - src: geerlingguy.firewall
 - src: geerlingguy.glusterfs
+
+- src: https://github.com/privacylabs/ansible-tunnel
+  version: master
+  name: ansible-tunnel
