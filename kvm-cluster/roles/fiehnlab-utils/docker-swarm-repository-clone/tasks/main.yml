@@ -6,9 +6,26 @@
   tags:
     - docker_swarm_repository
 
-- name: "cloning fiehnlab cluster repository locally"
+- name: "cloning fiehnlab cluster repository locally by ssh"
   git:
-    repo: "{{git.repo}}"
+    repo: "{{git.ssh_repo}}"
+    dest: "{{git.local_directory}}"
+    version: "{{git.branch}}"
+    accept_hostkey: true
+  ignore_errors: yes
+  no_log: True
+  tags:
+    - docker_swarm_repository
+
+- name: "status of cloned docker repository directory"
+  stat: 
+    path: "{{git.local_directory}}"
+  register: local_repository
+
+- name: "cloning fiehnlab cluster repository locally via https if ssh is not configured"
+  when: local_repository.stat.exists == False
+  git:
+    repo: "{{git.https_repo}}"
     dest: "{{git.local_directory}}"
     version: "{{git.branch}}"
     accept_hostkey: true
