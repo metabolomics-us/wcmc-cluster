@@ -1,5 +1,6 @@
 ---
 git:
   local_directory: "/tmp/docker-swarm-cluster"
-  repo: "git@bitbucket.org:fiehnlab/docker-swarm-cluster.git"
+  ssh_repo: "git@bitbucket.org:fiehnlab/docker-swarm-cluster.git"
+  https_repo: "https://bitbucket.org/fiehnlab/docker-swarm-cluster.git"
   branch: ansible
