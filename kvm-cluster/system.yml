@@ -84,3 +84,7 @@
     - name: "install power management based utilities"
       apt:
         name: [powerstat, powertop]
+
+    - name: "proton-vpn"
+      include_role:
+        name: vpn/protonvpn
