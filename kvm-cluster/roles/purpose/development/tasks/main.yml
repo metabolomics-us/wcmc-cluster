@@ -29,3 +29,7 @@
 - name: "python stuff"
   apt:
     name: [python-matplotlib,cmake, libfreetype6-dev, libfontconfig1-dev, xclip,pkg-config]
+
+- name: "image magick"
+  apt:
+    name: [imagemagick]
