@@ -1,0 +1,16 @@
+- name: "install dependencies | protonvpn"
+  become: true
+  apt:
+    name: [dialog, python, wget,openvpn]
+
+- name: "download script | protonvpn"
+  get_url:
+    url: https://raw.githubusercontent.com/ProtonVPN/protonvpn-cli/master/protonvpn-cli.sh
+    dest: /tmp/protonvpn-cli.sh
+    mode: '777'
+  delegate_to: 127.0.0.1
+
+- name: "install | protonvpn"
+  script: /tmp/protonvpn-cli.sh
+
+

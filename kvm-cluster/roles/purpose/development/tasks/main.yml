@@ -25,3 +25,7 @@
   loop: "{{accounts.users}}"
   loop_control:
     loop_var: "kvm_user"
+
+- name: "python stuff"
+  apt:
+    name: [python-matplotlib,cmake, libfreetype6-dev, libfontconfig1-dev, xclip,pkg-config]
