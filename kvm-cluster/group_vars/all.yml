@@ -14,7 +14,7 @@ accounts:
     - name: "diego"
       ssh_keys:
         - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1vPMB1IfYQoTHktZ7Eh4VXH9Ge1Vyg5qjReLxy6IyoKl0AgwkfoUkTkIJOMJh6Lkk/u1zq829EaJIQgCtZsYfsFfPZovSD67f4oLS1cUVmxaLMf13NVlrFkaZqm6dW5IClneDXT2Qx5HgsfN0Uq9KcB+XLS7MrKXzE0033qjmCIva1s+JdcYMnSs7xC7eDUcP/FkcCbwXiDX1dXM6w3Ru5hLBbuO22ZawhOwVVxBJPRA31s35SL1lHMvuaii8h7u9qvpCmeKg2EpLAjUQ8IG+XdXiFz20swtKJ8Br35zRDMEOd/nUWrbqAsX4I8KxIaRpLJz5QyFpcPExNXY1CwRl diego@farnsworth"
-
+        - "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCTVNx0fsqzN9+oJstdmFiBaXBMUOD/Idav7Cjzubazgato7m/5EKTyHLsX65Y8lYasw2RPtL1LpOZpNkeyiEFk= linuxmant@gmail.com"
 
 ##
 # poor mans vpn configurations
