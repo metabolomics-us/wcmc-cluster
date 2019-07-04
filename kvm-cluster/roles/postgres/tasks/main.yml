@@ -1,0 +1,26 @@
+- name: install pgsql requirement
+  apt: name=python3-psycopg2 state=present
+  become: true
+
+- name: "deploy postgress for MSMS storage"
+  docker_swarm_service:
+    name: msmspg
+    image: postgres:9
+    state: present
+    mounts:
+    - source: /nfs/share
+      target: /var/lib/postgresql/data
+      type: bind
+    replicas: 1
+    env:
+      POSTGRES_USER: "{{ msms_db_user }}"
+      POSTGRES_DB: "{{ msms_db_name }}"
+      POSTGRES_PASSWORD: test
+
+- name: create msms db
+  postgresql_db:
+    name: "{{ msms_db_name }}"
+    login_user: "{{ msms_db_user }}"
+    login_host: manager1
+    login_password: test
+    state: present
