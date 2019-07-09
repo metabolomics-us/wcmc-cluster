@@ -88,3 +88,14 @@
     - name: "proton-vpn"
       include_role:
         name: vpn/protonvpn
+
+##
+# gert specific setups
+- hosts: wohlgemuth
+  become_user: root
+  become: true
+  name: "configure custom software"
+  tasks:
+    - name: "install picture management software"
+      apt:
+        name: [darktable, shotwell]
