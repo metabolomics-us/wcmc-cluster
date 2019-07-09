@@ -1,8 +1,12 @@
 - name: install pgsql requirement
+  when:
+    - "'docker_swarm_manager' in group_names"
   apt: name=python3-psycopg2 state=present
   become: true
 
 - name: "deploy postgress for MSMS storage"
+  when:
+    - "'docker_swarm_manager' in group_names"
   docker_swarm_service:
     name: msmspg
     image: postgres:9
@@ -18,6 +22,8 @@
       POSTGRES_PASSWORD: test
 
 - name: create msms db
+  when:
+    - "'docker_swarm_manager' in group_names"
   postgresql_db:
     name: "{{ msms_db_name }}"
     login_user: "{{ msms_db_user }}"
