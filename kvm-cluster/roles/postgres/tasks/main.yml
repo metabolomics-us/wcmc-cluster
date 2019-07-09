@@ -4,6 +4,13 @@
   apt: name=python3-psycopg2 state=present
   become: true
 
+# Requires the nfs_cluster and nsf_dir vars to be set in the playbook task definition
+- name: "configure nfs mount"
+  include_role:
+    name: fiehnlab-utils/nfs-mount-init
+  tags:
+    - deploy_docker_registry
+
 - name: "deploy postgress for MSMS storage"
   when:
     - "'docker_swarm_manager' in group_names"
@@ -12,9 +19,15 @@
     image: postgres:9
     state: present
     mounts:
-    - source: /nfs/share
+    - type: volume
       target: /var/lib/postgresql/data
-      type: bind
+      source: msmspg_data
+      driver_config:
+        name: local
+        options:
+          type: nfs
+          device: ":/mnt/{{nfs_cluster}}/{{nfs_dir}}"
+          o: "addr={{nfs.host}},nolock,soft,rw"
     replicas: 1
     env:
       POSTGRES_USER: "{{ msms_db_user }}"
