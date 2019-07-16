@@ -103,9 +103,6 @@
         name: fiehnlab/metda
 
     - import_role:
-        name: fiehnlab/metsys
-
-    - import_role:
         name: fiehnlab/minix
     
     - import_role:
