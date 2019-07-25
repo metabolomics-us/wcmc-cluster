@@ -68,8 +68,6 @@
     - name: "configure software development"
       include_role:
         name: purpose/development
-
-
 ##
 # general laptop setup
 - hosts: laptops
@@ -88,3 +86,28 @@
     - name: "proton-vpn"
       include_role:
         name: vpn/protonvpn
+
+##
+# gert specific setups
+- hosts: wohlgemuth
+  become_user: root
+  become: true
+  name: "configure custom software"
+  tasks:
+    - name: "install picture management software"
+      apt:
+        name: [darktable, shotwell]
+    - name: "install audio tools"
+      apt:
+        name: [abcde, flac]
+
+##
+# bare bone jenkins servers
+- hosts: jenkins
+  become_user: root
+  become: true
+  name: install jenkins and persistence
+  tasks:
+    - name: "core jenkins"
+      include_role:
+        name: services/jenkins

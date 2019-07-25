@@ -6,54 +6,56 @@ network:
     configuration:
       network:
         ethernets:
-          enp10s0f0:
+          enp4s0:
             dhcp4: false
-          enp10s0f1:
-            dhcp4: false
+          enp6s0:
+            ##
+            # just required for testing and so
+            dhcp4: true
         vlans:
           # delegate to the bridges
           vlan.prod:
             id: 30
-            link: enp10s0f0
+            link: enp4s0
             dhcp4: false
             dhcp6: false
 
           # delegate to the bridges
           vlan.test:
             id: 31
-            link: enp10s0f0
+            link: enp4s0
             dhcp4: false
             dhcp6: false
 
           vlan.office:
             id: 50
-            link: enp10s0f0
+            link: enp4s0
             dhcp4: false
             dhcp6: false
 
           vlan.mmgt:
             id: 40
-            link: enp10s0f0
+            link: enp4s0
             dhcp4: false
             dhcp6: false
 
           # delegate to the bridges
           vlan.nas:
             id: 111
-            link: enp10s0f0
+            link: enp4s0
             dhcp4: false
             dhcp6: false
 
           # delegate to the bridges
           vlan.nvme:
             id: 110
-            link: enp10s0f0
+            link: enp4s0
             dhcp4: false
             dhcp6: false
 
           vlan.server:
             id: 5
-            link: enp10s0f0
+            link: enp4s0
             dhcp4: false
             dhcp6: false
 
