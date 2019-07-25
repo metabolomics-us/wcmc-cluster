@@ -1,0 +1,12 @@
+---
+- name: install java | jenkins
+  include_role:
+    name: geerlingguy.java
+
+- name: install jenkins | jenkins
+  include_role:
+    name: geerlingguy.jenkins
+  vars:
+    jenkins_http_port: 10000
+    jenkins_package_state: latest
+    jenkins_plugins: ['blueocean','ansible']
