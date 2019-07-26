@@ -1,7 +1,14 @@
 ---
+- name: install docker | jenkins
+  block:
+    - include_role:
+        name: geerlingguy.docker
+  delegate_to: 127.0.0.1
+
 - name: install java | jenkins
   include_role:
     name: geerlingguy.java
+
 
 - name: install jenkins | jenkins
   include_role:
@@ -10,3 +17,17 @@
     jenkins_http_port: 10000
     jenkins_package_state: latest
     jenkins_plugins: ['blueocean','ansible']
+
+
+##
+# this builds locally
+- name: build agent runner image | jenkins
+  command: 'docker build -t eros.fiehnlab.ucdavis.edu/jenkins-agent:latest docker/jenkins/agent'
+  delegate_to: 127.0.0.1
+
+##
+# this pushes the build image
+- name: pushes agent runner image | jenkins
+  command: 'docker push eros.fiehnlab.ucdavis.edu/jenkins-agent:latest'
+  delegate_to: 127.0.0.1
+
