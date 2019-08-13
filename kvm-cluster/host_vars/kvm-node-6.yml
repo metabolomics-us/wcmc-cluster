@@ -1,61 +1,70 @@
 ##
 network:
+
   ##
   # this contains the general network configuration, which should be adapted to local host needs
   netplan:
     configuration:
       network:
         ethernets:
-          enp4s0:
-            dhcp4: false
-          enp6s0:
-            ##
-            # just required for testing and so
+          enp3s0f0: {}
+          enp3s0f1: {}
+          enp4s0f0: {}
+          enp4s0f1: {}
+
+          ##
+          # cluster internal network
+          ens2f0:
             dhcp4: true
+
+          ens2f1:
+            dhcp4: false
+
+        bonds:
+          bond0:
+            parameters:
+              mode: 802.3ad
+              lacp-rate: fast
+              mii-monitor-interval: 50
+            interfaces:
+              - enp3s0f0
+              - enp3s0f1
+              - enp4s0f0
+              - enp4s0f1
+            mtu: 9000
+            dhcp4: false
+
         vlans:
           # delegate to the bridges
           vlan.prod:
             id: 30
-            link: enp4s0
+            link: bond0
             dhcp4: false
             dhcp6: false
 
           # delegate to the bridges
           vlan.test:
             id: 31
-            link: enp4s0
-            dhcp4: false
-            dhcp6: false
-
-          vlan.office:
-            id: 50
-            link: enp4s0
-            dhcp4: false
-            dhcp6: false
-
-          vlan.mmgt:
-            id: 40
-            link: enp4s0
+            link: bond0
             dhcp4: false
             dhcp6: false
 
           # delegate to the bridges
           vlan.nas:
             id: 111
-            link: enp4s0
+            link: ens2f0
             dhcp4: false
             dhcp6: false
 
           # delegate to the bridges
           vlan.nvme:
             id: 110
-            link: enp4s0
+            link: ens2f0
             dhcp4: false
             dhcp6: false
-
-          vlan.server:
-            id: 5
-            link: enp4s0
+          vlan.dev:
+            id: 32
+            link: bond0
             dhcp4: false
             dhcp6: false
 
@@ -67,50 +76,45 @@ network:
             interfaces:
               - vlan.prod
             dhcp6: false
-            dhcp4: true
+            dhcp4: false
             dhcp-identifier: mac
-
-          br.server:
+            addresses:
+              - 192.168.30.25/24
+          br.dev:
             interfaces:
-              - vlan.server
+              - vlan.dev
+            dhcp4: false
             dhcp6: false
-            dhcp4: true
             dhcp-identifier: mac
+            addresses:
+              - 192.168.32.25/24
 
-          br.office:
-            interfaces:
-              - vlan.office
-            dhcp6: false
-            dhcp4: true
-            dhcp-identifier: mac
-
-          br.mmgt:
-            interfaces:
-              - vlan.mmgt
-            dhcp6: false
-            dhcp4: true
-            dhcp-identifier: mac
 
           # test cluster resides in this network
           br.test:
             interfaces:
               - vlan.test
-            dhcp4: true
+            dhcp4: false
             dhcp6: false
             dhcp-identifier: mac
-
+            addresses:
+              - 192.168.31.25/24
           # shared services reside in this network
           br.nvme:
             interfaces:
               - vlan.nvme
-            dhcp4: true
+            dhcp4: false
             dhcp6: false
             dhcp-identifier: mac
+            addresses:
+              - 192.168.110.25/24
 
           # data access resides in this network
           br.nas:
             interfaces:
               - vlan.nas
-            dhcp4: true
+            dhcp4: false
             dhcp6: false
             dhcp-identifier: mac
+            addresses:
+              - 192.168.111.25/24

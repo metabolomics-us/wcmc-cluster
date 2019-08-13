@@ -9,6 +9,12 @@
   name: "setup a docker swarm for the barebone "
   tasks:
 
+    - import_role:
+        name: network
+
+    - import_role:
+        name: default
+
     - name: "configure user accounts"
       include_role:
         name: users
@@ -19,16 +25,7 @@
         loop_var: "kvm_user"
 
     - import_role:
-        name: network
-
-    - import_role:
-        name: default
-
-    - import_role:
         name: docker
-
-    - import_role:
-        name: elk
 
     - import_role:
         name: monitoring

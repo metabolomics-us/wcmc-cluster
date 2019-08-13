@@ -13,7 +13,13 @@
 - src: geerlingguy.ntp
 - src: geerlingguy.docker
 - src: geerlingguy.firewall
-- src: geerlingguy.glusterfs
+- src: geerlingguy.java
+- src: geerlingguy.jenkins
+
+- src: https://github.com/NVIDIA/ansible-role-nvidia-docker
+  version: master
+  name: nvidia.docker
+
 
 - src: https://github.com/privacylabs/ansible-tunnel
   version: master
