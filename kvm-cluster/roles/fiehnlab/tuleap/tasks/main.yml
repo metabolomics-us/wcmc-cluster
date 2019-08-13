@@ -2,6 +2,11 @@
 - name: "configure nfs mount"
   include_role:
     name: fiehnlab-utils/nfs-mount-init
+  vars:
+    # Tuleap requires mounts for both the main service and mysql
+    subdirectories:
+      - tuleap_data
+      - mysql_data
   tags:
     - deploy_tuleap
 
