@@ -58,6 +58,13 @@
   when:
     - "'docker_swarm_manager' in group_names"
 
+- name: leave swarm | node
+  docker_swarm:
+    state: absent
+  tags:
+    - destroy_swarm
+    - never
+
 - name: setup swarm | node
   docker_swarm:
     state: join
@@ -70,7 +77,7 @@
     - "'docker_swarm_manager' not in group_names"
 
 - name: "configure labels"
-  when: "'docker_swarm_manager' in group_names"
+  when: "'docker_swarm_manager' in group_names and docker_node_labels is defined"
   docker_node:
     labels_state: merge
     hostname: "{{item.key}}"

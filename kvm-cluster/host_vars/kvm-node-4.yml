@@ -1,72 +1,3 @@
-virtual_machines:
-  - machine:
-    name: test-2x4
-    cpus: 2
-    memory: 4096
-    storage_size: 80000
-    network:
-      - br.test
-    pool: nvme
-    group: test_cluster
-    domain: test.fiehnlab.ucdavis.edu
-    manager_possible: true # possible to be a manager, if running on a manager node
-
-  - machine:
-    name: prod-8x16
-    cpus: 8
-    memory: 16384
-    storage_size: 160000
-    network:
-      - br.prod
-    pool: nvme
-    group: prod_cluster
-    domain: cluster.fiehnlab.ucdavis.edu
-    manager_possible: true # possible to be a manager, if running on a manager node
-
-  - machine:
-    name: dev-4x16
-    cpus: 4
-    memory: 16384
-    storage_size: 160000
-    network:
-      - br.dev
-    pool: nvme
-    group: dev_cluster
-    domain: dev.fiehnlab.ucdavis.edu
-    manager_possible: true # possible to be a manager, if running on a manager node
-
-    ##
-    # this is a special gateway machine, which is accessible from the public genome center network, as well as from the internal cluster network
-  - machine:
-    gateway: true
-    name: gateway-prod
-    cpus: 2
-    memory: 8192
-    storage_size: 32000
-    network:
-      - br.prod
-      - br.public
-    pool: nvme
-    group: prod_cluster
-    domain: cluster.fiehnlab.ucdavis.edu
-    manager_possible: false # there can only be one manager!!!
-
-    ##
-    # this is a special gateway machine, which is accessible from the public genome center network, as well as from the internal cluster network
-  - machine:
-    gateway: true
-    name: gateway-test
-    cpus: 2
-    memory: 8192
-    storage_size: 32000
-    network:
-      - br.test
-      - br.public
-    pool: nvme
-    group: test_cluster
-    domain: test.fiehnlab.ucdavis.edu
-    manager_possible: false # there can only be one manager!!!
-
 ##
 network:
 
@@ -86,8 +17,6 @@ network:
           ens2f0:
             dhcp4: true
 
-          ##
-          # public facing network configuration
           ens2f1:
             dhcp4: false
 
@@ -120,12 +49,6 @@ network:
             dhcp4: false
             dhcp6: false
 
-          vlan.dev:
-            id: 32
-            link: bond0
-            dhcp4: false
-            dhcp6: false
-
           # delegate to the bridges
           vlan.nas:
             id: 111
@@ -139,20 +62,14 @@ network:
             link: ens2f0
             dhcp4: false
             dhcp6: false
+          vlan.dev:
+            id: 32
+            link: bond0
+            dhcp4: false
+            dhcp6: false
 
         # defines brigdes for KVM based interfaces
         bridges:
-
-          # bridge to the public outside network to be utilized by this node
-          br.public:
-            interfaces:
-              - ens2f1
-            addresses:
-              - 128.120.143.175/24
-            gateway4: 128.120.143.1
-            nameservers:
-              addresses:
-                - 192.168.5.1
           br.dev:
             interfaces:
               - vlan.dev
@@ -160,7 +77,7 @@ network:
             dhcp6: false
             dhcp-identifier: mac
             addresses:
-              - 192.168.32.20/24
+              - 192.168.32.23/24
 
           # production cluster resides in this network
           br.prod:
@@ -170,7 +87,7 @@ network:
             dhcp4: false
             dhcp-identifier: mac
             addresses:
-              - 192.168.30.20/24
+              - 192.168.30.23/24
 
           # test cluster resides in this network
           br.test:
@@ -180,7 +97,7 @@ network:
             dhcp6: false
             dhcp-identifier: mac
             addresses:
-              - 192.168.31.20/24
+              - 192.168.31.23/24
           # shared services reside in this network
           br.nvme:
             interfaces:
@@ -189,7 +106,7 @@ network:
             dhcp6: false
             dhcp-identifier: mac
             addresses:
-              - 192.168.110.20/24
+              - 192.168.110.23/24
 
           # data access resides in this network
           br.nas:
@@ -199,4 +116,4 @@ network:
             dhcp6: false
             dhcp-identifier: mac
             addresses:
-              - 192.168.111.20/24
+              - 192.168.111.23/24

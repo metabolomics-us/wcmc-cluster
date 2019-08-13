@@ -7,4 +7,4 @@ RUN apt-get update -y && \
 
 # always good to update pip
 RUN pip3 install --upgrade pip
-
+RUN pip3 install pytest tavern virtualenv
