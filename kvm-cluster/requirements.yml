@@ -13,7 +13,6 @@
 - src: geerlingguy.ntp
 - src: geerlingguy.docker
 - src: geerlingguy.firewall
-- src: geerlingguy.glusterfs
 - src: geerlingguy.java
 - src: geerlingguy.jenkins
 
