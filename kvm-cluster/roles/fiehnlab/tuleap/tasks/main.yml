@@ -1,0 +1,24 @@
+---
+- name: "configure nfs mount"
+  include_role:
+    name: fiehnlab-utils/nfs-mount-init
+  vars:
+    # Tuleap requires mounts for both the main service and mysql
+    subdirectories:
+      - tuleap_data
+      - mysql_data
+  tags:
+    - deploy_tuleap
+
+- name: "deploying Tuleap"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: present
+    name: tuleap
+    compose: "{{git.remote_directory}}/tuleap/docker-compose-nfs.yml"
+  environment:
+    MNT_HOST: "{{nfs.host}}"
+    MNT_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
+  tags:
+    - deploy_tuleap
