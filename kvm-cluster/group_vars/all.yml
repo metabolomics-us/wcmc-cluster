@@ -33,6 +33,15 @@ sshuttle:
     destination: "192.168.88.20/32"
     alias: "tunnel.home"
 
+  - route:
+    owner: sajjan
+    # Tunnel all traffic through kvm-node-1 host to access all cluster resources
+    gateway: "stout.fiehnlab.ucdavis.edu"
+    destination: "0/0"
+    flags: "--dns"
+    alias: "tunnel.cluster"
+
+
 ##
 # most simple default network setup
 #
