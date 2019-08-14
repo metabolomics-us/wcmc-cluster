@@ -57,13 +57,15 @@
     - import_role:
         name: fiehnlab/jenkins
       vars:
-        nfs_cluster: prod
+        # Note, mounting on the test mount is currently important
+        nfs_cluster: test
         nfs_dir: jenkins
 
     - import_role:
         name: fiehnlab/tuleap
       vars:
-        nfs_cluster: prod
+        # Note, mounting on the test mount is currently important
+        nfs_cluster: test
         nfs_dir: tuleap
 
     # Services
