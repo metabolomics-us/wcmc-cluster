@@ -21,12 +21,20 @@
   user:
     name: "{{ user.name }}"
     comment: "{{ user.name }}"
-    groups: docker, wheel
+    groups: docker
     shell: /bin/bash
     generate_ssh_key: yes
     ssh_key_bits: 2048
     ssh_key_file: .ssh/id_rsa
     append: true
+
+- name: "Set user {{ user.name }} as admin"
+  user:
+    name: "{{ user.name }}"
+    groups: wheel
+    append: true
+  when:
+    - "user.admin == true"
 
 - name: "Add key for user {{ user.name }}"
   authorized_key:

@@ -4,14 +4,17 @@ ansible_python_interpreter: /usr/bin/python3
 accounts:
   users:
     - name: "wohlgemuth"
+      admin: true
       ssh_keys:
         - "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
         - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQz/9sMFjqVmwQX6ayHY2nedpVIGMZnFGM0n9NifUaSnSh2D3RGyRArEsoat5KRzQtX3uCy+USdibIlVeEd6IkfjxSLc+pEf52LuyPIeaUDN+yFogFscu3Vp3gdL00TqeYMIvdA9elTvQsECYHpPf/+Img09wB/WoABT5D6SutoS6vskbbXcZKqJevLSdN8fYblDIcvZnM65p0NCmr0/2X0TOFU4wdy72BtejIsGyDHwwUNQtUYWY9RG4tqoFl4nbG2fgjnvbKcgcZYqKwlcOn/0HuWIpqIFjlwoBOoaI+0+OID2MZPnPiBJMyIc7SzCJczG6y0fjnrNJU4FhaSkfj ansible-generated on wohlgemuth-ThinkPad-T480s"
         - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZKJzrqCjPtHep4JT/qefyKtS9SKhhxlxq/VMkz3jN7QdF/2JEpU3t4omMAtR1f/TCRz3GOMU+JiqUlKM5mYbx31yQfZ75WM7wbkhXVFBSswalYgVmJqaQ1rdqkARxN8TxkLVwtuRJq2ggDIUZCQ8ux9rSQqIOnQNPO7jmFrSg/ZbtwYNePrz/RKS7Kbl/f5g/K1Ea2x4XTcAad5JD6Nq1Pb2Mlq5hxGYjtd0KDAyWT+W4usvFBkoejHA2Mpvr9jAerve0ej7siehPzjQvsQKMpWyE8/xrTTHW2RFAAEJjGhJkK2prJ8L3EeGldQK1K1bUfuDVzuM76nhm3fj4PPYz wohlgemuth@blade"
     - name: "sajjan"
+      admin: true
       ssh_keys:
         - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHMwcHtupnprBglpu0Vrt/NQMLinnI0cPxLmstYDaIHyvyH4AcoXqPILwiMki5y3WVsYNS/aVRDjqOFoMlT0lvznmwxu7uzXtthkRcSB8dXtSkLZi9TRGewEyf4RQAAcmn9oRB5kR95YUCUXbYrKoXZz9vajY/O/pHqL+biAm4C+eakzPtNFKmGz8/Fbgb3DF1IwebvAOgvW3fkLh5UdQoRF/p+230ZytkuLRD579utlUOb8KvdN0TyRdo7fVsV59dZFOlkQDeyR/onYmZEfFh4/n/62zQp7eJY364XJAwGeZssHBCgeXi3cCPE+pLr9o9TzabY7MYeqxfv1epwA5d sajjan@S-MPB"
     - name: "diego"
+      admin: true
       ssh_keys:
         - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1vPMB1IfYQoTHktZ7Eh4VXH9Ge1Vyg5qjReLxy6IyoKl0AgwkfoUkTkIJOMJh6Lkk/u1zq829EaJIQgCtZsYfsFfPZovSD67f4oLS1cUVmxaLMf13NVlrFkaZqm6dW5IClneDXT2Qx5HgsfN0Uq9KcB+XLS7MrKXzE0033qjmCIva1s+JdcYMnSs7xC7eDUcP/FkcCbwXiDX1dXM6w3Ru5hLBbuO22ZawhOwVVxBJPRA31s35SL1lHMvuaii8h7u9qvpCmeKg2EpLAjUQ8IG+XdXiFz20swtKJ8Br35zRDMEOd/nUWrbqAsX4I8KxIaRpLJz5QyFpcPExNXY1CwRl diego@farnsworth"
         - "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBCTVNx0fsqzN9+oJstdmFiBaXBMUOD/Idav7Cjzubazgato7m/5EKTyHLsX65Y8lYasw2RPtL1LpOZpNkeyiEFk= linuxmant@gmail.com"
