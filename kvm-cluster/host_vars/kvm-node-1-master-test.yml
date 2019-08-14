@@ -1,5 +1,5 @@
 docker_node_labels:
-  kvm-node-1-gateway-prod:
+  kvm-node-1-gateway-test:
     gateway: "true"
-  kvm-node-1-prod-8x16:
+  kvm-node-1-master-test:
     elasticdb: "true"
