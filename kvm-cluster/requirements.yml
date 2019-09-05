@@ -24,3 +24,5 @@
 - src: https://github.com/privacylabs/ansible-tunnel
   version: master
   name: ansible-tunnel
+
+- src: davidwittman.redis
