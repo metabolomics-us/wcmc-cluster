@@ -20,7 +20,13 @@
   version: master
   name: nvidia.docker
 
+- src: davidwittman.redis
+
+- src: https://github.com/berlinguyinca/ansible-spark-cluster.git
+  version: master
+  name: spark
 
 - src: https://github.com/privacylabs/ansible-tunnel
   version: master
   name: ansible-tunnel
+

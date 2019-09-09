@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+export JAVA_TOOL_OPTS=-Djava.net.preferIPv4Stack=true
+
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-/etc/hadoop/conf}
+
+SPARK_MASTER_HOST={{ hostvars[groups['docker_swarm_manager'][0]]['ansible_default_ipv4']['address']}}
+SPARK_MASTER_PORT={{ spark.master_port }}
+SPARK_WORKER_PORT={{ spark.worker_work_port }}
+SPARK_WORKER_WEBUI_PORT={{ spark.worker_ui_port }} #Avoid conflict with kafka ports
+
+{% for key, value in spark.env_extras.items() | sort %}
+export {{ key }}="{{ value }}"
+{% endfor %}

@@ -24,3 +24,51 @@
     - import_role:
         name: docker
 
+##
+# this configures a redis cluster for testing purposes
+- name: configure the master redis server
+  hosts: docker_swarm_manager
+  roles:
+    - davidwittman.redis
+
+- name: configure redis slaves
+  hosts: docker_swarm_worker
+  vars:
+    - redis_slaveof: kvm-node-1-master-dev.dev.fiehnlab.ucdavis.edu 6379
+  roles:
+    - davidwittman.redis
+
+- name: configure redis web frontend
+  hosts: docker_swarm_manager
+  tasks:
+
+    - name: "remove existing service | redis-commander"
+      docker_swarm_service:
+        name: redis-commander
+        state: absent
+
+    - name: "deploy docker service | redis-commander"
+      docker_swarm_service:
+
+        name: redis-commander
+        image: rediscommander/redis-commander:latest
+        env:
+          REDIS_HOSTS: kvm-node-1-master-dev.dev.fiehnlab.ucdavis.edu
+        publish:
+          - published_port: 9999
+            target_port: 8081
+            mode: ingress
+
+
+
+
+##
+# configures a spark cluster for massive parallel computing tasks
+#
+- name: configure spark cluster for compute
+  hosts: all
+
+  roles:
+    - cluster/hdfs
+    - cluster/spark
+    - cluster/spark-cluster-admin
