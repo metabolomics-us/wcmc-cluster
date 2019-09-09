@@ -1,0 +1,204 @@
+#!/bin/bash
+
+MAX_OPEN_FILES=65536
+MAX_MAP_COUNT=262144
+
+HOSTS=({% for host in groups['all'] %} {{ host }}.{{ ansible_domain }} {% endfor %})
+
+clear
+
+function exit_with_usage {
+  cat << EOF
+
+spark-cluster.sh - Manage an Apache Spark cluster and its components
+
+SYNOPSIS
+
+usage: spark-cluster.sh [--start | --stop | --restart | --clean]
+
+EOF
+  exit 1
+}
+
+set -e
+
+if [ $# -eq 0 ]; then
+  exit_with_usage
+fi
+
+
+# Process each provided argument configuration
+while [ "${1+defined}" ]; do
+  IFS="=" read -ra PARTS <<< "$1"
+  case "${PARTS[0]}" in
+    --start)
+      START=true
+      shift
+      ;;
+    --stop)
+      STOP=true
+      shift
+      ;;
+    --restart)
+      START=true
+      STOP=true
+      shift
+      ;;
+    --clean)
+      CLEAN=true
+      shift
+      ;;
+
+    *help* | -h)
+      exit_with_usage
+     exit 0
+     ;;
+    -*)
+     echo "Error: Unknown option: $1" >&2
+     exit 1
+     ;;
+    *)  # No more options
+     break
+     ;;
+  esac
+done
+
+echo " "
+echo " "
+echo "Environment configuration ..."
+{% if hdfs_installed is defined %} echo "Hadoop Home.........= $HADOOP_HOME" {% endif %}
+{% if spark_installed is defined %} echo "Spark Home..........= $SPARK_HOME" {% endif %}
+{% if kafka_installed is defined %} echo "Kafka Home..........= $KAFKA_HOME" {% endif %}
+{% if zookeeper_installed is defined %} echo "ZK Home.............= $ZOOKEEPER_HOME" {% endif %}
+{% if elastic_search_installed is defined %} echo "Elasticsearch Home..= $ELASTICSEARCH_HOME"  {% endif %}
+echo " "
+echo " "
+
+### Stop
+if [ "$STOP" == "true" ]
+then
+   echo ">>> "
+   echo ">>> Stopping services..."
+
+{% if spark_installed is defined %}
+   echo ">>> Stopping SPARK services..."
+   cd $SPARK_HOME && ./sbin/stop-all.sh
+   sleep 5s
+{% endif %}
+
+{% if kafka_installed is defined %}
+   echo " "
+   echo ">>> Stopping KAFKA services..."
+   for i in ${HOSTS[@]}; do
+     ssh -o StrictHostKeyChecking=no root@${i} "$KAFKA_HOME/bin/kafka-server-stop.sh" || true
+   done
+   sleep 5s
+{% endif %}
+
+{% if hdfs_installed is defined %}
+   echo " "
+   echo ">>> Stopping HDFS services..."
+   cd $HADOOP_HOME && ./sbin/stop-dfs.sh
+   sleep 5s
+{% endif %}
+
+{% if zookeeper_installed is defined %}
+   echo " "
+   echo ">>> Stopping ZOOKEEPER services..."
+   for i in ${HOSTS[@]}; do
+     ssh -o StrictHostKeyChecking=no root@${i} "$ZOOKEEPER_HOME/bin/zkServer.sh stop"
+   done
+   sleep 5s
+{% endif %}
+
+{% if elastic_search_installed is defined %}
+   echo " "
+   echo ">>> Stopping ELASTICSEARCH services..."
+   kill `cat /tmp/elasticsearch-root.pid`
+   echo ">>> "
+{% endif %}
+fi
+
+## cleanup
+if [ "$CLEAN" == "true" ]
+then
+   echo " "
+   echo ">>> "
+   echo ">>> Cleaning up temporary folders..."
+
+   for i in ${HOSTS[@]}; do
+     echo ">>> Cleaning host root@${i}"
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf $HADOOP_HOME/logs/*"    || true
+
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf $SPARK_HOME/logs/*"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf $SPARK_HOME/work/*"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf $SPARK_HOME/derby.log"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf $SPARK_HOME/metastore_db"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf /tmp/spark-*.pid"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf /tmp/spark/"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf /tmp/spark-events"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf /tmp/spark-history"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf /tmp/hive/"    || true
+
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf $KAFKA_HOME/log"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf $KAFKA_HOME/logs/*" || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf /tmp/kafka-logs"    || true
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf /var/kafka"         || true
+
+     ssh -o StrictHostKeyChecking=no root@${i} "rm -rf /var/zookeeper/data/version-2"  || true
+   done
+
+   echo ">>> "
+   echo " "
+fi
+
+
+## start
+if [ "$START" == "true" ]
+then
+   echo ">>> "
+   echo ">>> Starting services..."
+
+{% if zookeeper_installed is defined %}
+   echo " "
+   echo ">>> Starting ZOOKEEPER services..."
+   for i in ${HOSTS[@]}; do
+     ssh -o StrictHostKeyChecking=no root@${i} "$ZOOKEEPER_HOME/bin/zkServer.sh start"
+   done
+   sleep 10s
+{% endif %}
+
+{% if hdfs_installed is defined %}
+   echo " "
+   echo ">>> Starting HDFS services..."
+   cd $HADOOP_HOME && ./sbin/start-dfs.sh
+   sleep 10s
+{% endif %}
+
+{% if kafka_installed is defined %}
+   echo " "
+   echo ">>> Starting KAFKA services..."
+   for i in ${HOSTS[@]}; do
+     ssh -o StrictHostKeyChecking=no root@${i} "nohup $KAFKA_HOME/bin/kafka-server-start.sh $KAFKA_HOME/config/server.properties > $KAFKA_HOME/logs/kafka.log 2>&1 &"
+   done
+   sleep 10s
+{% endif %}
+
+{% if spark_installed is defined %}
+   echo " "
+   echo ">>> Starting Spark services..."
+   cd $SPARK_HOME && ./sbin/start-all.sh
+   sleep 10s
+{% endif %}
+
+{% if elastic_search_installed is defined %}
+   echo " "
+   echo ">>> Starting Elasticsearch services..."
+   rm -rf $ELASTICSEARCH_HOME/logs/*
+   ulimit -n $MAX_OPEN_FILES
+   sysctl -q -w vm.max_map_count=$MAX_MAP_COUNT
+#   /bin/su elasticsearch -s /bin/bash -c "cd $ELASTICSEARCH_HOME && ./bin/elasticsearch -d -p /tmp/elasticsearch.pid"
+   echo ">>> "
+{% endif %}
+
+fi

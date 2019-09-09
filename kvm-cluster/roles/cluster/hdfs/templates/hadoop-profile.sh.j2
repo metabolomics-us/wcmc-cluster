@@ -1,0 +1,10 @@
+export HADOOP_PREFIX=/opt/hadoop-{{ hadoop.version }}
+export HADOOP_COMMON_HOME=/opt/hadoop-{{ hadoop.version }}
+export HADOOP_HDFS_HOME=/opt/hadoop-{{ hadoop.version }}
+export HADOOP_MAPRED_HOME=/opt/hadoop-{{ hadoop.version }}
+#export HADOOP_YARN_HOME=/opt/hadoop-{{ hadoop.version }}
+export HADOOP_CONF_DIR=/opt/hadoop-{{ hadoop.version }}/etc/hadoop
+#export YARN_CONF_DIR=/opt/hadoop-{{ hadoop.version }}/etc/hadoop
+
+export HADOOP_HOME=/opt/hadoop-{{ hadoop.version }}
+export PATH=$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
