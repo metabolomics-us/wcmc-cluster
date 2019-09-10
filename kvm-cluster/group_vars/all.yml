@@ -32,7 +32,7 @@ sshuttle:
     gateway: "a2800903d1e0.sn.mynetname.net:2022"
     destination: "192.168.88.20/32"
     alias: "tunnel.home"
-    flags: "--dns"
+    flags: ""
 
   - route:
     owner: sajjan
@@ -79,3 +79,14 @@ alias:
     owner: wohlgemuth
     name: ssh thinkpad-t480s.office.fiehnlab.ucdavis.edu
     alias: ssh.thinkpad
+
+  - command:
+    owner: wohlgemuth
+    name: ssh kvm-node-1-master-dev.dev.fiehnlab.ucdavis.edu
+    alias: ssh.dev
+
+  - command:
+    owner: wohlgemuth
+    name: ssh kvm-node-1-master-prod.cluster.fiehnlab.ucdavis.edu
+    alias: ssh.prod
+

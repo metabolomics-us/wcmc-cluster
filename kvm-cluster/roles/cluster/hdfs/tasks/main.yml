@@ -1,12 +1,18 @@
 - name: set hdfs fact
   set_fact: hdfs_installed=True
 
-#- name: Create service account for HDFS
-#  user: name={{ hadoop.user }}
-#        system=yes
-#        shell={{ hadoop.user_shell }}
-#        state=present
-#        groups="{{ hadoop.user_groups | join(',') }}"
+- name: Create service account for HDFS
+  user: name={{ hadoop.user }}
+        system=yes
+        shell={{ hadoop.user_shell }}
+        state=present
+        groups="{{ hadoop.user_groups | join(',') }}"
+
+- name: allow access to all hosts
+  include_role:
+    name: purpose/pwdlessssh
+  vars:
+    pwdless: "{{ hadoop.user }}"
 
 - name: install java
   apt:
@@ -45,9 +51,9 @@
   file:
     path: "{{ hadoop.data_dir }}"
     state: directory
-#    owner: "{{ hadoop.user }}"
-#    group: "{{ hadoop.user }}"
-#  become: true
+    owner: "{{ hadoop.user }}"
+    group: "{{ hadoop.user }}"
+  become: true
 
 - name: remove pre-existent hadoop name directory
   file:
@@ -58,9 +64,9 @@
   file:
     path: "{{ hadoop.name_dir }}"
     state: directory
-#    owner: "{{ hadoop.user }}"
-#    group: "{{ hadoop.user }}"
-#  become: true
+    owner: "{{ hadoop.user }}"
+    group: "{{ hadoop.user }}"
+  become: true
 
 
 - name: remove pre-existent hadoop temp directory
@@ -72,17 +78,17 @@
   file:
     path: "{{ hadoop.temp_dir }}"
     state: directory
-#    owner: "{{ hadoop.user }}"
-#    group: "{{ hadoop.user }}"
-#  become: true
+    owner: "{{ hadoop.user }}"
+    group: "{{ hadoop.user }}"
+  become: true
 
 - name: create install directory
   file:
     path: "/opt/{{ hadoop.hadoop_install_dir }}"
     state: directory
-#    owner: "{{ hadoop.user }}"
-#    group: "{{ hadoop.user }}"
-#  become: true
+    owner: "{{ hadoop.user }}"
+    group: "{{ hadoop.user }}"
+  become: true
 
 - debug:
     msg: "Downloading Hadoop from: {{ hadoop.download_location }}/hadoop-{{ hadoop.version }}/{{ hadoop.hadoop_archive }}"
