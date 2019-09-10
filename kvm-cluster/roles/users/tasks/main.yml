@@ -50,6 +50,7 @@
   register: ssh_keys
 
 - name: Allow passwordless SSH between all hosts
+  when: "{{'ssh_keys' in hostvars[item]}}"
   lineinfile:
     dest: "/home/{{ user.name }}/.ssh/authorized_keys"
     state: present

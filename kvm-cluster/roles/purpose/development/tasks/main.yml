@@ -33,3 +33,7 @@
 - name: "image magick"
   apt:
     name: [imagemagick]
+
+- name: "spark client"
+  include_role:
+    name: cluster/spark-client
