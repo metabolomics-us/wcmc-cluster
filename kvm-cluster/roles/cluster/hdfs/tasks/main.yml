@@ -3,10 +3,10 @@
 
 - name: Create service account for HDFS
   user: name={{ hadoop.user }}
-        system=yes
-        shell={{ hadoop.user_shell }}
-        state=present
-        groups="{{ hadoop.user_groups | join(',') }}"
+    system=yes
+    shell={{ hadoop.user_shell }}
+    state=present
+    groups="{{ hadoop.user_groups | join(',') }}"
 
 - name: allow access to all hosts
   include_role:
@@ -53,12 +53,14 @@
     state: directory
     owner: "{{ hadoop.user }}"
     group: "{{ hadoop.user }}"
+    recurse: yes
   become: true
 
 - name: remove pre-existent hadoop name directory
   file:
     path: "{{ hadoop.name_dir }}/"
     state: absent
+  become: true
 
 - name: create hadoop name directory
   file:
@@ -67,6 +69,13 @@
     owner: "{{ hadoop.user }}"
     group: "{{ hadoop.user }}"
   become: true
+
+- name: change permissions for name dir
+  file:
+    path: "{{ hadoop.name_dir }}"
+    owner: "{{ hadoop.user }}"
+    group: "{{ hadoop.user }}"
+    recurse: yes
 
 
 - name: remove pre-existent hadoop temp directory
@@ -80,6 +89,7 @@
     state: directory
     owner: "{{ hadoop.user }}"
     group: "{{ hadoop.user }}"
+    recurse: yes
   become: true
 
 - name: create install directory
@@ -119,8 +129,11 @@
     dest: /etc/profile.d/hadoop-profile.sh
     mode: 0644
 
+
+
 - name: format hdfs
   shell: "bin/hdfs namenode -format"
   args:
     chdir: "/opt/{{ hadoop.hadoop_install_dir }}"
   when: (inventory_hostname in groups['docker_swarm_manager'])
+  become_user: "{{ hadoop.user  }}"
