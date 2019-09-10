@@ -7,6 +7,6 @@
     </property>
     <property>
        <name>fs.default.name</name>
-       <value>hdfs://{{ groups['docker_swarm_manager'][0] }}.{{ ansible_domain }}:9000</value>
+       <value>hdfs://{{ hostvars[groups['docker_swarm_manager'][0]]['ansible_default_ipv4']['address'] }}:9000</value>
     </property>
 </configuration>

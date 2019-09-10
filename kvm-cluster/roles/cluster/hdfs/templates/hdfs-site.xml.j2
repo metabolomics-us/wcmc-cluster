@@ -11,12 +11,12 @@
     </property>
     <property>
          <name>dfs.data.dir</name>
-         <value>{{ hadoop.data_dir }}</value>
+         <value>file://{{ hadoop.data_dir }}</value>
          <final>true</final>
       </property>
       <property>
          <name>dfs.name.dir</name>
-         <value>{{ hadoop.name_dir }}</value>
+         <value>file://{{ hadoop.name_dir }}</value>
          <final>true</final>
       </property>
 </configuration>

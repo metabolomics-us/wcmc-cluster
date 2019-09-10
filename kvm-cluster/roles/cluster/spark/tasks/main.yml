@@ -5,29 +5,11 @@
     state=present
     groups="{{ spark.user_groups | join(',') }}"
 
-- name: "generate ssh keys"
-  openssh_keypair:
-    path: "/home/{{ spark.user }}/.ssh/id_rsa"
-  become: "{{ spark.user }}"
-
-- name: "set correct ssh permissions"
-  file:
-    dest: "/home/{{ spark.user }}/.ssh"
-    owner: "{{ spark.user }}"
-    group: "{{ spark.user }}"
-    recurse: yes
-
-
-- name: Allow passwordless SSH between all hosts
-  shell: "/bin/cat /home/{{ spark.user }}/.ssh/id_rsa.pub"
-  register: ssh_keys
-
-- name: Allow passwordless SSH between all hosts
-  lineinfile:
-    dest: "/home/{{ spark.user }}/.ssh/authorized_keys"
-    state: present
-    line:  " {{ hostvars[item]['ssh_keys']['stdout'] }}"
-  with_items: "{{ groups['all']}}"
+- name: allow access to all hosts
+  include_role:
+    name: purpose/pwdlessssh
+  vars:
+    pwdless: "{{ spark.user }}"
 
 - name: set spark fact
   set_fact: spark_installed=True

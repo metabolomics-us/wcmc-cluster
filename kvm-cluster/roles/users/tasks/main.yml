@@ -45,17 +45,11 @@
   loop_control:
     loop_var: my_ssh_key
 
-- name: Allow passwordless SSH between all hosts
-  shell: "/bin/cat /home/{{ user.name }}/.ssh/id_rsa.pub"
-  register: ssh_keys
-
-- name: Allow passwordless SSH between all hosts
-  when: "{{'ssh_keys' in hostvars[item]}}"
-  lineinfile:
-    dest: "/home/{{ user.name }}/.ssh/authorized_keys"
-    state: present
-    line:  " {{ hostvars[item]['ssh_keys']['stdout'] }}"
-  with_items: "{{ groups['all']}}"
+- name: allow access to all hosts
+  include_role:
+    name: purpose/pwdlessssh
+  vars:
+    pwdless: "{{ user.name }}"
 
 - name: "install tmux for user {{ user.name }}"
   include_role:
