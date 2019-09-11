@@ -1,4 +1,10 @@
 ##
+# only contains hosts, which need a barebone setup and should be always cleared out after
+# initial setup
+[barebone]
+
+
+##
 # this group contains all physical barebone nodes which
 # please configure accordingly!
 [node]
@@ -9,6 +15,8 @@ kvm-node-3	ansible_ssh_host=kvm-node-3
 kvm-node-4	ansible_ssh_host=kvm-node-4
 kvm-node-5	ansible_ssh_host=kvm-node-5
 kvm-node-6	ansible_ssh_host=kvm-node-6
+kvm-node-7	ansible_ssh_host=kvm-node-7
+kvm-node-8	ansible_ssh_host=kvm-node-8
 
 ##
 # workstations
@@ -65,6 +73,8 @@ kvm-node-3
 kvm-node-4
 kvm-node-5
 kvm-node-6
+kvm-node-7
+kvm-node-8
 
 ##
 # this group defines which nodes should provide virtual machines
@@ -76,7 +86,8 @@ kvm-node-3
 kvm-node-4
 kvm-node-5
 kvm-node-6
-
+kvm-node-7
+kvm-node-8
 
 [systems:children]
 laptops
