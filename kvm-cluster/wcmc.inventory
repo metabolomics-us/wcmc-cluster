@@ -1,3 +1,4 @@
+
 ##
 # this group contains all physical barebone nodes which
 # please configure accordingly!
@@ -9,6 +10,9 @@ kvm-node-3	ansible_ssh_host=kvm-node-3
 kvm-node-4	ansible_ssh_host=kvm-node-4
 kvm-node-5	ansible_ssh_host=kvm-node-5
 kvm-node-6	ansible_ssh_host=kvm-node-6
+kvm-node-7	ansible_ssh_host=kvm-node-7
+kvm-node-8	ansible_ssh_host=kvm-node-8
+kvm-node-9	ansible_ssh_host=kvm-node-9
 
 ##
 # workstations
@@ -19,7 +23,7 @@ workstation-wohlgemuth ansible_ssh_host=192.168.30.231 #leela.cluster.fiehnlab.u
 ##
 # laptops
 [laptops]
-thinkpad-wohlgemuth   ansible_ssh_host=thinkpad-t480s.office.fiehnlab.ucdavis.edu
+thinkpad-wohlgemuth ansible_ssh_host=thinkpad-t480s.office.fiehnlab.ucdavis.edu
 
 ##
 # servers
@@ -65,6 +69,9 @@ kvm-node-3
 kvm-node-4
 kvm-node-5
 kvm-node-6
+kvm-node-7
+kvm-node-8
+kvm-node-9
 
 ##
 # this group defines which nodes should provide virtual machines
@@ -76,9 +83,32 @@ kvm-node-3
 kvm-node-4
 kvm-node-5
 kvm-node-6
-
+kvm-node-7
+kvm-node-8
+kvm-node-9
 
 [systems:children]
 laptops
 workstations
 servers
+
+
+##
+# logical group don't touch it
+[barebone]
+
+##
+# all children of barebone servers
+# these are groupds
+[barebone:children]
+hpg7
+other
+
+##
+# hp-g7 to be initializes
+# remove ips after initialization is complete
+[hpg7]
+
+##
+# none standard servers, each need a custom file definition!
+[other]

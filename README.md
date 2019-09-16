@@ -32,7 +32,21 @@ Which will provide you with a basic architecture to work off.
 5. 4x1GB on board network cards, which will be bonded
 6. Ansible 2.8
 7. correctly configured dns server, which automatically registers the names of the generated kvm-vm machines.
+8. setup each baremetal system with a super user account called 'wohlgemuth' and the super secret password
 
+### Initialize a barebone system
+
+this will prep usernames and the minimum network configuration and it's dependent on the hardware utilize
+
+#### HP G7
+
+
+
+### Installing the barebone cluster
+
+this will install the KVM cluster on all define machines
+
+./deploy-cluster.sh
 
 ### What does this do on the barebone servers
 
