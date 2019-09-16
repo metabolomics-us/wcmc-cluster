@@ -1,6 +1,14 @@
-virtual_machines:
+virtual_machines: []
   # none specified, will mostly run windows only
 
+##
+# configuration of your storage backends
+storage:
+
+  ##
+  # here we will store all KVM related content.
+  #
+  device: "/dev/md0"
 ##
 network:
 
