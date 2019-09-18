@@ -4,5 +4,6 @@ ansible_python_interpreter: /usr/bin/python3
 accounts:
   users:
     - name: "wohlgemuth"
+      admin: true
       ssh_keys:
         - "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"

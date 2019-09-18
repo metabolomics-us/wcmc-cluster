@@ -1,0 +1,46 @@
+- name: Check if the key already exists
+  stat:
+      path: "/home/{{ pwdless }}/.ssh/id_rsa.pub"
+  register: stat_result
+
+- name: "generate dir if missing"
+  file:
+    path: "/home/{{ pwdless }}/.ssh"
+    state: directory
+    mode: '0700'
+    owner: "{{ pwdless }}"
+    group: "{{ pwdless }}"
+  become: true
+
+
+- name: "generate ssh keys"
+  openssh_keypair:
+    path: "/home/{{ pwdless }}/.ssh/id_rsa"
+  become: true
+  when: stat_result.stat.exists == False
+
+- name: "set correct ssh permissions"
+  file:
+    dest: "/home/{{ pwdless }}/.ssh"
+    owner: "{{ pwdless }}"
+    group: "{{ pwdless }}"
+    recurse: yes
+
+- name: "touch authorized keys file"
+  file:
+    path: "/home/{{ pwdless }}/.ssh/authorized_keys"
+    state: touch
+    mode: '0644'
+
+
+- name: Allow passwordless SSH between all hosts
+  shell: "/bin/cat /home/{{ pwdless }}/.ssh/id_rsa.pub"
+  register: ssh_keys
+
+- name: Allow passwordless SSH between all hosts
+  when: '"ssh_keys" in hostvars[item]'
+  lineinfile:
+    dest: "/home/{{ pwdless }}/.ssh/authorized_keys"
+    state: present
+    line:  " {{ hostvars[item]['ssh_keys']['stdout'] }}"
+  with_items: "{{ groups['all']}}"

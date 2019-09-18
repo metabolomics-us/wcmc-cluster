@@ -6,13 +6,16 @@
     unit: GiB
   register: nvme_info
 
+- debug:
+    var: (nvme_info.partitions | sort(attribute='num') | last).num
+
 - name: "remove partitions if layout is none expected"
   parted:
     device: "{{storage.device}}"
     number: "{{part.num}}"
     state: absent
   with_items: "{{nvme_info.partitions}}"
-  when: nvme_info.partitions | length != 1
+  when: (nvme_info.partitions | sort(attribute='num') | last).num > 1
   loop_control:
     loop_var: part
 
@@ -21,8 +24,8 @@
     device: "{{storage.device}}"
     number: 1
     state: present
-    part_end: "0%"
-    part_start: "99%"
+    part_end: "98%"
+    part_start: "1%"
 
 - name: "format disk in ext4, if not done so"
   filesystem:

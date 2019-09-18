@@ -1,0 +1,128 @@
+virtual_machines: []
+  # none specified, will mostly run windows only
+
+##
+# configuration of your storage backends
+storage:
+
+  ##
+  # here we will store all KVM related content.
+  #
+  device: "/dev/md0"
+##
+network:
+
+  ##
+  # this contains the general network configuration, which should be adapted to local host needs
+  netplan:
+    configuration:
+      network:
+        ethernets:
+          enp7s0f0: {}
+          enp7s0f1: {}
+          enp7s0f2: {}
+          enp7s0f3: {}
+
+          ##
+          # cluster internal network
+          enp2s0:
+            dhcp4: false
+
+        bonds:
+          bond0:
+            parameters:
+              mode: 802.3ad
+              lacp-rate: fast
+              mii-monitor-interval: 50
+            interfaces:
+              - enp7s0f0
+              - enp7s0f1
+              - enp7s0f2
+              - enp7s0f3
+            mtu: 9000
+            dhcp4: true
+
+        vlans:
+          # delegate to the bridges
+          vlan.prod:
+            id: 30
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.test:
+            id: 31
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nas:
+            id: 111
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nvme:
+            id: 110
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+          vlan.dev:
+            id: 32
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
+        # defines brigdes for KVM based interfaces
+        bridges:
+
+          # production cluster resides in this network
+          br.prod:
+            interfaces:
+              - vlan.prod
+            dhcp6: false
+            dhcp4: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.30.28/24
+          br.dev:
+            interfaces:
+              - vlan.dev
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.32.28/24
+
+
+          # test cluster resides in this network
+          br.test:
+            interfaces:
+              - vlan.test
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.31.28/24
+          # shared services reside in this network
+          br.nvme:
+            interfaces:
+              - vlan.nvme
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.110.28/24
+
+          # data access resides in this network
+          br.nas:
+            interfaces:
+              - vlan.nas
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.111.28/24

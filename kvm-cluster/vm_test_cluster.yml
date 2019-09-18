@@ -57,3 +57,9 @@
       vars:
         nfs_cluster: test
         nfs_dir: jenkins
+
+    - import_role:
+        name: fiehnlab/mona
+      vars:
+        nfs_cluster: test
+        nfs_dir: mona

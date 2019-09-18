@@ -2,6 +2,7 @@
 accounts:
   users:
     - name: "wohlgemuth"
+      admin: true
       ssh_keys:
         - "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
       git:
@@ -9,5 +10,19 @@ accounts:
         email: "berlinguyinca@gmail.com"
 
 
+sshuttle:
+  - route:
+    owner: wohlgemuth
+    # we want to route all traffic using this host
+    gateway: "a2800903d1e0.sn.mynetname.net:2022"
+    destination: "192.168.88.20/32"
+    alias: "tunnel.home"
+    flags: ""
 
-
+  - route:
+    owner: wohlgemuth
+    # we want to route all traffic using this host
+    gateway: "a2800903d1e0.sn.mynetname.net:2022"
+    destination: "172.16.4.0/24"
+    alias: "tunnel.bot"
+    flags: ""

@@ -118,6 +118,10 @@
   ##
   # here we somehow need to combine all the host variables into 1
   # - name: aggregate into one varaible
+- name: generate empty list, if no virtaul machine is defined
+  set_fact:
+    deployed_vms: []
+  when: deployed_vms is not defined
 
 ##
 # this builds new environment files

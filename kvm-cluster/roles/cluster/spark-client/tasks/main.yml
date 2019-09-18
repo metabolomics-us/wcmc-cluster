@@ -1,0 +1,35 @@
+
+- name: set spark fact
+  set_fact: spark_installed=True
+
+- name: set spark installation path fact
+  set_fact: spark_installation_dir=spark-{{ spark.version }}-bin-hadoop{{ spark.hadoop_version }}
+
+- name: set spark archive fact
+  set_fact: spark_archive=spark-{{ spark.version }}-bin-hadoop{{ spark.hadoop_version }}.tgz
+
+- name: set spark download location fact
+  set_fact: spark_download={{ spark.download_location }}/spark-{{ spark.version }}/{{ spark_archive }}
+
+- name: set spark home location
+  set_fact: spark_home=/opt/spark
+- name: create install directory
+  file:
+    path: "{{spark_home}}"
+    state: directory
+
+- debug:
+    msg: "Downloading Spark from: {{ spark_download }}"
+
+- name: download spark
+  get_url: url="{{ spark_download }}" dest="/tmp/{{ spark_archive }}"
+
+- name: unarchive to the install directory
+  shell: "tar -xvf /tmp/{{ spark_archive }} --strip 1 --directory {{ spark_home }}"
+
+# Environment setup.
+- name: add spark profile to startup
+  template:
+    src: spark-profile.sh.j2
+    dest: /etc/profile.d/spark-profile.sh
+    mode: 0644

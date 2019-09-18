@@ -1,0 +1,3 @@
+{% for host in groups['kvm_vm'] %}
+{{ hostvars[host]['ansible_hostname'] }}.{{ ansible_domain }}
+{% endfor %}

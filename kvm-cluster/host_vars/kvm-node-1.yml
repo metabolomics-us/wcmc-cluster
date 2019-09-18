@@ -1,6 +1,6 @@
 virtual_machines:
   - machine:
-    name: test-2x4
+    name: master-test
     cpus: 2
     memory: 4096
     storage_size: 80000
@@ -12,7 +12,7 @@ virtual_machines:
     manager_possible: true # possible to be a manager, if running on a manager node
 
   - machine:
-    name: prod-8x16
+    name: master-prod
     cpus: 8
     memory: 16384
     storage_size: 160000
@@ -24,7 +24,7 @@ virtual_machines:
     manager_possible: true # possible to be a manager, if running on a manager node
 
   - machine:
-    name: dev-4x16
+    name: master-dev
     cpus: 4
     memory: 16384
     storage_size: 160000
@@ -120,6 +120,12 @@ network:
             dhcp4: false
             dhcp6: false
 
+          vlan.dev:
+            id: 32
+            link: bond0
+            dhcp4: false
+            dhcp6: false
+
           # delegate to the bridges
           vlan.nas:
             id: 111
@@ -147,34 +153,50 @@ network:
             nameservers:
               addresses:
                 - 192.168.5.1
+          br.dev:
+            interfaces:
+              - vlan.dev
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.32.20/24
 
           # production cluster resides in this network
           br.prod:
             interfaces:
               - vlan.prod
             dhcp6: false
-            dhcp4: true
+            dhcp4: false
             dhcp-identifier: mac
+            addresses:
+              - 192.168.30.20/24
 
           # test cluster resides in this network
           br.test:
             interfaces:
               - vlan.test
-            dhcp4: true
+            dhcp4: false
             dhcp6: false
             dhcp-identifier: mac
-
+            addresses:
+              - 192.168.31.20/24
           # shared services reside in this network
           br.nvme:
             interfaces:
               - vlan.nvme
-            dhcp4: true
+            dhcp4: false
             dhcp6: false
             dhcp-identifier: mac
+            addresses:
+              - 192.168.110.20/24
+
           # data access resides in this network
           br.nas:
             interfaces:
               - vlan.nas
-            dhcp4: true
+            dhcp4: false
             dhcp6: false
             dhcp-identifier: mac
+            addresses:
+              - 192.168.111.20/24
