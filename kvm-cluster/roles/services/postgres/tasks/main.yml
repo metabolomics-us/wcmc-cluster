@@ -1,0 +1,81 @@
+- name: install pgsql requirement
+  when:
+    - "'docker_swarm_manager' in group_names"
+  apt: name=python3-psycopg2 state=present
+  become: true
+
+# Requires the nfs_cluster and nsf_dir vars to be set in the playbook task definition
+- name: "configure nfs mount"
+  include_role:
+    name: fiehnlab-utils/nfs-mount-init
+  when:
+    - "db_on_nfs"
+
+- name: "deploy postgres over NFS"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - "db_on_nfs"
+  docker_swarm_service:
+    name: "postgres-{{db_name}}"
+    image: postgres:9
+    state: present
+    mounts:
+      - type: volume
+        target: /var/lib/postgresql/data
+        source: "postgres_data_{{ db_name }}"
+        driver_config:
+          name: local
+          options:
+            type: nfs
+            device: ":/mnt/{{nfs_cluster}}/{{nfs_dir}}"
+            o: "addr={{nfs.host}},nolock,soft,rw"
+    replicas: 1
+    env:
+      POSTGRES_USER: "{{ db_user }}"
+      POSTGRES_DB: "{{ db_name }}"
+      POSTGRES_PASSWORD: "{{ db_password }}"
+
+    publish:
+      - mode: ingress
+        published_port: "{{ db_port }}"
+        target_port: 5432
+
+    placement:
+      constraints:
+        - "{{db_placement}}"
+
+- name: "deploy postgres on file system"
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - "not db_on_nfs"
+  docker_swarm_service:
+    name: "postgres-{{db_name}}"
+    image: postgres:9
+    state: present
+    mounts:
+      - type: volume
+        target: /var/lib/postgresql/data
+        source: "postgres_data_{{ db_name }}"
+    replicas: 1
+    env:
+      POSTGRES_USER: "{{ db_user }}"
+      POSTGRES_DB: "{{ db_name }}"
+      POSTGRES_PASSWORD: "{{ db_password }}"
+
+    publish:
+      - mode: ingress
+        published_port: "{{ db_port }}"
+        target_port: 5432
+    placement:
+      constraints:
+        - "{{db_placement}}"
+
+- name: "create database {{ db_name }}"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  postgresql_db:
+    name: "{{ db_name }}"
+    login_user: "{{ db_user }}"
+    login_host: "{{groups['docker_swarm_manager'][0]}}"
+    login_password: "{{ db_password }}"
+    state: present

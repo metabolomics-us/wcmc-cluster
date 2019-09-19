@@ -1,0 +1,7 @@
+---
+db_name: database
+db_user: database
+db_password: database
+db_port: 5432
+db_on_nfs: false
+db_placement: "node.role == manager"

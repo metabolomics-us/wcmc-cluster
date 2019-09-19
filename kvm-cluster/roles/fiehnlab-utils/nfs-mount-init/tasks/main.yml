@@ -1,10 +1,10 @@
 ---
-- name: "mount the desired nfs folder"
+- name: "mount the desired nfs folder from server {{nfs.host}}:/mnt/{{nfs_cluster}} /mnt/nfs"
   when:
     - "'docker_swarm_manager' in group_names"
   mount:
     path: /mnt/nfs
-    src: "nas1.nas.fiehnlab.ucdavis.edu:/mnt/{{nfs_cluster}}"
+    src: "{{nfs.host}}:/mnt/{{nfs_cluster}}"
     fstype: nfs
     state: mounted
   tags:

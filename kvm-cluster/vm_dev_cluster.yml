@@ -25,7 +25,23 @@
         name: docker
 
 ##
-# this configures a redis cluster for testing purposes
+# this configures postgres databases for development purposes
+- name: configure postgres databases
+  hosts: docker_swarm_manager
+  vars:
+    nfs_cluster: dev
+    nfs:
+      host: "nas1.nas.fiehnlab.ucdavis.edu"
+
+    db_name: machine
+    db_user: machine
+    db_password: machine
+    nfs_dir: "postgres/{{db_name}}"
+  roles:
+    - services/postgres
+
+##
+# this configures a redis cluster for development purposes
 - name: configure the master redis server
   hosts: docker_swarm_manager
   roles:
@@ -58,9 +74,6 @@
           - published_port: 9999
             target_port: 8081
             mode: ingress
-
-
-
 
 ##
 # configures a spark cluster for massive parallel computing tasks
