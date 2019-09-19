@@ -1,6 +1,3 @@
 ---
 git:
   remote_directory: "/mnt/git/docker-swarm-cluster"
-
-nfs:
-  host: "nas1.nas.fiehnlab.ucdavis.edu"

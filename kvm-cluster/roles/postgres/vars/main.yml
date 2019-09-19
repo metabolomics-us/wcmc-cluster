@@ -1,6 +1,0 @@
----
-msms_db_name: msms_data
-msms_db_user: msms
-
-nfs:
-  host: "nas1.nas.fiehnlab.ucdavis.edu"
