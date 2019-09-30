@@ -24,6 +24,16 @@
     - import_role:
         name: docker
 
+- name: "configure monitioring solutions"
+  hosts: kvm_vm_dev_cluster
+  tasks:
+
+    - import_role:
+        name: elk
+      vars:
+        nfs_cluster: test
+        nfs_dir: logging_elasticsearch
+
 ##
 # this configures postgres databases for development purposes
 - name: configure postgres databases
