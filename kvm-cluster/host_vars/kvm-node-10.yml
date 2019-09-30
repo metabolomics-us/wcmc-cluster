@@ -1,14 +1,43 @@
-virtual_machines: []
+virtual_machines:
+
+  - machine:
+    name: prod-8x64
+    cpus: 8
+    memory: 64000
+    storage_size: 160000
+    network:
+      - br.prod
+    pool: nvme
+    group: prod_cluster
+    domain: cluster.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
+
+  - machine:
+    name: prod-16x32
+    cpus: 16
+    memory: 32000
+    storage_size: 160000
+    network:
+      - br.prod
+    pool: nvme
+    group: prod_cluster
+    domain: cluster.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
+
+  - machine:
+    name: dev-4x16
+    cpus: 4
+    memory: 16384
+    storage_size: 160000
+    network:
+      - br.dev
+    pool: nvme
+    group: dev_cluster
+    domain: dev.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
+
   # none specified, will mostly run windows only
 
-##
-# configuration of your storage backends
-storage:
-
-  ##
-  # here we will store all KVM related content.
-  #
-  device: "/dev/nvme0n1"
 ##
 network:
 
