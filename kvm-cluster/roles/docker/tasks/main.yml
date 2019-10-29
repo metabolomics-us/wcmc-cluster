@@ -36,8 +36,8 @@
 - name: setup swarm | manager
   docker_swarm:
     state: present
-    advertise_addr: "{{ docker.nic }}:4567"
-    listen_addr: "{{ docker.nic }}:2377"
+    advertise_addr: "{{ docker.nic }}"
+    listen_addr: "0.0.0.0:2377"
   tags:
     - swarm
   when:

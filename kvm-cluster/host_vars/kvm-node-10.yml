@@ -1,0 +1,139 @@
+virtual_machines:
+
+  - machine:
+    name: prod-8x64
+    cpus: 8
+    memory: 64000
+    storage_size: 160000
+    network:
+      - br.prod
+    pool: nvme
+    group: prod_cluster
+    domain: cluster.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
+
+  - machine:
+    name: prod-16x32
+    cpus: 16
+    memory: 32000
+    storage_size: 160000
+    network:
+      - br.prod
+    pool: nvme
+    group: prod_cluster
+    domain: cluster.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
+
+  - machine:
+    name: dev-4x16
+    cpus: 4
+    memory: 16384
+    storage_size: 160000
+    network:
+      - br.dev
+    pool: nvme
+    group: dev_cluster
+    domain: dev.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
+
+  # none specified, will mostly run windows only
+
+##
+network:
+
+  ##
+  # this contains the general network configuration, which should be adapted to local host needs
+  netplan:
+    configuration:
+      network:
+        ethernets:
+          eno1: {}
+          eno2:
+            dhcp4: true
+          eno3: {}
+          eno4: {}
+
+        vlans:
+          # delegate to the bridges
+          vlan.prod:
+            id: 30
+            link: eno2
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.test:
+            id: 31
+            link: eno2
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nas:
+            id: 111
+            link: eno2
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nvme:
+            id: 110
+            link: eno2
+            dhcp4: false
+            dhcp6: false
+          vlan.dev:
+            id: 32
+            link: eno2
+            dhcp4: false
+            dhcp6: false
+
+        # defines brigdes for KVM based interfaces
+        bridges:
+
+          # production cluster resides in this network
+          br.prod:
+            interfaces:
+              - vlan.prod
+            dhcp6: false
+            dhcp4: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.30.29/24
+          br.dev:
+            interfaces:
+              - vlan.dev
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.32.29/24
+
+
+          # test cluster resides in this network
+          br.test:
+            interfaces:
+              - vlan.test
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.31.29/24
+          # shared services reside in this network
+          br.nvme:
+            interfaces:
+              - vlan.nvme
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.110.29/24
+
+          # data access resides in this network
+          br.nas:
+            interfaces:
+              - vlan.nas
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.111.29/24
