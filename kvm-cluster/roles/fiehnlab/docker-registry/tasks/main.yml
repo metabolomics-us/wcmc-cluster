@@ -17,3 +17,7 @@
     NFS_PATH: "/mnt/{{nfs_cluster}}/{{nfs_dir}}"
   tags:
     - deploy_docker_registry
+
+- name: "pause to ensure services have completely started before continuing deployment"
+  pause:
+    seconds: 30

@@ -17,3 +17,7 @@
     compose: "{{git.remote_directory}}/proxy/docker-compose-stack.yml"
   tags:
     - deploy_proxy
+
+- name: "pause to ensure services have completely started before continuing deployment"
+  pause:
+    seconds: 30
