@@ -53,21 +53,6 @@
     - import_role:
         name: fiehnlab/proxy
 
-    # DevOps
-    - import_role:
-        name: fiehnlab/jenkins
-      vars:
-        # Note, mounting on the test mount is currently important
-        nfs_cluster: test
-        nfs_dir: jenkins
-
-    - import_role:
-        name: fiehnlab/tuleap
-      vars:
-        # Note, mounting on the test mount is currently important
-        nfs_cluster: test
-        nfs_dir: tuleap
-
     # Services
     - import_role:
         name: fiehnlab/binbase
