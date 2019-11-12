@@ -53,6 +53,13 @@
     - import_role:
         name: fiehnlab/proxy
 
+    # Docker registry, required for most fiehnlab services
+    - import_role:
+        name: fiehnlab/docker-registry
+      vars:
+        nfs_cluster: prod
+        nfs_dir: docker-registry
+
     # Services
     - import_role:
         name: fiehnlab/binbase
@@ -74,12 +81,6 @@
 
     - import_role:
         name: fiehnlab/cts
-
-    - import_role:
-        name: fiehnlab/docker-registry
-      vars:
-        nfs_cluster: prod
-        nfs_dir: docker-registry
 
     - import_role:
         name: fiehnlab/eureka
