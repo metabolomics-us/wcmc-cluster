@@ -32,11 +32,11 @@
     - import_role:
         name: docker
 
-    - import_role:
-        name: elk
-      vars:
-        nfs_cluster: test
-        nfs_dir: logging_elasticsearch
+#   - import_role:
+#       name: elk
+#     vars:
+#       nfs_cluster: test
+#       nfs_dir: logging_elasticsearch
 
     - import_role:
         name: monitoring

@@ -22,6 +22,14 @@ sshuttle:
   - route:
     owner: wohlgemuth
     # we want to route all traffic using this host
+    gateway: "main.fiehnlab.ucdavis.edu"
+    destination: "192.168.50.0/32"
+    alias: "tunnel.work"
+    flags: ""
+
+  - route:
+    owner: wohlgemuth
+    # we want to route all traffic using this host
     gateway: "a2800903d1e0.sn.mynetname.net:2022"
     destination: "172.16.4.0/24"
     alias: "tunnel.bot"

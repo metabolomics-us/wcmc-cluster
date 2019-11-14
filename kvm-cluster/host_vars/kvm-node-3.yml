@@ -46,14 +46,6 @@ network:
             link: bond0
             dhcp4: false
             dhcp6: false
-          br.dev:
-            interfaces:
-              - vlan.dev
-            dhcp4: false
-            dhcp6: false
-            dhcp-identifier: mac
-            addresses:
-              - 192.168.32.22/24
 
           # delegate to the bridges
           vlan.test:
@@ -78,6 +70,14 @@ network:
 
         # defines brigdes for KVM based interfaces
         bridges:
+          br.dev:
+            interfaces:
+              - vlan.dev
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.32.22/24
 
           # production cluster resides in this network
           br.prod:
