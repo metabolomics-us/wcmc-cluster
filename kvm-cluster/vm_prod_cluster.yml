@@ -77,16 +77,10 @@
         name: fiehnlab/cfb
 
     - import_role:
-        name: fiehnlab/chemrich
-
-    - import_role:
         name: fiehnlab/cts
 
     - import_role:
         name: fiehnlab/eureka
-
-    - import_role:
-        name: fiehnlab/exposome
 
     - import_role:
         name: fiehnlab/mida
@@ -99,9 +93,6 @@
 
     - import_role:
         name: fiehnlab/metcor
-
-    - import_role:
-        name: fiehnlab/metda
 
     - import_role:
         name: fiehnlab/minix
@@ -132,6 +123,18 @@
 
     - import_role:
         name: fiehnlab/splash
+
+
+    # services with large images or long startup time that can cause a bottleneck in the
+    # proxy's ability to identify other services
+    - import_role:
+        name: fiehnlab/chemrich
+
+    - import_role:
+        name: fiehnlab/exposome
+
+    - import_role:
+        name: fiehnlab/metda
 
     - import_role:
         name: fiehnlab/stats
