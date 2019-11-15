@@ -1,4 +1,14 @@
 ---
+- name: "removing existing Eureka stack"
+  when:
+    - "'docker_swarm_manager' in group_names"
+  docker_stack:
+    state: absent
+    name: eureka
+  tags:
+    - deploy_eureka
+
+
 - name: "deploying Eureka"
   when:
     - "'docker_swarm_manager' in group_names"
