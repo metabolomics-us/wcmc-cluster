@@ -122,8 +122,6 @@ other
 # hp-g8 to be initializes
 # remove ips after initialization is complete
 [hpg8]
-kvm-db-node-1   ansible_ssh_host=192.168.5.49
-kvm-db-node-2   ansible_ssh_host=192.168.5.50
 
 ##
 # none standard servers, each need a custom file definition!
