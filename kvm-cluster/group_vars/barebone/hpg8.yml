@@ -1,0 +1,15 @@
+##
+network:
+
+  ##
+  # this contains the general network configuration, which should be adapted to local host needs
+  netplan:
+    configuration:
+      network:
+        ethernets:
+          eno1: {}
+          eno2: {}
+          ens2:
+            dhcp4: true
+
+
