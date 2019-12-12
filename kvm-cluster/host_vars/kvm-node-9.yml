@@ -9,6 +9,8 @@ storage:
   # here we will store all KVM related content.
   #
   device: "/dev/md0"
+  system: false
+
 ##
 network:
 

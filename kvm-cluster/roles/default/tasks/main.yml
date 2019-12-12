@@ -17,7 +17,6 @@
 - name: "install default utilities"
   apt:
     name: [git, mc, mtr, htop, nmap, sysstat, tmux, python3-pip, curl, ncdu, nfs-common, gnupg]
-    update_cache: true
     state: latest
 
 
