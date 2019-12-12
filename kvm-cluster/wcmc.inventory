@@ -4,19 +4,19 @@
 # please configure accordingly!
 [node]
 
-kvm-node-1	ansible_ssh_host=kvm-node-1
-kvm-node-2	ansible_ssh_host=kvm-node-2
-kvm-node-3	ansible_ssh_host=kvm-node-3
-kvm-node-4	ansible_ssh_host=kvm-node-4
-kvm-node-5	ansible_ssh_host=kvm-node-5
-kvm-node-6	ansible_ssh_host=kvm-node-6
-kvm-node-7	ansible_ssh_host=kvm-node-7
-kvm-node-8	ansible_ssh_host=kvm-node-8
-kvm-node-9	ansible_ssh_host=kvm-node-9
-kvm-node-10 	ansible_ssh_host=kvm-node-10
-kvm-node-11 	ansible_ssh_host=kvm-node-11
-kvm-db-node-1   ansible_ssh_host=192.168.5.49
-kvm-db-node-2   ansible_ssh_host=192.168.5.50
+#kvm-node-1	ansible_ssh_host=kvm-node-1
+#kvm-node-2	ansible_ssh_host=kvm-node-2
+#kvm-node-3	ansible_ssh_host=kvm-node-3
+#kvm-node-4	ansible_ssh_host=kvm-node-4
+#kvm-node-5	ansible_ssh_host=kvm-node-5
+#kvm-node-6	ansible_ssh_host=kvm-node-6
+#kvm-node-7	ansible_ssh_host=kvm-node-7
+#kvm-node-8	ansible_ssh_host=kvm-node-8
+#kvm-node-9	ansible_ssh_host=kvm-node-9
+#kvm-node-10 	ansible_ssh_host=kvm-node-10
+#kvm-node-11 	ansible_ssh_host=kvm-node-11
+kvm-db-node-1   ansible_ssh_host=kvm-db-node-1
+kvm-db-node-2   ansible_ssh_host=kvm-db-node-2
 
 ##
 # workstations
@@ -83,17 +83,19 @@ kvm-node-11
 # this group defines which nodes should provide virtual machines
 # and will be setup accordingly
 [kvm_node]
-kvm-node-1
-kvm-node-2
-kvm-node-3
-kvm-node-4
-kvm-node-5
-kvm-node-6
-kvm-node-7
-kvm-node-8
-kvm-node-9
-kvm-node-10
-kvm-node-11
+#kvm-node-1
+#kvm-node-2
+#kvm-node-3
+#kvm-node-4
+#kvm-node-5
+#kvm-node-6
+#kvm-node-7
+#kvm-node-8
+#kvm-node-9
+#kvm-node-10
+#kvm-node-11
+kvm-db-node-1
+kvm-db-node-2
 
 [systems:children]
 laptops

@@ -5,13 +5,17 @@ virtual_machines:
     name: binbase
     cpus: 16
     memory: 32000
-    storage_size: 15000000
+    storage_size: 18000000
     network:
       - br.nas
     pool: nvme
     group: database
     domain: nas.fiehnlab.ucdavis.edu
     manager_possible: false # possible to be a manager, if running on a manager node
+
+# we only have one main partion
+storage:
+  system: true
 
 ##
 network:

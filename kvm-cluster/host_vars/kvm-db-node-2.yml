@@ -2,17 +2,20 @@
 virtual_machines:
 
   - machine:
-    name: test-4x8
-    cpus: 4
-    memory: 32778
-    storage_size: 80000
+    name: cts
+    cpus: 16
+    memory: 32000
+    storage_size: 15000000
     network:
-      - br.test
+      - br.nas
     pool: nvme
-    group: test_cluster
-    domain: test.fiehnlab.ucdavis.edu
+    group: database
+    domain: nas.fiehnlab.ucdavis.edu
     manager_possible: false # possible to be a manager, if running on a manager node
 
+# we only have one main partion
+storage:
+  system: true
 ##
 network:
 

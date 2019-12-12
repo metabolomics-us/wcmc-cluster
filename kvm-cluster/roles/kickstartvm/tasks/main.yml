@@ -55,6 +55,16 @@
     dest:  "{{git.directory}}/makeiso/ubuntu/18.04/custom/isohdpfx.bin"
   tags:
     - kickstart
+
+- name: update permissions
+  become: true
+  file:
+    path: "{{git.directory}}/makeiso"
+    mode: 0777
+    recurse: true
+  tags:
+    - kickstart
+
 - name: generate kickstart image
   #  when: iso_exists == false
   shell: "./ubuntu/18.04/build-iso.sh {{git.directory}}/makeiso/ubuntu/18.04/custom/id_rsa.pub"
