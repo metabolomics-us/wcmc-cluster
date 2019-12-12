@@ -1,0 +1,113 @@
+# none specified, will mostly run windows only
+virtual_machines:
+
+  - machine:
+    name: test-4x8
+    cpus: 4
+    memory: 32778
+    storage_size: 80000
+    network:
+      - br.test
+    pool: nvme
+    group: test_cluster
+    domain: test.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
+
+##
+network:
+
+  ##
+  # this contains the general network configuration, which should be adapted to local host needs
+  netplan:
+    configuration:
+      network:
+        ethernets:
+          eno1: {}
+          eno2: {}
+          ens2:
+            dhcp4: true
+
+        vlans:
+          # delegate to the bridges
+          vlan.prod:
+            id: 30
+            link: ens2
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.test:
+            id: 31
+            link: ens2
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nas:
+            id: 111
+            link: ens2
+            dhcp4: false
+            dhcp6: false
+
+          # delegate to the bridges
+          vlan.nvme:
+            id: 110
+            link: ens2
+            dhcp4: false
+            dhcp6: false
+          vlan.dev:
+            id: 32
+            link: ens2
+            dhcp4: false
+            dhcp6: false
+
+        # defines brigdes for KVM based interfaces
+        bridges:
+
+          # production cluster resides in this network
+          br.prod:
+            interfaces:
+              - vlan.prod
+            dhcp6: false
+            dhcp4: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.30.50/24
+          br.dev:
+            interfaces:
+              - vlan.dev
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.32.50/24
+
+
+          # test cluster resides in this network
+          br.test:
+            interfaces:
+              - vlan.test
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.31.50/24
+          # shared services reside in this network
+          br.nvme:
+            interfaces:
+              - vlan.nvme
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.110.50/24
+
+          # data access resides in this network
+          br.nas:
+            interfaces:
+              - vlan.nas
+            dhcp4: false
+            dhcp6: false
+            dhcp-identifier: mac
+            addresses:
+              - 192.168.111.50/24
