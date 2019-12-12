@@ -15,6 +15,12 @@
     - import_role:
         name: default
 
+    - name: Upgrade all packages to the latest version
+      apt:
+        name: "*"
+        state: latest
+
+
     - name: "configure user accounts"
       include_role:
         name: users
