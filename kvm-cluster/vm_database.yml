@@ -19,6 +19,22 @@
   become: true
 
   tasks:
+    - name: "clear out old folders"
+      mount:
+        path: "{{postgresql_backup_dir}}"
+        state: unmounted
+
+    # configure backups
+    - import_role:
+        name: postgres-backup
+
+    - name: "mount the desired nfs folder from server {{nfs.host}}:{{nfs.dir}} {{ postgresql_backup_dir}}"
+      mount:
+        path: "{{postgresql_backup_dir}}"
+        src: "{{nfs.host}}:{{nfs.dir}}"
+        fstype: nfs
+        state: mounted
+
     # required package
     - apt:
         name: python3-psycopg2
@@ -35,7 +51,3 @@
     # do all the postgres stuff
     - import_role:
         name: geerlingguy.postgresql
-
-    # configure backups
-    - import_role:
-        name: postgres-backup

@@ -31,6 +31,6 @@
   version: master
   name: ansible-tunnel
 
-- src: https://github.com/ome/ansible-role-postgresql-backup
+- src: https://github.com/metabolomics-us/ansible-role-postgresql-backup
   version: master
   name: postgres-backup

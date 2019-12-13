@@ -2,7 +2,11 @@ postgresql_users: []
 
 postgresql_restarted_state: "reloaded"
 
-postgresql_backup_dir: /nfs/backups
+nfs:
+  host: "nas1.nas.fiehnlab.ucdavis.edu"
+  dir: "/mnt/test"
+
+postgresql_backup_dir: "/mnt/backups/postgres"
 postgresql_backup_filename_format: "{{ ansible_hostname }}-%Y%m%d-%H%M%S.sql"
 postgresql_backup_minimum_expected_size: 1000
 postgresql_backup_frequency: "hourly"
