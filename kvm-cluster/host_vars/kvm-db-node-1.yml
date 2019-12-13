@@ -13,6 +13,18 @@ virtual_machines:
     domain: nas.fiehnlab.ucdavis.edu
     manager_possible: false # possible to be a manager, if running on a manager node
 
+  - machine:
+    name: minix
+    cpus: 8
+    memory: 32000
+    storage_size: 1800000
+    network:
+      - br.nas
+    pool: nvme
+    group: database
+    domain: nas.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
+
 # we only have one main partion
 storage:
   system: true
