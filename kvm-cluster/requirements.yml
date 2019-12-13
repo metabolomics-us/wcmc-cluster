@@ -15,6 +15,7 @@
 - src: geerlingguy.firewall
 - src: geerlingguy.java
 - src: geerlingguy.jenkins
+- src: geerlingguy.postgresql
 
 - src: https://github.com/NVIDIA/ansible-role-nvidia-docker
   version: master

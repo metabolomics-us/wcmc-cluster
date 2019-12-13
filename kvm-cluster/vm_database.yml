@@ -1,0 +1,27 @@
+---
+- hosts: all
+  gather_facts: True
+  become_user: root
+  become: true
+
+#- hosts: kvm_vm_database
+#  tasks:
+#    - name: "configure user accounts"
+#      include_role:
+#        name: users
+#      vars:
+#        user: "{{kvm_user}}"
+#      loop: "{{accounts.users}}"
+#      loop_control:
+#        loop_var: "kvm_user"
+
+- hosts: kvm_vm_database
+  become: true
+
+  tasks:
+    - apt:
+        name: python3-psycopg2
+        state: present
+
+    - import_role:
+        name: geerlingguy.postgresql
