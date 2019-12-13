@@ -1,5 +1,3 @@
 postgresql_databases:
   - name: binbase
-postgresql_users: []
 
-postgresql_restarted_state: "reloaded"

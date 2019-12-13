@@ -19,9 +19,23 @@
   become: true
 
   tasks:
+    # required package
     - apt:
         name: python3-psycopg2
         state: present
 
+    # setup users for postgres
+    - name: "build users"
+      set_fact:
+        postgresql_users: "{{ postgresql_users + [ user ] }}"
+      loop: "{{accounts.users}}"
+      loop_control:
+        loop_var: "user"
+
+    # do all the postgres stuff
     - import_role:
         name: geerlingguy.postgresql
+
+    # configure backups
+    - import_role:
+        name: postgres-backup
