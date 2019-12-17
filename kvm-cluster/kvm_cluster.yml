@@ -2,49 +2,49 @@
 # this section will install all nodes in a docker swarm cluster
 # with basic monitoring
 ##
-#- hosts: node
-#  gather_facts: True
-#  become_user: root
-#  become: true
-#  name: "setup a docker swarm for the barebone "
-#  tasks:
-#
-#    - import_role:
-#        name: network
-#
-#    - import_role:
-#        name: default
-#
-#    - name: Upgrade all packages to the latest version
-#      apt:
-#        name: "*"
-#        state: latest
-#
-#
-#    - name: "configure user accounts"
-#      include_role:
-#        name: users
-#      vars:
-#        user: "{{kvm_user}}"
-#      loop: "{{accounts.users}}"
-#      loop_control:
-#        loop_var: "kvm_user"
-#
-#    - import_role:
-#        name: docker
-#
-#    - import_role:
-#        name: monitoring
+ - hosts: node
+   gather_facts: True
+   become_user: root
+   become: true
+   name: "setup a docker swarm for the barebone "
+   tasks:
+ 
+     - import_role:
+         name: network
+ 
+     - import_role:
+         name: default
+ 
+     - name: Upgrade all packages to the latest version
+       apt:
+         name: "*"
+         state: latest
+ 
+ 
+     - name: "configure user accounts"
+       include_role:
+         name: users
+       vars:
+         user: "{{kvm_user}}"
+       loop: "{{accounts.users}}"
+       loop_control:
+         loop_var: "kvm_user"
+ 
+     - import_role:
+         name: docker
+ 
+     - import_role:
+         name: monitoring
 
 ##
 #  this section will install the physical KVM nodes
 #  and all virtual machines
 ##
-- hosts: kvm_node
-  become_user: root
-  become: true
-  name: "install the physical kvm cluster and generate all our inventory files"
-  tasks:
+ - hosts: kvm_node
+   become_user: root
+   become: true
+   name: "install the physical kvm cluster and generate all our inventory files"
+   tasks:
     - import_role:
         name: drives
       when: "{{ storage.system}} | default(false) | bool == false"

@@ -2,6 +2,19 @@
 virtual_machines:
 
   - machine:
+    name: machine
+    cpus: 16
+    memory: 32000
+    storage_size: 5000000
+    network:
+      - br.nas
+    pool: nvme
+    group: database
+    domain: nas.fiehnlab.ucdavis.edu
+    manager_possible: false # possible to be a manager, if running on a manager node
+
+
+  - machine:
     name: cts
     cpus: 16
     memory: 32000

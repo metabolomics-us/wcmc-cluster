@@ -134,6 +134,10 @@
   set_fact:
     deployed_vms: []
   when: deployed_vms is not defined
+  tags:
+    - generate_inventory
+    - kvm_cluster
+
 
 ##
 # this builds new environment files
