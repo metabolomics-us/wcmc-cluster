@@ -1,0 +1,25 @@
+postgresql_users: []
+
+postgresql_restarted_state: "restarted"
+
+nfs:
+  host: "nas1.nas.fiehnlab.ucdavis.edu"
+  dir: "/mnt/test"
+
+postgresql_backup_dir: "/mnt/backups/postgres"
+postgresql_backup_filename_format: "{{ ansible_hostname }}-%Y%m%d-%H%M%S.sql"
+postgresql_backup_minimum_expected_size: 1000
+postgresql_backup_frequency: "hourly"
+
+##
+# general postgres options
+postgresql_global_config_options:
+  - option: listen_addresses
+    value: '*'
+
+postgresql_hba_entries:
+  - {type: local, database: all, user: postgres, auth_method: peer}
+  - {type: local, database: all, user: all, auth_method: peer}
+  - {type: host, database: all, user: all, address: '127.0.0.1/32', auth_method: md5}
+  - {type: host, database: all, user: all, address: '192.168.0.0/16', auth_method: md5}
+  - {type: host, database: all, user: all, address: '::1/128', auth_method: md5}

@@ -1,0 +1,54 @@
+---
+- hosts: all
+  gather_facts: True
+  become_user: root
+  become: true
+
+- hosts: kvm_vm_database
+  tasks:
+    - name: "configure user accounts"
+      include_role:
+        name: users
+      vars:
+        user: "{{kvm_user}}"
+      loop: "{{accounts.users}}"
+      loop_control:
+        loop_var: "kvm_user"
+
+- hosts: kvm_vm_database
+  become: true
+
+  tasks:
+
+    # required package
+    - apt:
+        name: [ python3-psycopg2, nfs-common ]
+        state: present
+
+    # setup users for postgres
+    - name: "build users"
+      set_fact:
+        postgresql_users: "{{ postgresql_users + [ user ] }}"
+      loop: "{{accounts.users}}"
+      loop_control:
+        loop_var: "user"
+
+    # do all the postgres stuff
+    - import_role:
+        name: geerlingguy.postgresql
+
+    - name: "clear out old folders"
+      mount:
+        path: "{{postgresql_backup_dir}}"
+        state: unmounted
+
+    # configure backups
+    - import_role:
+        name: postgres-backup
+
+    - name: "mount the desired nfs folder from server {{nfs.host}}:{{nfs.dir}} {{ postgresql_backup_dir}}"
+      mount:
+        path: "{{postgresql_backup_dir}}"
+        src: "{{nfs.host}}:{{nfs.dir}}"
+        fstype: nfs
+        state: mounted

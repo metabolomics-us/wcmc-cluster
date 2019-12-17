@@ -15,6 +15,7 @@
 - src: geerlingguy.firewall
 - src: geerlingguy.java
 - src: geerlingguy.jenkins
+- src: geerlingguy.postgresql
 
 - src: https://github.com/NVIDIA/ansible-role-nvidia-docker
   version: master
@@ -30,3 +31,6 @@
   version: master
   name: ansible-tunnel
 
+- src: https://github.com/metabolomics-us/ansible-role-postgresql-backup
+  version: master
+  name: postgres-backup

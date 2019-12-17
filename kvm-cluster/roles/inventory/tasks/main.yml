@@ -3,4 +3,5 @@
   add_host:
     name: "{{hostname}}.{{domain}}"
     group: "{{group}}"
+    cluster_file: "{{group}}"
   become: yes

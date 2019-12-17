@@ -6,6 +6,7 @@ storage:
   # here we will store all KVM related content.
   #
   device: "/dev/nvme0n1"
+  system: false
 
 git:
   directory: "/mnt/git"

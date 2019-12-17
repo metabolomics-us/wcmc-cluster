@@ -7,7 +7,6 @@
 - name: "install qeme and libvrt related stuff"
   apt:
     name: [qemu-kvm, libvirt-clients, libvirt-daemon-system, bridge-utils, libvirt-dev]
-    update_cache: true
     state: latest
 
 - name: "install python modules"
@@ -20,6 +19,19 @@
     src: "{{storage.device}}p1"
     fstype: ext4
     state: mounted
+  when: "{{ storage.system}} | default(false) | bool == false"
+
+- name: "setup kvm directory with no mount"
+  file:
+    path: /mnt/kvm
+    state: directory
+  when: "{{ storage.system}} | default(false) | bool == true"
+
+- name: "setup kvm directory permissions"
+  file:
+    path: /mnt/kvm
+    state: touch
+    mode: u+rw,g-wx,o-rw
 
 - name: "generate install iso"
   block:
@@ -122,6 +134,10 @@
   set_fact:
     deployed_vms: []
   when: deployed_vms is not defined
+  tags:
+    - generate_inventory
+    - kvm_cluster
+
 
 ##
 # this builds new environment files
@@ -150,26 +166,43 @@
     - kvm_cluster
   delegate_to: 127.0.0.1
 
-- name: "generate names of clusters"
+- name: "generate empty list"
   set_fact:
-    clusters_to_generate: "{{ deployed_vms | json_query('[*].group') | list | unique }}"
+    clusters_to_generate: []
   tags:
     - generate_inventory
     - kvm_cluster
-
   delegate_to: 127.0.0.1
+
+- name: "generate names of clusters"
+  when: "{{ 'cluster_file' in hostvars[ item ] }}"
+  set_fact:
+    clusters_to_generate: "{{ clusters_to_generate + [ hostvars[ item ][ 'cluster_file' ] ] }}"
+  tags:
+    - generate_inventory
+    - kvm_cluster
+  with_inventory_hostnames:
+    - all
+  run_once: true
+  delegate_to: 127.0.0.1
+
+- name: "strip duplicates"
+  set_fact:
+    clusters_to_generate: "{{ clusters_to_generate | unique }}"
+  tags:
+    - generate_inventory
+    - kvm_cluster
+  run_once: true
+  delegate_to: 127.0.0.1
+
 - debug:
     var: clusters_to_generate
   tags:
     - generate_inventory
     - kvm_cluster
 
-- debug:
-    var: deployed_vms
-  tags:
-    - generate_inventory
-    - kvm_cluster
-
+  run_once: true
+  delegate_to: 127.0.0.1
 - name: "generate inventory files for all defined clusters"
   template:
     src: inventory.ini.j2
