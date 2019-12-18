@@ -9,7 +9,7 @@ nfs:
 postgresql_backup_dir: "/mnt/backups/postgres"
 postgresql_backup_filename_format: "{{ ansible_hostname }}-%Y%m%d-%H%M%S.sql"
 postgresql_backup_minimum_expected_size: 1000
-postgresql_backup_frequency: "hourly"
+postgresql_backup_frequency: "daily"
 
 ##
 # general postgres options
